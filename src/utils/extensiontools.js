@@ -33,7 +33,28 @@ const extension = {
             }
         }
 
-        return(validFiles)
+        return (validFiles)
+    },
+
+    getThumbnail: function (fileName) {
+
+        const ext = this.getFromFileName(fileName)
+
+        const extType = this.checkValid(ext)[0]
+
+        const thumbnailImg = () => {
+            if (extType === 0) {
+                return(<i class="material-icons thumbnail">photo</i>)
+            } else if (extType === 1) {
+                return(<i class="material-icons">photo</i>)
+            } else if (extType === 2) {
+                return(<i class="material-icons">movie</i>)
+            } else {
+                return(<i class="material-icons">photo</i>)
+            }
+        }
+
+        return(thumbnailImg());
     }
 };
 

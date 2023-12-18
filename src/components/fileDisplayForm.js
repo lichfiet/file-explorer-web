@@ -97,9 +97,10 @@ export default function FileDisplayForm() {
                 <label htmlFor="fileName">Image Name:</label>
                 <input type="text" id="fileName" name="fileName" ref={fileNameRef}></input>
             </form>
-            <button onClick={getFile}>Fetch Image/Video</button>
-            <button onClick={deleteFile}>Delete Image/Video</button>
-
+            <div class="container">
+                <button onClick={getFile} class="contrast fileDisplay">Fetch Image/Video</button>
+                <button onClick={deleteFile} class="secondary outline fileDisplay">Delete Image/Video</button>
+            </div>
             <div style={{padding: "20px"}}>
                 <img ref={imgElement} src="" alt="" style={{display: "block", padding: "20px"}}></img>
                 <video ref={vidElement} src="" autoPlay={true}></video>

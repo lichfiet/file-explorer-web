@@ -1,12 +1,12 @@
 import extension from '../utils/extensiontools.js';
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 // Wrapper component to handle button click and render FileListBlock
 export default function FileListBlockWrapper() {
     const [showFiles, setShowFiles] = useState(false); // State to track button click
-    const [showWaiting, setShowWaiting] = useState(false);
     const [files, setFiles] = useState([]); // State to store fetched files
+    const [listButton, setLoading] = useState([]); // State to store fetched files
 
     // Function to fetch files from the server
     const fetchData = async () => {
@@ -20,7 +20,7 @@ export default function FileListBlockWrapper() {
 
 
             setFiles(validFiles); // Update state with valid file names
-            setShowWaiting(false);
+            setLoading(false);
 
         } catch (error) {
             console.log(error);
@@ -29,42 +29,54 @@ export default function FileListBlockWrapper() {
 
     // Handler for button click
     const handleButtonClick = () => {
-        setShowFiles(true); // Set showFiles to true when button is clicked
-        setShowWaiting(true);
+        setFiles([])
         fetchData(); // Fetch data when the button is clicked
+        setShowFiles(true); // Set showFiles to true when button is clicked
+        setLoading(true);
     };
 
     return (
         <div>
-            {/* Show button if files are not displayed */}
+            <button aria-busy={listButton} onClick={handleButtonClick} class="contrast">List Files</button>
+
             {!showFiles && (
-                <button onClick={handleButtonClick}>List Files</button>
-            )}
-
-            {/* Show FileListBlock component if button is clicked */}
+                <></>
+            )}{/* Show button if files are not displayed */}
             {showFiles && (
-                <FileListBlock files={files} />
-            )}
 
-            {/* Don't show waiting if not waiting */}
-            {!showWaiting && (<p></p>)}
+                <div>
+                    <FileListBlock files={files} />
+                </div>
 
-            {/* Show waiting if waiting */}
-            {showWaiting && (<p>Waiting on file list...</p>)}
+            )}{/* Show FileListBlock component if button is clicked */}
+
         </div>
     );
 }
 
 // Component to display the file list
 function FileListBlock({ files }) {
-    return (
-        <div>
-            <div>
-                {/* Render file names */}
-                {files.map((fileName, index) => (
-                    <p key={index}>{fileName}</p>
-                ))}
-            </div>
+
+    const updateSelected = function () {
+        
+    }
+
+    return /* Render file button elements */ (
+
+        <div class="grid">
+            {files.map((fileName, index) => (
+                <a href="" role="button" class="filesListed contrast" id={fileName}>
+                    <div class="thumbnail">
+
+                        {extension.getThumbnail(fileName)}
+                        <button class="secondary outline filesAdd" key={index} onClick={updateSelected()}>+</button>
+                        
+
+                    </div>
+                    <p class="filesListed">{fileName}</p>
+                </a>
+            ))}
         </div>
+
     );
 }

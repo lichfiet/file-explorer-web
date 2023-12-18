@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+
 .App {
   text-align: center;
 }
@@ -24,23 +26,46 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 p {
   font-size: 20px;
   display: inline;
   padding: 2px;
   margin-right: 10px;
   margin-bottom: 20px;
+}
+
+.fileDisplay /* For the file display element buttons */ {
+  text-align: center;
+  display: inline;
+  width: 45%;
+  margin: 1%;
+}
+
+.fileUpload /* For the file display element buttons */ {
+  display: inline;
+  width: 100%;
+  margin: 10px;
+  font-size: 75%;
+}
+
+.filesListed /* For the file display element buttons */ {
+  display: inline;
+  width: 100%;
+  padding: 0%;
+  margin: 0%;
+  font-size: 75%;
+}
+
+.filesAdd {
+  padding: 0%;
+  margin-left: 10%;
+  display: inline;
+  width: 50%;
+  
+}
+
+.thumbnail {
+  text-align: center;
+  display: inline;
+
 }
