@@ -19,9 +19,6 @@ function App() {
               <FileUploadForm />
             </section>
             <FileDisplayForm />
-            <FileListBlock />
-
-
           </article>
         </div>
       </body>

@@ -69,7 +69,7 @@ function FileListBlock({ files }) {
                     <div class="thumbnail">
 
                         {extension.getThumbnail(fileName)}
-                        <button class="secondary outline filesAdd" key={index} onClick={updateSelected()}>+</button>
+                        <button class="secondary outline filesAdd" key={index} onClick={() => {updateSelected({fileName})}}>+</button>
                         
 
                     </div>
