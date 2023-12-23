@@ -11,10 +11,10 @@ const extension = {
         if (RegExp((/^(jpg|jpeg|png)$/i)).test(fileExtension) === true || def === true) {
             return ([0, null, "JPG/JPEG/PNG"]) // unsure what other value to return
 
-        } else if (RegExp((/^(gif)$/i)).test(fileExtension) == true) {
+        } else if (RegExp((/^(gif)$/i)).test(fileExtension) === true) {
             return ([1, null, "GIF"]) // unsure what other value to return
 
-        } else if (RegExp((/^(mov|avi|mp4)$/i)).test(fileExtension) == true) {
+        } else if (RegExp((/^(mov|avi|mp4)$/i)).test(fileExtension) === true) {
             return ([2, null, "MOV/AVI/MP4"]) // unsure what other value to return
 
         } else {
@@ -36,21 +36,19 @@ const extension = {
         return (validFiles)
     },
 
-    getThumbnail: function (fileName) {
-
-        const ext = this.getFromFileName(fileName)
-
-        const extType = this.checkValid(ext)[0]
+    getThumbnail: function (fileExtensionType, fileType) {
 
         const thumbnailImg = () => {
-            if (extType === 0) {
-                return(<i class="material-icons thumbnail">photo</i>)
-            } else if (extType === 1) {
-                return(<i class="material-icons">photo</i>)
-            } else if (extType === 2) {
-                return(<i class="material-icons">movie</i>)
-            } else {
-                return(<i class="material-icons">photo</i>)
+            if (fileType === "d") {
+                return(<i className="fileIcon fa fa-solid fa-folder"></i>)
+            } else if (fileExtensionType === 0) {
+                return(<i className="fileIcon fa fa-file-image-o"></i>)
+            } else if (fileExtensionType === 1) {
+                return(<i className="fileIcon fa fa-file-image-o"></i>)
+            } else if (fileExtensionType === 2) {
+                return(<i className="fileIcon fa fa-solid fa-film"></i>)
+            } else if (fileExtensionType === 3) {
+                return(<i className="fileIcon fa fa-file"></i>)
             }
         }
 

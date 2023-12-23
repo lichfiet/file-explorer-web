@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
 
 .App {
   text-align: center;
@@ -49,23 +49,44 @@ p {
 }
 
 .filesListed /* For the file display element buttons */ {
-  display: inline;
+  display: grid;
+  gap: 1rem;
+
+  /* 1 too skinny, too much code */
+  /* grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr; */
+
+  /* 2 cleaner code */
+  /* grid-template-columns: repeat(12, 1fr); */
+
+  /* 3  better sizing, but overflows */
+  /* grid-template-columns: repeat(12, minmax(240px, 1fr)); */
+
+  /* 4 final */
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+}
+
+.fileReturned {
+  display: flex;
+  flex-direction: column;
+  inline-size: min-content;
+  justify-content: top;
+  align-items: center;
+  font-size: 2rem;
+  height: 100%;
   width: 100%;
-  padding: 0%;
-  margin: 0%;
-  font-size: 75%;
+  border-radius: 4px;
+  transition: all 500ms;
+  overflow: wrap;
+  word-break: break-all;
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-.filesAdd {
-  padding: 0%;
-  margin-left: 10%;
-  display: inline;
-  width: 50%;
-  
-}
-
-.thumbnail {
+.fileReturnedText {
+  margin: 0px;
+  word-break: break-all;
   text-align: center;
-  display: inline;
-
 }
+

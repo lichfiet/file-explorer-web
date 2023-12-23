@@ -10,7 +10,7 @@ export default function FileDisplayForm() {
     const fileNameRef = useRef(null);
     const [isMounted, setIsMounted] = useState(false); // Added state to track component mount status
     const [delIsMounted, setDelIsMounted] = useState(false); // Added state to track component mount status
-    const [refInfo, setCurrFile] = useState("Enter a file name, or click the '+' above an image name");
+    const [refInfo, setCurrFile] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
@@ -132,7 +132,7 @@ export default function FileDisplayForm() {
 
         return (
             <div>
-                <button aria-busy={listButton} onClick={handleButtonClick} class="contrast">List Files</button>
+                <button aria-busy={listButton} onClick={handleButtonClick} className="contrast">List Files</button>
 
                 {!showFiles && (
                     <></>
@@ -154,16 +154,16 @@ export default function FileDisplayForm() {
 
         return /* Render file button elements */ (
 
-            <div class="grid">
+            <div className="grid">
                 {files.map((fileName, index) => (
 
-                    <div class="thumbnail">
+                    <div className="thumbnail">
 
 
                         {extension.getThumbnail(fileName)}
-                        <button class="secondary outline filesAdd" onClick={() => { setCurrFile(fileName) }} key={index} value={fileName}>+</button>
+                        <button className="secondary outline filesAdd" onClick={() => { setCurrFile(fileName) }} key={index} value={fileName}>+</button>
 
-                        <p class="filesListed">{fileName}</p>
+                        <p className="filesListed">{fileName}</p>
 
                     </div>
 
@@ -181,13 +181,13 @@ export default function FileDisplayForm() {
             <h3>Fetch Image/Video from SFTP Server</h3>
             <form>
                 <label htmlFor="fileName">Image Name:</label>
-                <input type="text" id="fileName" name="fileName" ref={fileNameRef} value={refInfo}></input>
+                <input type="text" id="fileName" name="fileName" ref={fileNameRef} value={refInfo} onChange={e => setCurrFile(e.target.value)}></input>
             </form>
-            <div class="container">
+            <div className="container">
                 <button onClick={getFile} className="contrast fileDisplay" disabled={isLoading}>
                     {isLoading ? 'Loading...' : 'Fetch Image/Video'}
                 </button>
-                <button onClick={() => { deleteFile() }} class="secondary outline fileDisplay">Delete Image/Video</button>
+                <button onClick={() => { deleteFile() }} className="secondary outline fileDisplay">Delete Image/Video</button>
             </div>
             <div style={{ padding: "20px" }}>
                 <img ref={imgElement} src="" alt="" style={{ display: "block", padding: "20px" }}></img>

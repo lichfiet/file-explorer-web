@@ -1,14 +1,13 @@
 export function NavBar() {
     return (
-        <nav>
+        <nav id="nav">
             <ul>
                 <li><strong>Trevor's Epic Website</strong></li>
             </ul>
             <ul>
                 <li>Select A Tool</li>
                 <li>
-                    <select>
-                        <option value="" disabled selected>Select</option>
+                    <select>            
                         <option>File Converter</option>
                         <option>…</option>
                         <option>…</option>

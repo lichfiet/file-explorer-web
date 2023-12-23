@@ -2,6 +2,7 @@ import './App.css';
 import FileUploadForm from './components/fileUploadForm';
 import FileDisplayForm from './components/fileDisplayForm';
 import FileListBlock from './components/fileListBlock';
+import FileExplorer from './components/fileExplorer'
 import { NavBar } from './components/navBar';
 import '@picocss/pico'
 
@@ -12,16 +13,24 @@ function App() {
       <header>
         <NavBar />
       </header>
-      <body>
-        <div class="container">
-          <article>
-            <section>
-              <FileUploadForm />
-            </section>
-            <FileDisplayForm />
-          </article>
-        </div>
-      </body>
+      <div className="container">
+        <article>
+          <section>
+            <div className="grid" >
+              <div className="container" style={{padding: "30px"}}>
+                <FileUploadForm />
+              </div>
+              <div className="container" style={{padding: "20px"}}>
+                <FileDisplayForm />
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <FileExplorer />
+          </section>
+        </article>
+      </div>
     </div>
   );
 }
