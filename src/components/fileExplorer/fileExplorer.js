@@ -8,7 +8,7 @@ const FileExplorer = function () {
 
     const [files, setFiles] = useState([]); // State Data for file list
     const [filesLoading, setFilesLoading] = useState({ busy: false, text:"Refresh"}) // Refresh Button State
-    const [fileDeleting, setFileDeleting] = useState({ busy: false, icon: <i className="fa fa-solid fa-trash"></i> }) // File Deletion Button State
+    const [fileDeleting, setFileDeleting] = useState({ busy: false, icon:<i className="fa fa-solid fa-trash"></i>}) // File Deletion Button State
 
     const [activeFile, setActiveFile] = useState({ fileName: null, index: null, fileExtensionType: null })
     const [fileSelected, setFileSelected] = useState(null)
@@ -16,25 +16,32 @@ const FileExplorer = function () {
     // Grab the file list
     const fetchFiles = async () => {
         setFilesLoading({ busy: true, text: null }) // make button loading
+
+        // Request file list data from Api
         try {
-
-            let fileData
-
+            let fileData // Req
             fileData = await localApi.requestFiles()
 
-            setFiles(fileData);
-            console.log("Logging Data")
+            setFiles(fileData); // Update file state variable
+            console.log("Logging Data") // Log
             console.log(fileData)
 
         } catch (error) {
-            // Handle error if API request fails
-            console.error('Error fetching files:', error);
+            console.error('Error fetching files:', error); // Handle error if API request fails
         }
-        setFilesLoading({ busy: false, text: "Refresh" })
+        setFilesLoading({ busy: false, text: "Refresh" }) // Reset Loading State
     }
 
-    // Delete File
+
+    // Delete Selected File
     const deleteFile = async () => {
+
+        if (activeFile.fileName === null) {
+            console.log("No File Selected")
+        } else {
+        console.log(activeFile.fileName)
+
+        
         const fileName = activeFile.fileName
         console.log(activeFile);
         setFileDeleting({ busy: true, icon: null })
@@ -65,6 +72,8 @@ const FileExplorer = function () {
         button.innerHTML = oldval
         button.setAttribute('aria-busy', 'false')
 
+        setActiveFile({ fileName: null, index: null, fileExtensionType: null })
+        }
     }
 
     const fileSelector = function (fileName, index, fileExtensionType) {
