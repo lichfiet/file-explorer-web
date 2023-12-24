@@ -90,3 +90,16 @@ p {
   text-align: center;
 }
 
+.fileExplorerContainer {
+  background-color: rgb(18, 21, 27);
+  padding-top: 2%;
+  padding-left: 2%;
+  padding-right: 2%;
+  border-radius: 0.5rem;
+}
+
+.fileExplorerButton {
+  font-size: 75%;
+  margin-right: 5%;
+}
+

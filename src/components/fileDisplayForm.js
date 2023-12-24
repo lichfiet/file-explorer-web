@@ -193,7 +193,9 @@ export default function FileDisplayForm() {
                 <img ref={imgElement} src="" alt="" style={{ display: "block", padding: "20px" }}></img>
                 <video ref={vidElement} src="" autoPlay={true}></video>
             </div>
-            <FileListBlockWrapper />
+            {
+            //<FileListBlockWrapper />
+            }
         </div>
 
     )
