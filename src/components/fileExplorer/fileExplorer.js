@@ -7,7 +7,7 @@ const FileExplorer = function () {
     const [modal, setModal] = useState(null)
 
     const [files, setFiles] = useState([]); // State Data for file list
-    const [filesLoading, setFilesLoading] = useState({ busy: false, text: "Refresh" }) // Refresh Button State
+    const [filesLoading, setFilesLoading] = useState({ busy: false, text:"Refresh"}) // Refresh Button State
     const [fileDeleting, setFileDeleting] = useState({ busy: false, icon: <i className="fa fa-solid fa-trash"></i> }) // File Deletion Button State
 
     const [activeFile, setActiveFile] = useState({ fileName: null, index: null, fileExtensionType: null })
@@ -159,7 +159,25 @@ const FileExplorer = function () {
 
 
             return (FilePanePreview(fileName, index, fileExtensionType));
+        } else  if (activeFile.fileName === null) {
+            const fileElement = document.getElementById("button-" + fileName)
+
+            const currClasses = fileElement.className
+
+            setFileSelected(currClasses)
+
+            fileElement.className = (fileElement.className + " contrast")
+
+            setActiveFile(
+                {
+                    fileName: fileName,
+                    index: index,
+                    fileExtensionType: fileExtensionType
+                });
         } else {
+            const currFile = document.getElementById("button-" + activeFile.fileName)
+            currFile.className = fileSelected
+
             const fileElement = document.getElementById("button-" + fileName)
 
             const currClasses = fileElement.className
