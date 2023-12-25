@@ -1,7 +1,5 @@
 import './App.css';
 import FileUploadForm from './components/fileUploadForm';
-import FileDisplayForm from './components/fileDisplayForm';
-import FileListBlock from './components/fileListBlock';
 import FileExplorer from './components/fileExplorer/fileExplorer'
 import { NavBar } from './components/navBar';
 import '@picocss/pico'

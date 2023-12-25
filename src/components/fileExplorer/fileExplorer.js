@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import localApi from '../../utils/apiHanding';
 import extension from '../../utils/extensiontools'
 
@@ -140,7 +140,7 @@ const FileExplorer = function () {
                             <dialog open>
                                 <article>
                                     <header>
-                                        <a href="#" aria-label="Close" className="close" onClick={() => {setModal(null); setActiveFile() }}></a>
+                                        <button aria-label="Close" className="close" onClick={() => {setModal(null); setActiveFile() }}></button>
                                         File Preview
                                     </header>
                                     <h4>{fileName}</h4>
