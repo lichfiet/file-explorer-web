@@ -44,7 +44,7 @@ const FileExplorer = function () {
         
         const fileName = activeFile.fileName
         console.log(activeFile);
-        setFileDeleting({ busy: true, icon: null })
+        setFileDeleting({ busy: true, icon:null})
 
         let button = document.getElementById(`${activeFile.index}`)
 
@@ -67,7 +67,7 @@ const FileExplorer = function () {
             // Handle error if API request fails
             console.error('Error fetching files:', error);
         }
-        setFileDeleting({ busy: false, icon: <i className="fa fa-solid fa-trash"></i> })
+        setFileDeleting({ busy: false, icon:<i className="fa fa-solid fa-trash"></i>})
 
         button.innerHTML = oldval
         button.setAttribute('aria-busy', 'false')
@@ -215,7 +215,7 @@ const FileExplorer = function () {
                     </ul>
                     <ul>
                         <button aria-busy={false} onClick={() => { fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType) }} className="fileExplorerButton"> Open </button>
-                        <button aria-busy={fileDeleting.busy} onClick={() => { deleteFile(activeFile) }} className="fileExplorerButton"> {fileDeleting.icon} </button>
+                        <button aria-busy={fileDeleting.busy} onClick={() => { deleteFile(activeFile) }} className="fileExplorerButton">{fileDeleting.icon}</button>
                     </ul>
                 </nav>
                 <div className="grid">
