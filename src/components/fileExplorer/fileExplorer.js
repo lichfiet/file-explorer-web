@@ -10,6 +10,45 @@ const FileExplorer = function () {
     const [filesLoading, setFilesLoading] = useState({ busy: false, text:"Refresh"}) // Refresh Button State
     const [fileDeleting, setFileDeleting] = useState({ busy: false, icon:<i className="fa fa-solid fa-trash"></i>}) // File Deletion Button State
 
+    // var for button loading template
+  let buttonLoading = {
+        openFile: {
+            loading: {
+                busy: true,
+                innerText: (null)
+            },
+            standby: {
+                busy: false,
+                innerText: ("Open")
+            },
+            state: {
+                busy: false,
+                innerText: ("Open")
+            }
+        },
+        deleteFile: {
+            busy: false,
+            innerText: (<i className="fa fa-solid fa-trash"></i>)
+        },
+        refreshList: {
+            busy: false,
+            innerText: ("False")
+        }
+    }
+
+    // state object used to manage loading value for buttons
+    const [buttonLoadingStates, setButtonLoading] = useState({
+        openFile: buttonLoading.openFile.standby,
+        deleteFile: {
+            busy: buttonLoading.deleteFile.busy,
+            innerText: buttonLoading.deleteFile.innerText
+        },
+        refreshList: {
+            busy: buttonLoading.refreshList.busy,
+            innerText: buttonLoading.refreshList.innerText
+        }
+    })
+
     const [activeFile, setActiveFile] = useState({ fileName: null, index: null, fileExtensionType: null })
     const [fileSelected, setFileSelected] = useState(null)
 
@@ -82,6 +121,8 @@ const FileExplorer = function () {
         if (activeFile.fileName === fileName) {
 
             const FilePanePreview = async function (fileName, index, fileExtensionType) {
+                
+                buttonLoading.openFile.state = buttonLoading.openFile.loading
 
                 setActiveFile(
                     {
@@ -164,6 +205,8 @@ const FileExplorer = function () {
 
                 setActiveFile({ fileName: null, index: null, fileExtensionType: null })
 
+                buttonLoading.openFile.state = buttonLoading.openFile.standby
+
             };
 
 
@@ -214,7 +257,7 @@ const FileExplorer = function () {
                         <button aria-busy={filesLoading.busy} onClick={() => { fetchFiles() }} className="fileExplorerButton">{filesLoading.text}</button>
                     </ul>
                     <ul>
-                        <button aria-busy={false} onClick={() => { fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType) }} className="fileExplorerButton"> Open </button>
+                        <button aria-busy={buttonLoadingStates.openFile.busy} onClick={() => { fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType) }} className="fileExplorerButton">{buttonLoadingStates.openFile.innerText}</button>
                         <button aria-busy={fileDeleting.busy} onClick={() => { deleteFile(activeFile) }} className="fileExplorerButton">{fileDeleting.icon}</button>
                     </ul>
                 </nav>
