@@ -3,12 +3,15 @@ import axios from 'axios'
 
 const localApi = {
 
-    requestFiles: async () => {
+    requestFiles: async (connectionType) => {
 
         try {
 
             console.log("Getting file list from FTP Client");
-            const response = await axios.get(`${connSettings.host}/listFilesFromDir/`)
+            const response = await axios.get(`${connSettings.host}/listFilesDev/`, {headers: {
+                method: connectionType,
+                sessionid: true
+            }})
             console.log("Retrieved file list");
 
             if (!response.status === 200) {
@@ -42,7 +45,9 @@ const localApi = {
             console.log("Attempting upload");
             const response = await axios.post(`${connSettings.host}/uploadFile/`, formData, {
                 headers : {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'multipart/form-data',
+                    'method': 'S3',
+                    'sessionid': 'true'
                 }
             })
 
@@ -71,13 +76,17 @@ const localApi = {
 
     },
 
-    getFile: async (fileName) => {
+    getFile: async (fileName, connectionType) => {
 
         try {
 
             console.log("Getting file from FTP Client");
             const response = await axios.get(`${connSettings.host}/getFile/${fileName}`, {
-                responseType: 'blob' // Set responseType to 'blob'
+                responseType: 'blob', // Set responseType to 'blob'
+                headers: {
+                    method: connectionType,
+                    sessionid: true
+                }
             });
             console.log("Retrieved file list");
 
@@ -104,12 +113,15 @@ const localApi = {
 
     },
 
-    deleteFile: async (fileName) => {
+    deleteFile: async (fileName, connectionType) => {
 
         try {
 
             console.log("Deleting file from client");
-            const response = await axios.delete(`${connSettings.host}/deleteFile/${fileName}`);
+            const response = await axios.delete(`${connSettings.host}/deleteFile/${fileName}`, {headers: {
+                method: connectionType,
+                sessionid: true
+            }});
             console.log("Retrieved response");
 
             if (!response.status === 200) {
