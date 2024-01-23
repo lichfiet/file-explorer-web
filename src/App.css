@@ -88,6 +88,8 @@ p {
   margin: 0px;
   word-break: break-all;
   text-align: center;
+  font-size: 40%;
+  padding-bottom: 15px;
 }
 
 .fileExplorerContainer {

@@ -3,6 +3,7 @@ import localApi from '../../utils/apiHanding';
 import extension from '../../utils/extensiontools'
 import FileUploadForm from './fileUploadForm'
 
+
 const FileExplorer = function () {
 
     const [modal, setModal] = useState(null)
@@ -45,29 +46,13 @@ const FileExplorer = function () {
 
     const clearSelected = () => {
         for (let n = 0; n < files.length; n++) {
-
-            if (document.getElementById("button-" + files[n].fileName) !== null) {
-                let file = document.getElementById("button-" + files[n].fileName)
+            let file = document.getElementById("button-" + files[n].fileName);
+            if (file !== null) {
                 file.className = 'outline secondary';
-                console.log(files[n], extension.getThumbnail(files[n].fileExtensionType, files[n].fileType))
-
             }
-
         } 
     }
 
-    // state object used to manage loading value for buttons
-    const [buttonLoadingStates, setButtonLoading] = useState({
-        openFile: buttonLoading.openFile.standby,
-        deleteFile: {
-            busy: buttonLoading.deleteFile.busy,
-            innerText: buttonLoading.deleteFile.innerText
-        },
-        refreshList: {
-            busy: buttonLoading.refreshList.busy,
-            innerText: buttonLoading.refreshList.innerText
-        }
-    })
 
     // Grab the file list
     const fetchFiles = async () => {
@@ -75,8 +60,7 @@ const FileExplorer = function () {
    
         // Request file list data from Api
         try {
-            let fileData // Req
-            fileData = await localApi.requestFiles(connectionType)
+            const fileData = await localApi.requestFiles(connectionType)
 
             setFiles(fileData); // Update file state variable
             console.log("Logging Data") // Log
@@ -91,8 +75,7 @@ const FileExplorer = function () {
             } 
         }
 
-        setFilesLoading(buttonLoading.refreshList) // Reset Loading State
-
+        setFilesLoading({ busy: false, icon: (<i class="fa fa-solid fa-rotate-right"></i>) }) // Reset Loading State
     }
 
     useEffect(() => {
@@ -157,19 +140,18 @@ const FileExplorer = function () {
         );
     }
 
+    const openPreviewModal = () => {}
+
     const fileSelector = function (fileName, index, fileExtensionType) {
 
+        // If active file = the one just clicked on (i.e., file was double clicked)
         if (activeFile.fileName === fileName) {
+
+            setFileOpening({ busy: true, icon: undefined})
 
             const FilePanePreview = async function (fileName, index, fileExtensionType) {
 
-
-                setActiveFile(
-                    {
-                        fileName: fileName,
-                        index: index,
-                        fileExtensionType: fileExtensionType
-                    });
+                setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType });
 
                 let exttype = fileExtensionType
                 let button = document.getElementById(`${index}`)
@@ -179,64 +161,32 @@ const FileExplorer = function () {
                 button.innerHTML = ""
                 button.setAttribute('aria-busy', 'true');
 
-
                 console.log(fileName);
 
-                if (exttype === 0 || exttype === 1) {
+                if ((fileExtensionType === 0) || (fileExtensionType === 1) || (fileExtensionType === 2)) {
                     try {
                         const response = await localApi.getFile(fileName, connectionType);
-                        console.log("1")
                         const blob = new Blob([response.data]);
-                        // Check if component is still mounted
-                        const filetest = URL.createObjectURL(blob);
+                        const fileSrc = URL.createObjectURL(blob);
+
+                        setFileOpening({ busy: false, icon: <i class="fa fa-solid fa-eye"></i>})
 
                         setModal(
                             <dialog open>
                                 <article>
                                     <header>
-                                        <a href="#close" aria-label="Close" className="close" onClick={() => { setModal(null); setActiveFile({ fileName: null, index: null, fileExtensionType: null }) }}></a>
+                                        <button aria-label="Close" className="close" onClick={() => { setModal(null) }}></button>
                                         File Preview
                                     </header>
                                     <h4>{fileName}</h4>
-                                    <img src={filetest} alt="File Preview" />
+                                    {/** If video, use video tag, else use img tag */}
+                                    {fileExtensionType === 2 ? (<video controls="true" autoPlay="true" src={fileSrc}></video>) : (<img src={fileSrc} alt="File Preview" />)}
                                 </article>
                             </dialog>
                         );
 
-                        // Remove Contrast from the button
-                        clearSelected();
-
                     } catch (error) {
                         console.error('There was an error:', error);
-                        clearSelected();
-                    }
-                } else if (exttype === 2) {
-                    try {
-                        const response = await localApi.getFile(fileName, connectionType);
-                        console.log("1")
-                        const blob = new Blob([response.data]);
-                        const videotest = URL.createObjectURL(blob);
-
-                        setModal(
-                            <dialog open>
-                                <article>
-                                    <header>
-                                        <button aria-label="Close" className="close" onClick={() => { setModal(null); setActiveFile({ fileName: null, index: null, fileExtensionType: null }) }}></button>
-                                        File Preview
-                                    </header>
-                                    <h4>{fileName}</h4>
-                                    <video controls="true" autoPlay="true" src={videotest}></video>
-                                </article>
-                            </dialog>
-                        );
-
-                        // Remove Contrast from the button
-                        clearSelected();
-
-                    } catch (error) {
-                        console.error('There was an error:', error);
-
-                        clearSelected();
                     }
                 }
 
@@ -244,24 +194,24 @@ const FileExplorer = function () {
                 button.innerHTML = (oldval === null ? "n/a" : oldval)
                 button.setAttribute('aria-busy', 'false')
 
+                setFileOpening({ busy: false, icon: <i class="fa fa-solid fa-eye"></i>});
                 setActiveFile({ fileName: null, index: null, fileExtensionType: null })
+                // Remove Contrast from the button
+                clearSelected();
 
             };
 
             return (FilePanePreview(fileName, index, fileExtensionType));
-        } else if (activeFile.fileName === null || activeFile.fileName === undefined && fileName !== null) {
-
+        } else if (((activeFile.fileName === null) || (activeFile.fileName === undefined)) && (fileName !== null)) {            
+            clearSelected();
             // find file by id and
             const fileElement = document.getElementById("button-" + fileName)
             fileElement.className = (fileElement.className + " contrast")
 
-            setActiveFile(
-                {
-                    fileName: fileName,
-                    index: index,
-                    fileExtensionType: fileExtensionType
-                });
+            setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType });
+
         } else {
+
             const currFile = document.getElementById("button-" + activeFile.fileName)
             currFile.className = fileSelected
 
@@ -293,10 +243,10 @@ const FileExplorer = function () {
             <section>
                 <nav style={{ padding: "10px" }}>
                     <ul>
-                        <a href="#" data-tooltip="Refresh File List" style={{'margin-right': '1px'}}><button aria-busy={filesLoading.busy} onClick={() => { fetchFiles() }} className="contrast fileExplorerButton">{filesLoading.icon}</button></a>
-                        <a href="#" data-tooltip="Open File" style={{'margin-right': '1px'}}><button aria-busy={buttonLoadingStates.openFile.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType)) }} className="contrast fileExplorerButton">{fileOpening.icon}</button></a>
-                        <a href="#" data-tooltip="Delete File" style={{'margin-right': '1px'}}><button aria-busy={fileDeleting.busy} onClick={() => { deleteFile(activeFile) }} className="contrast fileExplorerButton">{fileDeleting.icon}</button></a>
-                        <a href="#" data-tooltip="Upload File" style={{'margin-right': '1px'}}><button aria-busy={fileUploading.busy} onClick={() => { openUploadModal(connectionType) }} className="contrast fileExplorerButton">{fileUploading.icon}</button></a>
+                        <a data-tooltip="Refresh File List" style={{'margin-right': '1px'}}><button aria-busy={filesLoading.busy} onClick={() => { fetchFiles() }} className="contrast fileExplorerButton">{filesLoading.icon}</button></a>
+                        <a data-tooltip="Open File" style={{'margin-right': '1px'}}><button aria-busy={fileOpening.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType)) }} className="contrast fileExplorerButton">{fileOpening.icon}</button></a>
+                        <a data-tooltip="Delete File" style={{'margin-right': '1px'}}><button aria-busy={fileDeleting.busy} onClick={() => { deleteFile(activeFile) }} className="contrast fileExplorerButton">{fileDeleting.icon}</button></a>
+                        <a data-tooltip="Upload File" style={{'margin-right': '1px'}}><button aria-busy={fileUploading.busy} onClick={() => { openUploadModal(connectionType) }} className="contrast fileExplorerButton">{fileUploading.icon}</button></a>
                     </ul>
                     {/** S3 or SFTP radio buttons */}
                     <ul>
