@@ -68,11 +68,7 @@ const FileExplorer = function () {
         } catch (error) {
             console.error('Error fetching files:', error); // Handle error if API request fails
         } finally {
-            for (let n = 0; n < files.length; n++) {
-                let file = document.getElementById("button-" + files[n].fileName)
-                file.className = 'outline secondary';
-                console.log(files[n], extension.getThumbnail(files[n].fileExtensionType, files[n].fileType))
-            } 
+            clearSelected();
         }
 
         setFilesLoading({ busy: false, icon: (<i class="fa fa-solid fa-rotate-right"></i>) }) // Reset Loading State
