@@ -74,9 +74,9 @@ const FileExplorer = function () {
         setFilesLoading({ busy: false, icon: (<i class="fa fa-solid fa-rotate-right"></i>) }) // Reset Loading State
     }
 
-    useEffect(() => {
+    /**useEffect(() => {
         fetchFiles();
-      }, []);
+      }, []);*/
 
 
     // Delete Selected File
