@@ -6,7 +6,6 @@ const localApi = {
     requestFiles: async (connectionType) => {
 
         try {
-
             console.log("Getting file list from FTP Client");
             const response = await axios.get(`${connSettings.host}/listFilesDev/`, {headers: {
                 method: connectionType,
@@ -15,65 +14,41 @@ const localApi = {
             console.log("Retrieved file list");
 
             if (!response.status === 200) {
-
                 throw new Error('Network response was not ok');
-
             } else {
-
                 return response.data
-
             }
-
-
         } catch (error) {
-
             console.error('There was an error:', error);
-
         } finally {
-
             console.log("Epic request")
-
         }
-
     },
 
-    uploadFile: async (formData) => {
-
+    uploadFile: async (formData, method) => {
         try {
-
-
             console.log("Attempting upload");
             const response = await axios.post(`${connSettings.host}/uploadFile/`, formData, {
                 headers : {
                     'Content-Type': 'multipart/form-data',
-                    'method': 'S3',
+                    'method': method,
                     'sessionid': 'true'
                 }
             })
 
+            // Check for valid response
             if (!response.status === 200) {
-
-                throw new Error('Network response was not ok');
-
+                throw new Error('Network response was not ok: ' + response.body);
             } else {
-
                 console.log("Uploaded File");
-
                 return {status: response.status, data: response.data}
-
             }
 
-
         } catch (error) {
-
-            console.error('There was an error:', error);
-
+            console.error('There was an error: ', error);
         } finally {
-
-            console.log("Epic request")
-
+            console.log("File Upload Request Executred")
         }
-
     },
 
     getFile: async (fileName, connectionType) => {
@@ -91,13 +66,9 @@ const localApi = {
             console.log("Retrieved file list");
 
             if (!response.status === 200) {
-
                 throw new Error('Network response was not ok');
-
             } else {
-
                 return (response)
-
             }
 
 
