@@ -1,5 +1,5 @@
 const connSettings = {
-    host: `https://34.224.70.109:3000`
+    host: `https://api.trevorlichfield.xyz`
 }
 
 export default connSettings
