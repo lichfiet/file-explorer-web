@@ -7,10 +7,10 @@ const localApi = {
 
         try {
             console.log("Getting file list from FTP Client");
-            const response = await axios.get(`${connSettings.host}/listFilesDev`, {headers: {
-                method: connectionType,
-                sessionid: true,
-                Access-Control-Allow-Credentials: true,
+            const response = await axios.get(`${connSettings.host}/listFilesDev/`, {headers: {
+                'method': `${connectionType}`,
+                'sessionid': 'true',
+                'Access-Control-Allow-Credentials': 'true',
             }})
             console.log("Retrieved file list");
 
