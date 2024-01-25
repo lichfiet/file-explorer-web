@@ -7,7 +7,7 @@ const localApi = {
 
         try {
             console.log("Getting file list from FTP Client");
-            const response = await axios.get(`${connSettings.host}/listFilesDev/`, {headers: {
+            const response = await axios.get(`${connSettings.host}/listFilesDev`, {headers: {
                 method: connectionType,
                 sessionid: true,
                 Access-Control-Allow-Credentials: true
@@ -29,7 +29,7 @@ const localApi = {
     uploadFile: async (formData, method) => {
         try {
             console.log("Attempting upload");
-            const response = await axios.post(`${connSettings.host}/uploadFile/`, formData, {
+            const response = await axios.post(`${connSettings.host}/uploadFile`, formData, {
                 headers : {
                     'Content-Type': 'multipart/form-data',
                     'method': method,
@@ -49,7 +49,7 @@ const localApi = {
         } catch (error) {
             console.error('There was an error: ', error);
         } finally {
-            console.log("File Upload Request Executred")
+            console.log("File Upload Request Executed")
         }
     },
 
