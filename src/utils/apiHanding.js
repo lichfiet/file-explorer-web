@@ -7,7 +7,7 @@ const localApi = {
 
         try {
             console.log("Getting file list from FTP Client");
-            const response = await axios.get(`${connSettings.host}/listFilesDev/`, {headers: {
+            const response = await axios.get(`${connSettings.host}/listFilesDev`, {headers: {
                 'method': `${connectionType}`,
                 'sessionid': 'true',
                 'Access-Control-Allow-Credentials': 'true',
@@ -61,9 +61,9 @@ const localApi = {
             const response = await axios.get(`${connSettings.host}/getFile/${fileName}`, {
                 responseType: 'blob', // Set responseType to 'blob'
                 headers: {
-                    method: connectionType,
-                    sessionid: true,
-                    Access-Control-Allow-Credentials: true
+                    method: `${connectionType}`,
+                    'sessionid': 'true',
+                    'Access-Control-Allow-Credentials': 'true',
                 }
             });
             console.log("Retrieved file list");
@@ -93,9 +93,9 @@ const localApi = {
 
             console.log("Deleting file from client");
             const response = await axios.delete(`${connSettings.host}/deleteFile/${fileName}`, {headers: {
-                method: connectionType,
-                sessionid: true,
-                Access-Control-Allow-Credentials: true
+                'method': `${connectionType}`,
+                'sessionid': 'true',
+                'Access-Control-Allow-Credentials': 'true'
             }});
             console.log("Retrieved response");
 
