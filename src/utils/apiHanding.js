@@ -10,7 +10,7 @@ const localApi = {
             const response = await axios.get(`${connSettings.host}/listFilesDev`, {headers: {
                 method: connectionType,
                 sessionid: true,
-                Access-Control-Allow-Credentials: true
+                Access-Control-Allow-Credentials: true,
             }})
             console.log("Retrieved file list");
 
@@ -34,7 +34,7 @@ const localApi = {
                     'Content-Type': 'multipart/form-data',
                     'method': method,
                     'sessionid': 'true',
-                    'Access-Control-Allow-Credentials': true
+                    'Access-Control-Allow-Credentials': true,
                 }
             })
 
