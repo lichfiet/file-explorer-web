@@ -1,19 +1,22 @@
 import './App.css';
-import FileExplorer from './components/fileExplorer/fileExplorer'
-import { NavBar } from './components/navBar';
+import { NavBar} from './components/navBar.js'
+import HomePage from './pages/home.jsx';
+import Projects from './pages/projects/projects.jsx';
 import '@picocss/pico'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
 
   return (
-    <div className="container-fluid">
-      <header>
-        <NavBar />
-      </header>
-      <div className="container">
-            <FileExplorer />
-      </div>
-    </div>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<NavBar />}>
+          <Route index element={<HomePage />} />
+          <Route path="home" element={<HomePage />}></Route>
+          <Route path="projects" element={<Projects />}></Route>
+          </Route>
+        </Routes>
+      </BrowserRouter>
   );
 }
 

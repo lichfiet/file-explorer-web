@@ -109,3 +109,22 @@ p {
   width: 50px;
 }
 
+
+.socialMedia {
+  font-size: 100%;
+}
+
+.socialMediaIcon {
+  font-size: 150%;
+  padding: 0px;
+}
+
+.navTitle {
+  font-size: 130%;
+}
+
+.toolsArticle {
+  padding-top: 40px;
+  padding-bottom: 80px;
+}
+
