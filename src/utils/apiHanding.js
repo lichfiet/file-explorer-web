@@ -7,7 +7,7 @@ const localApi = {
 
         try {
             console.log("Getting file list from FTP Client");
-            const response = await axios.get(`${connSettings.host}/listFilesDev`, {headers: {
+            const response = await axios.get(`${connSettings.host}/listFilesDev/`, {headers: {
                 'method': `${connectionType}`,
                 'sessionid': 'true',
                 'Access-Control-Allow-Credentials': 'true',
@@ -29,7 +29,7 @@ const localApi = {
     uploadFile: async (formData, method) => {
         try {
             console.log("Attempting upload");
-            const response = await axios.post(`${connSettings.host}/uploadFile`, formData, {
+            const response = await axios.post(`${connSettings.host}/uploadFile/`, formData, {
                 headers : {
                     'Content-Type': 'multipart/form-data',
                     'method': method,
@@ -58,7 +58,7 @@ const localApi = {
         try {
 
             console.log("Getting file from FTP Client");
-            const response = await axios.get(`${connSettings.host}/getFile/${fileName}`, {
+            const response = await axios.get(`${connSettings.host}/getFile/${fileName}/`, {
                 responseType: 'blob', // Set responseType to 'blob'
                 headers: {
                     method: `${connectionType}`,
@@ -92,7 +92,7 @@ const localApi = {
         try {
 
             console.log("Deleting file from client");
-            const response = await axios.delete(`${connSettings.host}/deleteFile/${fileName}`, {headers: {
+            const response = await axios.delete(`${connSettings.host}/deleteFile/${fileName}/`, {headers: {
                 'method': `${connectionType}`,
                 'sessionid': 'true',
                 'Access-Control-Allow-Credentials': 'true'
