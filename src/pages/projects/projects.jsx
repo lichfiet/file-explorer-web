@@ -3,7 +3,6 @@ import { useEffect, useState } from "react"; // Make sure to import useState
 
 import FileExplorer from '../../components/projects/tools/fileExplorer/fileExplorer'
 import XmlToJson from '../../components/projects/tools/xmlToJson/xmlToJson'
-import 'https://md-block.verou.me/md-block.js'
 
 
 const Projects = function () {
