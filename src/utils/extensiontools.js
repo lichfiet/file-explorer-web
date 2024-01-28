@@ -42,9 +42,9 @@ const extension = {
             if (fileType === "d") {
                 return(<i className="fileIcon fa fa-solid fa-folder"></i>)
             } else if (fileExtensionType === 0) {
-                return(<i className="fileIcon fa fa-file-image-o"></i>)
+                return(<i className="fileIcon fa fa-file-image"></i>)
             } else if (fileExtensionType === 1) {
-                return(<i className="fileIcon fa fa-file-image-o"></i>)
+                return(<i className="fileIcon fa fa-file-image"></i>)
             } else if (fileExtensionType === 2) {
                 return(<i className="fileIcon fa fa-solid fa-film"></i>)
             } else if (fileExtensionType === 3) {

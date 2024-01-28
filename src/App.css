@@ -51,17 +51,6 @@ p {
 .filesListed /* For the file display element buttons */ {
   display: grid;
   gap: 1rem;
-
-  /* 1 too skinny, too much code */
-  /* grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr; */
-
-  /* 2 cleaner code */
-  /* grid-template-columns: repeat(12, 1fr); */
-
-  /* 3  better sizing, but overflows */
-  /* grid-template-columns: repeat(12, minmax(240px, 1fr)); */
-
-  /* 4 final */
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
 }
 

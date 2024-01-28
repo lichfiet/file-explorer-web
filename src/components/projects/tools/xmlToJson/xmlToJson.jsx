@@ -12,11 +12,11 @@ const XmlToJson = function () {
             <div className="grid">
                 <div>
                     <textarea
-                        placeholder="XML">
+                        placeholder="XML" style={{resize: 'none', height: '500px'}}>
                     </textarea>
                 </div>
                 <div>
-                    <textarea placeholder="JSON" readonly>
+                    <textarea placeholder="JSON" readonly style={{resize: 'none', height: '500px'}}>
                     </textarea>
                 </div>
             </div>
