@@ -25,13 +25,13 @@ const Projects = function () {
 
             <div className="container-fluid">
                 <section className="">
-                    <article className="toolsArticle">
+                    <article className="overrideArticle">
                         <div className="container-fluid">
                             <nav id="nav">
                                 <ul>
                                     <hgroup>
-                                        <h2>Tools</h2>
-                                        <p>meow</p>
+                                        <h2 className="overrideHeading">Tools</h2>
+                                        <p className="overrideSubHeading">meow</p>
                                     </hgroup>
                                 </ul>
                                 <ul>
@@ -52,13 +52,13 @@ const Projects = function () {
                     </article>
                 </section>
                 <section>
-                    <article>
+                    <article className="overrideArticle">
                         <div className="container-fluid">
                             <nav id="nav">
                                 <ul>
                                     <hgroup>
-                                        <h2>Tools</h2>
-                                        <p>meow</p>
+                                        <h2 className="overrideHeading">Tools</h2>
+                                        <p className="overrideSubHeading">meow</p>
                                     </hgroup>
                                 </ul>
                                 <ul>

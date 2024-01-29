@@ -24,13 +24,13 @@ export function NavBar() {
                 <div className="container-fluid">
                     <nav id="nav">
                         <ul>
-                            <a onClick={() => handleChange("home")} className="contrast navTitle"><li><strong>Trevor Lichfield</strong></li></a>
+                            <a onClick={() => handleChange("home")} className="contrast navTitle"><li className="nav-name"><strong>Trevor Lichfield</strong></li></a>
                         </ul>
                         <ul>
-                            <a onClick={() => handleChange("home")}><li>Home</li></a>
-                            <a onClick={() => handleChange("about")}><li>About</li></a>
-                            <a onClick={() => handleChange("workExperience")}><li>Work Experience</li></a>
-                            <a onClick={() => handleChange("projects")}><li>Projects</li></a>
+                            <a onClick={() => handleChange("home")}><li className="nav-link">HOME</li></a>
+                            <a onClick={() => handleChange("about")}><li>ABOUT</li></a>
+                            <a onClick={() => handleChange("workExperience")}><li>WORK</li></a>
+                            <a onClick={() => handleChange("projects")}><li>PROJECTS</li></a>
                         </ul>
                         <ul>
                             <li><a class="contrast socialMedia outline" href="https://github.com/lichfiet"><i class="socialMediaIcon fab fa-github"></i></a></li>

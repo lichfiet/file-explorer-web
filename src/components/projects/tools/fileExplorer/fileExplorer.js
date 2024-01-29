@@ -8,7 +8,7 @@ const FileExplorer = function () {
     const [modal, setModal] = useState(null)
 
     const [files, setFiles] = useState([]); // State Data for file list
-    const [filesLoading, setFilesLoading] = useState({ busy: false, icon: <i class="fa fa-solid fa-arrows-rotate"></i> }) // Refresh Button State
+    const [filesLoading, setFilesLoading] = useState({ busy: false, icon: <i class="fa fa-solid fa-arrows-rotate" style={{'color':'#FFFFF'}}></i>}) // Refresh Button State
     const [fileDeleting, setFileDeleting] = useState({ busy: false, icon: <i className="fa fa-solid fa-trash"></i> }) // File Deletion Button State
     const [fileUploading, setFileUploading] = useState({ busy: false, icon: <i className="fa fa-solid fa-plus"></i> }) // File Upload Button State
     const [fileOpening, setFileOpening] = useState({ busy: false, icon: <i class="fa fa-solid fa-eye"></i> }) // File Open Button State
@@ -21,7 +21,7 @@ const FileExplorer = function () {
         for (let n = 0; n < files.length; n++) {
             let file = document.getElementById("button-" + files[n].fileName);
             if (file !== null) {
-                file.className = 'outline secondary';
+                file.className = 'contrast';
             }
         }
     }
@@ -51,7 +51,7 @@ const FileExplorer = function () {
             clearSelected();
         }
 
-        setFilesLoading({ busy: false, icon: (<i class="fa fa-solid fa-arrows-rotate"></i>) }) // Reset Loading State
+        setFilesLoading({ busy: false, icon: (<i class="fa fa-solid fa-rotate-right"></i>) }) // Reset Loading State
     }
 
     useEffect(() => {
@@ -216,13 +216,14 @@ const FileExplorer = function () {
 
     return (
         <div className="container-fluid">
+            
             <div className="fileExplorerContainer">
-                <nav style={{ padding: "10px" }}>
-                    <ul>
-                        <a data-tooltip="Refresh File List" style={{ 'margin-right': '1px' }}><button aria-busy={filesLoading.busy} onClick={() => { fetchFiles() }} className="contrast fileExplorerButton">{filesLoading.icon}</button></a>
-                        <a data-tooltip="Open File" style={{ 'margin-right': '1px' }}><button aria-busy={fileOpening.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType)) }} className="contrast fileExplorerButton">{fileOpening.icon}</button></a>
-                        <a data-tooltip="Delete File" style={{ 'margin-right': '1px' }}><button aria-busy={fileDeleting.busy} onClick={() => { deleteFile(activeFile) }} className="contrast fileExplorerButton">{fileDeleting.icon}</button></a>
-                        <a data-tooltip="Upload File" style={{ 'margin-right': '1px' }}><button aria-busy={fileUploading.busy} onClick={() => { openUploadModal(connectionType) }} className="contrast fileExplorerButton">{fileUploading.icon}</button></a>
+                <nav style={{ padding: "10px" }}>                    
+                <ul>
+                        <button aria-busy={filesLoading.busy} onClick={() => { fetchFiles() }} className="contrast fileExplorerButton">{filesLoading.icon}</button>
+                        <button aria-busy={fileOpening.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType)) }} className="contrast fileExplorerButton">{fileOpening.icon}</button>
+                        <button aria-busy={fileDeleting.busy} onClick={() => { deleteFile(activeFile) }} className="contrast fileExplorerButton">{fileDeleting.icon}</button>
+                        <button aria-busy={fileUploading.busy} onClick={() => { openUploadModal(connectionType) }} className="contrast fileExplorerButton">{fileUploading.icon}</button>
                     </ul>
                     {/** S3 or SFTP radio buttons */}
                     <ul>
@@ -241,7 +242,7 @@ const FileExplorer = function () {
                     {
                         files.map((obj, index) => (
                             <div className="fileReturned" key={index} id={obj.fileName}>
-                                <button name={obj.fileName} id={"button-" + obj.fileName} className={"outline secondary"} onClick={() => { fileSelector(obj.fileName, index, obj.fileExtensionType) }}>
+                                <button name={obj.fileName} id={"button-" + obj.fileName} className={"secondary"} onClick={() => { fileSelector(obj.fileName, index, obj.fileExtensionType) }}>
 
 
                                     <div className="fileReturned" id={index}>
