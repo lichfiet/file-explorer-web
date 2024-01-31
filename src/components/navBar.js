@@ -21,22 +21,26 @@ export function NavBar() {
                 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet"></link>
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet"></link>
 
-                <div className="container-fluid">
-                    <nav id="nav">
-                        <ul>
-                            <a onClick={() => handleChange("home")} className="contrast navTitle"><li className="nav-name"><strong>Trevor Lichfield</strong></li></a>
-                        </ul>
-                        <ul>
-                            <a onClick={() => handleChange("home")}><li className="nav-link">HOME</li></a>
-                            <a onClick={() => handleChange("about")}><li>ABOUT</li></a>
-                            <a onClick={() => handleChange("workExperience")}><li>WORK</li></a>
-                            <a onClick={() => handleChange("projects")}><li>PROJECTS</li></a>
-                        </ul>
-                        <ul>
-                            <li><a class="contrast socialMedia outline" href="https://github.com/lichfiet"><i class="socialMediaIcon fab fa-github"></i></a></li>
-                            <li><a class="contrast socialMedia outline" href="https://www.linkedin.com/in/tlichfield/"><i class="socialMediaIcon fab fa-linkedin-in"></i></a></li>
-                        </ul>
-                    </nav>
+                <div className="container" style={{ 'background-color': '#ffff', 'margin-bottom': '30px' }}>
+                    <div className="container-fluid">
+                        <nav id="nav">
+                            <ul>
+                                <a onClick={() => handleChange("home")} className="contrast navTitle"><li className="nav-name"><strong>Trevor Lichfield</strong></li></a>
+                            </ul>
+                            <ul>
+                                <a href="" onClick={() => handleChange("home")}><strong><li className="nav-link">HOME</li></strong></a>
+                                <a href="" onClick={() => handleChange("about")}><strong><li>ABOUT</li></strong></a>
+                                <a href="" onClick={() => handleChange("workExperience")}><strong><li>WORK</li></strong></a>
+                                <a href="" onClick={() => handleChange("projects")}><strong><li>PROJECTS</li></strong></a>
+                            </ul>
+                            <ul>
+                                <li><a class="contrast socialMedia outline" href="https://github.com/lichfiet"><i class="socialMediaIcon fab fa-github"></i></a></li>
+                                <li><a class="contrast socialMedia outline" href="https://github.com/lichfiet"><i class="socialMediaIcon fab fa-github"></i></a></li>
+                                <li><a class="contrast socialMedia outline" href="https://github.com/lichfiet"><i class="socialMediaIcon fab fa-github"></i></a></li>
+                                <li><a class="contrast socialMedia outline" href="https://www.linkedin.com/in/tlichfield/"><i class="socialMediaIcon fab fa-linkedin-in"></i></a></li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
                 <Outlet />
             </div>

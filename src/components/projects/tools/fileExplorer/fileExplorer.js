@@ -129,7 +129,6 @@ const FileExplorer = function () {
 
                 setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType });
 
-                let exttype = fileExtensionType
                 let button = document.getElementById(`${index}`)
 
                 let oldval = button.innerHTML
@@ -149,7 +148,7 @@ const FileExplorer = function () {
 
                         setModal(
                             <dialog open>
-                                <article>
+                                <article className='filePreview'>
                                     <header>
                                         <button aria-label="Close" className="close" onClick={() => { setModal(null) }}></button>
                                         File Preview
@@ -217,8 +216,8 @@ const FileExplorer = function () {
     return (
         <div className="container-fluid">
             
-            <div className="fileExplorerContainer">
-                <nav style={{ padding: "10px" }}>                    
+            <div className="toolsContainer">
+                <nav style={{ padding: "20px" }}>                    
                 <ul>
                         <button aria-busy={filesLoading.busy} onClick={() => { fetchFiles() }} className="contrast fileExplorerButton">{filesLoading.icon}</button>
                         <button aria-busy={fileOpening.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType)) }} className="contrast fileExplorerButton">{fileOpening.icon}</button>

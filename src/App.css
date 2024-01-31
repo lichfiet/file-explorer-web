@@ -1,18 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 
 .App {
   text-align: center;
+  
 }
 
 .background {
-  background-color: #12131d;
+  background-color: #362a179a;
 }
 
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
 
 .App-header {
   background-color: #282c34;
@@ -32,6 +28,19 @@ p {
   margin-right: 10px;
   margin-bottom: 20px;
 }
+
+/* Projects Page */
+
+.toolsContainer {
+  background-color: #b6ae99;
+  padding-top: 1.75%;
+  padding-left: 2%;
+  padding-right: 2%;
+  border-radius: 0.5rem;
+  filter: drop-shadow(5px 5px 15px rgb(43, 41, 41))
+}
+
+/* File Explorer */
 
 .fileDisplay /* For the file display element buttons */ {
   text-align: center;
@@ -71,7 +80,7 @@ p {
   background-position: center;
   background-repeat: no-repeat;
 
-  color: #3e4053;
+  color: #ffffff;
 }
 
 .fileReturnedText {
@@ -82,14 +91,6 @@ p {
   padding-bottom: 15px;
 }
 
-.fileExplorerContainer {
-  background-color: #d5d6db;
-  padding-top: 2%;
-  padding-left: 2%;
-  padding-right: 2%;
-  border-radius: 0.5rem;
-}
-
 .fileExplorerButton {
   font-size: 100%;
   margin-right: 5%;
@@ -98,11 +99,16 @@ p {
   padding-right: 17px;
   width: 50px;
   background-color: #31333f;
-  border-color: #9ca59d;
+  border-color: #2b2d31;
   color: #ffffff;
 }
 
+/* Xml to Json */
 
+.xmlToJsonInput {
+  background-color: #26272c;
+  color: white;
+}
 
 
 .socialMedia {
@@ -120,30 +126,57 @@ p {
 
 /* Nav */
 .nav-name {
-  color: #ffffff
+  color: #241e15
 }
 
 .nav-link {
-  color: #d9dcee
+  color: #212646
 }
 
 
 /* OVERRIDES */
 .overrideArticle {
-  margin-top: 2%;
-  padding-top: 4%;
-  padding-bottom: 5%;
-  background-color: #191a1f
+  padding-top: 2%;
+  padding-bottom: 2%;
+  background-color: #dfdace;
+  filter: drop-shadow(0px 0px 5px rgb(49, 49, 49))
+  /* background-color: #191a1f */
 }
 
 .overrideHeading {
-  color: #ffffff;
+  color: #000000;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .overrideSubHeading {
-  color: #838fa0;
+  color: #000000;
 }
 
 .white-text {
-  color: white
+  color: rgb(0, 0, 0);
+  font-family: 'Open Sans', sans-serif;
+}
+
+.portrait {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  background-color: rgba(211, 211, 211, 0.925);
+  filter: drop-shadow( 7px 7px 0px rgba(65, 65, 65, 0.705))
+}
+
+.homeIntro {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+}
+
+.homeIntroContainer {
+  background-color: #212646;
+}
+
+.filePreview {
+  position: absolute;
+  left: vw / 2;
+  top: vh / 2;
+  transform: translate(vh / 2, vw /2);
+  width: 10000px;
 }

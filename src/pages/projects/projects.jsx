@@ -6,7 +6,16 @@ import XmlToJson from '../../components/projects/tools/xmlToJson/xmlToJson'
 
 
 const Projects = function () {
-    const [selectedOption, setSelectedOption] = useState(<div className="container"><i><h4 style={{textAlign: "center"}}>Please Select a tool</h4></i></div>);
+    const [selectedOption, setSelectedOption] = useState(<FileExplorer />);
+    const [projDesc, setProjDesc] = useState(
+        <div>
+            <h2 className="overrideHeading">File Explorer</h2>
+
+            <p className="overrideSubHeading">This simple file explorer uses React.js as a front-end, a RESTful Node.js API as the
+                backend, and AWS S3 Object storage leveraging the API Gateway to create routes for managing
+                files inside the buckets</p>
+        </div>
+    );
 
     function handleChange(value) {
         (value === "fileExplorer" ? setSelectedOption(<FileExplorer />) : console.log("meow"));
@@ -21,63 +30,43 @@ const Projects = function () {
 
             <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet"></link>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet"></link>
+            <article className="overrideArticle">
+                <div className="container-fluid">
+                    <h3>
+                        Tools
+                    </h3>
+                    <nav id="nav">
+                        <ul>
+                        </ul>
+                        <ul>
+                            <li>Select a tool</li>
+                            <li>
+                                <select onChange={(event) => handleChange(event.target.value)}>
+                                    <option value="fileExplorer">File Explorer</option>
+                                    <option value="xmlToJson">Xml to Json</option>
+                                </select>
+                            </li>
+                        </ul>
+                        <ul>
+                        </ul>
+                    </nav>
 
+                </div>
+                <article className="overrideArticle">
+                <header>
+                    {projDesc}
+                </header>
+                <body>
+                    <div className="container-fluid tool">
+                        {/** This is the selected tool */ selectedOption}
+                    </div>
+                </body>
+                <footer>
+               
+                </footer>
+            </article>
+            </article>
 
-            <div className="container-fluid">
-                <section className="">
-                    <article className="overrideArticle">
-                        <div className="container-fluid">
-                            <nav id="nav">
-                                <ul>
-                                    <hgroup>
-                                        <h2 className="overrideHeading">Tools</h2>
-                                        <p className="overrideSubHeading">meow</p>
-                                    </hgroup>
-                                </ul>
-                                <ul>
-                                    <li>
-                                        <select onChange={(event) => handleChange(event.target.value)}>
-                                            <option value="">Select a tool</option>
-                                            <option value="fileExplorer">File Converter</option>
-                                            <option value="xmlToJson">Xml to Json</option>
-                                        </select>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
-                        <Outlet />
-                        <div className="container">
-                            {/** This is the selected tool */ selectedOption}
-                        </div>
-                    </article>
-                </section>
-                <section>
-                    <article className="overrideArticle">
-                        <div className="container-fluid">
-                            <nav id="nav">
-                                <ul>
-                                    <hgroup>
-                                        <h2 className="overrideHeading">Tools</h2>
-                                        <p className="overrideSubHeading">meow</p>
-                                    </hgroup>
-                                </ul>
-                                <ul>
-                                    <li className="contrast">Select A Tool</li>
-                                    <li>
-                                        <select onChange={(event) => handleChange(event.target.value)}>
-                                            <option value="home">Home</option>
-                                            <option value="fileExplorer">File Converter</option>
-                                        </select>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
-                        <Outlet />
-                        <div className="container">
-                        </div>
-                    </article>
-                </section>
-            </div>
         </div>
     )
 }
