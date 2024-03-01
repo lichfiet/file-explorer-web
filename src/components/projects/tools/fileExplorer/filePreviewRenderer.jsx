@@ -1,29 +1,26 @@
-export default async function FilePreviewRenderer(fileName, index, fileExtensionType) {
+export default function FilePreviewRenderer(props) {
 
-    if ((fileExtensionType === 0) || (fileExtensionType === 1) || (fileExtensionType === 2)) {
+    if ((props.fileType === 0) || (props.fileType === 1) || (props.fileType === 2)) {
+
         try {
-            const response = await localApi.getFile(fileName, connectionType);
-            const blob = new Blob([response.data]);
-            const fileSrc = URL.createObjectURL(blob);
 
-            setFileOpening({ busy: false, icon: <i class="fa fa-solid fa-eye"></i> })
+            const fileSrc = URL.createObjectURL(props.fileInputData);
+            const fileName = "testing"
 
-            setModal(
-                <dialog open>
-                    <article className='filePreview'>
-                        <header>
-                            <button aria-label="Close" className="close" onClick={() => { setModal(null) }}></button>
-                            File Preview
-                        </header>
-                        <h4>{fileName}</h4>
-                        {/** If video, use video tag, else use img tag */}
-                        {fileExtensionType === 2 ? (<video controls="true" autoPlay="true" src={fileSrc}></video>) : (<img src={fileSrc} alt="File Preview" />)}
-                    </article>
-                </dialog>
+            return (
+                <>
+                    <h4>{fileName}</h4>
+                    {/** If video, use video tag, else use img tag */}
+                    {props.fileType === 2 ? (<video controls="true" autoPlay="true" src={fileSrc}></video>) : (<img src={fileSrc} alt="File Preview" />)}
+                </>
             );
 
         } catch (error) {
+
             console.error('There was an error:', error);
+            return (
+                <p>There was an error loading the file</p>
+            );
         }
     }
 

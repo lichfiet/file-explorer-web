@@ -15,7 +15,7 @@ const FileExplorer = function () {
     const [fileDeleting, setFileDeleting] = useState({ busy: false, icon: <i className="fa fa-solid fa-trash"></i> }) // File Deletion Button State
     const [fileUploading, setFileUploading] = useState({ busy: false, icon: <i className="fa fa-solid fa-plus"></i> }) // File Upload Button State
     const [fileOpening, setFileOpening] = useState({ busy: false, icon: <i className="fa fa-solid fa-eye"></i> }) // File Open Button State
-    const [connectionType, setConnectionType] = useState('SFTP');
+    const [connectionType, setConnectionType] = useState('S3');
 
     const [activeFile, setActiveFile] = useState({ fileName: null, index: null, fileExtensionType: null })
 
@@ -115,6 +115,7 @@ const FileExplorer = function () {
     }
 
     const openUploadModal = (connectionType) => {
+
         setModal(
             <dialog open>
                 <article>
@@ -133,7 +134,7 @@ const FileExplorer = function () {
             <dialog open>
                 <article>
                     <header>
-                        <a href="#close" aria-label="Close" className="close" onClick={() => { setModal(null); setActiveFile({ fileName: null, index: null, fileExtensionType: null }) }}></a>
+                        <a href="#close" aria-label="Close" className="close" onClick={() => { setModal(null); clearSelectedFile() }}></a>
                         File Upload
                     </header>
                     <FilePreviewRenderer fileInputData={selectedFileData} fileType={selectedFileType}></FilePreviewRenderer>
@@ -142,116 +143,65 @@ const FileExplorer = function () {
         )
     }
 
-    const newFileSelector = (fileName, index, fileExtensionType) => {
-        /**
-         * Behavior:
-         * 
-         * IF no file selected, set currently selected file and log it
-         * 
-         * IF file selected, and file clicked is the same as the one selected, open the file with openPreviewModal function
-         * 
-         * IF file selected, and file clicked is different, set the new file as the selected file and log it
-         */
-
-
+    const fileSelector = async (fileName, index, fileExtensionType) => {
 
         // If no fileName was passed to the function
-        if ((fileName !== null)) {
+        if ((fileName === null)) {
 
             console.log("No File Name Passed To File Selector")
 
-            // If no file is currently selected
+
         } else if (activeFile.fileName === null || activeFile.fileName === undefined) {
 
-            // set the new file as the selected file
-            // re-render the file list
+            // If no file is currently selected
+            setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType });
 
-            // If the file clicked is the same as the one selected
+            
         } else if (activeFile.fileName === fileName) {
 
-            // set file opening state 
-            // query the file
-            // and open the preview modal
+            // If the file clicked is the same as the one selected
+            setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType }); // Set the active file to the one just clicked on
 
-            // remove loading state
-            // clear selected file
-            // set active file to null
-
-
-            // If the file clicked is different from the one selected
-        } else if (activeFile.fileName !== fileName) {
-
-            // clear selected file
-            // set the new file as the selected file
-
-        }
-    }
-
-    const fileSelector = function (fileName, index, fileExtensionType) {
-
-        // If active file = the one just clicked on (i.e., file was double clicked)
-        if (activeFile.fileName === fileName) {
-
-            setFileOpening({ busy: true, icon: undefined })
 
             const FilePanePreview = async function (fileName, index, fileExtensionType) {
+                setFileOpening({ busy: true, icon: undefined }) // Set file opening state to busy
 
-                setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType });
+                let button = document.getElementById(`${index}`) // Get the button that was clicked on
+                let oldval = button.innerHTML // Store the button's innerHTML
 
-                let button = document.getElementById(`${index}`)
+                button.innerHTML = "" // Clear the button's innerHTML
+                button.setAttribute('aria-busy', 'true'); // Set the button's aria-busy attribute to true
 
-                let oldval = button.innerHTML
+                const response = await localApi.getFile(fileName, connectionType); // Query the file
+                const blob = new Blob([response.data]); // Create a blob from the file data
 
-                button.innerHTML = ""
-                button.setAttribute('aria-busy', 'true');
-
-                console.log(fileName);
-
-                if ((fileExtensionType === 0) || (fileExtensionType === 1) || (fileExtensionType === 2)) {
-                    try {
-                        const response = await localApi.getFile(fileName, connectionType);
-                        const blob = new Blob([response.data]);
-                        const fileSrc = URL.createObjectURL(blob);
-
-                        setFileOpening({ busy: false, icon: <i className="fa fa-solid fa-eye"></i> })
-
-                        setModal(
-                            <dialog open>
-                                <article className='filePreview'>
-                                    <header>
-                                        <button aria-label="Close" className="close" onClick={() => { setModal(null) }}></button>
-                                        File Preview
-                                    </header>
-                                    <h4>{fileName}</h4>
-                                    {/** If video, use video tag, else use img tag */}
-                                    {fileExtensionType === 2 ? (<video controls="true" autoPlay="true" src={fileSrc}></video>) : (<img src={fileSrc} alt="File Preview" />)}
-                                </article>
-                            </dialog>
-                        );
-
-                    } catch (error) {
-                        console.error('There was an error:', error);
-                    }
-                }
-
-
+                // Set the button's innerHTML back to its original value
                 button.innerHTML = (oldval === null ? "n/a" : oldval)
                 button.setAttribute('aria-busy', 'false')
 
+                // Open the preview modal
+                try {
+                    openPreviewModal(blob, fileExtensionType);
+                } catch (error) {
+                    console.error('There was an error:', error);
+                }
+
                 setFileOpening({ busy: false, icon: <i className="fa fa-solid fa-eye"></i> });
-
-                clearSelectedFile();
-
             };
 
-            return (FilePanePreview(fileName, index, fileExtensionType));
-        } else if (((activeFile.fileName === null) || (activeFile.fileName === undefined)) && (fileName !== null)) {
-            setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType });
-        } else {
-            setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType });
-        }
+            clearSelectedFile();
 
+            return (FilePanePreview(fileName, index, fileExtensionType));
+
+            
+        } else if (activeFile.fileName !== fileName) { 
+
+            // If the file clicked is different from the one selected
+            setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType });
+
+        }
     }
+
 
     // Set the active connection type
     const setActiveConnection = (value) => {

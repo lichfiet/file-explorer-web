@@ -72,7 +72,7 @@ p {
   height: 100%;
   width: 100%;
   border-radius: 4px;
-  transition: all 100ms;
+  transition: all 50ms;
   overflow: wrap;
   word-break: break-all;
 
