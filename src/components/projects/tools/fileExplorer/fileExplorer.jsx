@@ -7,7 +7,12 @@ const FileExplorer = function () {
 
     const [modal, setModal] = useState(null)
 
-    const [files, setFiles] = useState([]); // State Data for file list
+    const [files, setFiles] = useState([{
+        fileName: "No files found", // s3 contents Key value 
+        fileType: '-', // Directory or File
+        fileExtension: "Dir", // If File, add extension
+        fileExtensionType: "Dir", // If File, add extension type
+    }]); // State Data for file list
     const [filesLoading, setFilesLoading] = useState({ busy: false, icon: <i class="fa fa-solid fa-arrows-rotate" style={{'color':'#FFFFF'}}></i>}) // Refresh Button State
     const [fileDeleting, setFileDeleting] = useState({ busy: false, icon: <i className="fa fa-solid fa-trash"></i> }) // File Deletion Button State
     const [fileUploading, setFileUploading] = useState({ busy: false, icon: <i className="fa fa-solid fa-plus"></i> }) // File Upload Button State
@@ -24,7 +29,7 @@ const FileExplorer = function () {
                 file.className = 'contrast';
             }
         }
-    }
+    };
 
 
     // Grab the file list
@@ -35,18 +40,23 @@ const FileExplorer = function () {
         try {
             const fileData = await localApi.requestFiles(connectionType)
 
-            console.log('test')
-
             if (fileData === undefined) {
+
                 throw new Error('Missing File Data')
+                
             } else {
                 setFiles(fileData); // Update file state variable
-                console.log("Logging Data") // Log
-                console.log(fileData)
             }
 
         } catch (error) {
-            console.error('Error fetching files:', error); // Handle error if API request fails
+            console.error('Error fetching files'); // Handle error if API request fails
+                 
+            setFiles([{
+                fileName: "No files found", // s3 contents Key value 
+                fileType: '-', // Directory or File
+                fileExtension: "Dir", // If File, add extension
+                fileExtensionType: "Dir", // If File, add extension type
+            }]);
         } finally {
             clearSelected();
         }
@@ -56,7 +66,7 @@ const FileExplorer = function () {
 
     useEffect(() => {
         fetchFiles();
-      }, []);
+      }, [files]);
 
 
     // Delete Selected File
@@ -214,9 +224,9 @@ const FileExplorer = function () {
 
 
     return (
-        <div className="container-fluid">
+
             
-            <div className="toolsContainer">
+            <div className="">
                 <nav style={{ padding: "20px" }}>                    
                 <ul>
                         <button aria-busy={filesLoading.busy} onClick={() => { fetchFiles() }} className="contrast fileExplorerButton">{filesLoading.icon}</button>
@@ -259,7 +269,6 @@ const FileExplorer = function () {
                     {modal}
                 </div>
         </div>
-    </div>
     );
 };
 

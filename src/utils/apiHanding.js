@@ -6,13 +6,16 @@ const localApi = {
     requestFiles: async (connectionType) => {
 
         try {
-            console.log("Getting file list from FTP Client");
+            console.log("Getting file list from Backend API");
+
             const response = await axios.get(`${connSettings.host}/listFilesDev/`, {headers: {
                 'method': `${connectionType}`,
                 'sessionid': 'true',
                 'Access-Control-Allow-Credentials': 'true',
             }})
+
             console.log("Retrieved file list");
+            console.log(response.data)
 
             if (!response.status === 200) {
                 throw new Error('Network response was not ok');
@@ -21,8 +24,8 @@ const localApi = {
             }
         } catch (error) {
             console.error('There was an error:', error);
+            return(undefined);
         } finally {
-            console.log("Epic request")
         }
     },
 
