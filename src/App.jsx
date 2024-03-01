@@ -1,5 +1,5 @@
 import './App.css';
-import { NavBar} from './components/navBar.js'
+import { NavBar} from './components/navBar.jsx'
 import HomePage from './pages/home.jsx';
 import Projects from './pages/projects/projects.jsx';
 import '@picocss/pico'
