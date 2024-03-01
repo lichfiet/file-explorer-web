@@ -1,5 +1,5 @@
 const connSettings = {
-    host: `https://localhost:8443`
+    host: `http://localhost:8443`
 }
 
 export default connSettings

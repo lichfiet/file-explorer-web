@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import localApi from '../../../../utils/apiHanding';
 import extension from '../../../../utils/extensiontools'
 import FileUploadForm from './fileUploadForm'
+import FilePreviewRenderer from './filePreviewRenderer'
 
 const FileExplorer = function () {
 
@@ -13,11 +14,11 @@ const FileExplorer = function () {
         fileExtension: "Dir", // If File, add extension
         fileExtensionType: "Dir", // If File, add extension type
     }]); // State Data for file list
-    const [filesLoading, setFilesLoading] = useState({ busy: false, icon: <i class="fa fa-solid fa-arrows-rotate" style={{'color':'#FFFFF'}}></i>}) // Refresh Button State
+    const [filesLoading, setFilesLoading] = useState({ busy: false, icon: <i class="fa fa-solid fa-arrows-rotate" style={{ 'color': '#FFFFF' }}></i> }) // Refresh Button State
     const [fileDeleting, setFileDeleting] = useState({ busy: false, icon: <i className="fa fa-solid fa-trash"></i> }) // File Deletion Button State
     const [fileUploading, setFileUploading] = useState({ busy: false, icon: <i className="fa fa-solid fa-plus"></i> }) // File Upload Button State
     const [fileOpening, setFileOpening] = useState({ busy: false, icon: <i class="fa fa-solid fa-eye"></i> }) // File Open Button State
-    const [connectionType, setConnectionType] = useState('S3');
+    const [connectionType, setConnectionType] = useState('SFTP');
 
     const [activeFile, setActiveFile] = useState({ fileName: null, index: null, fileExtensionType: null })
     const [fileSelected, setFileSelected] = useState(null)
@@ -43,14 +44,14 @@ const FileExplorer = function () {
             if (fileData === undefined) {
 
                 throw new Error('Missing File Data')
-                
+
             } else {
                 setFiles(fileData); // Update file state variable
             }
 
         } catch (error) {
             console.error('Error fetching files'); // Handle error if API request fails
-                 
+
             setFiles([{
                 fileName: "No files found", // s3 contents Key value 
                 fileType: '-', // Directory or File
@@ -63,10 +64,6 @@ const FileExplorer = function () {
 
         setFilesLoading({ busy: false, icon: (<i class="fa fa-solid fa-rotate-right"></i>) }) // Reset Loading State
     }
-
-    useEffect(() => {
-        fetchFiles();
-      }, [files]);
 
 
     // Delete Selected File
@@ -123,10 +120,22 @@ const FileExplorer = function () {
                     <FileUploadForm method={connectionType}></FileUploadForm>
                 </article>
             </dialog>
-        );
-    }
+        )
+    };
 
-    const openPreviewModal = () => { }
+    const openPreviewModal = (selectedFileData, selectedFileType) => {
+        setModal(
+            <dialog open>
+                <article>
+                    <header>
+                        <a href="#close" aria-label="Close" className="close" onClick={() => { setModal(null); setActiveFile({ fileName: null, index: null, fileExtensionType: null }) }}></a>
+                        File Upload
+                    </header>
+                    <FilePreviewRenderer fileInputData={selectedFileData} fileType={selectedFileType}></FilePreviewRenderer>
+                </article>
+            </dialog>
+        )
+    }
 
     const fileSelector = function (fileName, index, fileExtensionType) {
 
@@ -222,52 +231,56 @@ const FileExplorer = function () {
         console.log(value)
     }
 
+    useEffect(() => {
+        fetchFiles();
+    }, []);
+
 
     return (
 
-            
-            <div className="">
-                <nav style={{ padding: "20px" }}>                    
+
+        <div className="">
+            <nav style={{ padding: "20px" }}>
                 <ul>
-                        <button aria-busy={filesLoading.busy} onClick={() => { fetchFiles() }} className="contrast fileExplorerButton">{filesLoading.icon}</button>
-                        <button aria-busy={fileOpening.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType)) }} className="contrast fileExplorerButton">{fileOpening.icon}</button>
-                        <button aria-busy={fileDeleting.busy} onClick={() => { deleteFile(activeFile) }} className="contrast fileExplorerButton">{fileDeleting.icon}</button>
-                        <button aria-busy={fileUploading.busy} onClick={() => { openUploadModal(connectionType) }} className="contrast fileExplorerButton">{fileUploading.icon}</button>
-                    </ul>
-                    {/** S3 or SFTP radio buttons */}
-                    <ul>
-                        <fieldset>
-                            <input type="radio" id="S3" name="connection-type" onClick={() => { setActiveConnection('S3') }} />
-                            <label htmlFor="S3">S3</label>
-                            <input type="radio" id="SFTP" name="connection-type" onClick={() => { setActiveConnection('SFTP') }} />
-                            <label htmlFor="SFTP">SFTP</label>
-                        </fieldset>
-                    </ul>
+                    <button aria-busy={filesLoading.busy} onClick={() => { fetchFiles() }} className="contrast fileExplorerButton">{filesLoading.icon}</button>
+                    <button aria-busy={fileOpening.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType)) }} className="contrast fileExplorerButton">{fileOpening.icon}</button>
+                    <button aria-busy={fileDeleting.busy} onClick={() => { deleteFile(activeFile) }} className="contrast fileExplorerButton">{fileDeleting.icon}</button>
+                    <button aria-busy={fileUploading.busy} onClick={() => { openUploadModal(connectionType) }} className="contrast fileExplorerButton">{fileUploading.icon}</button>
+                </ul>
+                {/** S3 or SFTP radio buttons */}
+                <ul>
+                    <fieldset>
+                        <input type="radio" id="S3" name="connection-type" onClick={() => { setActiveConnection('S3') }} />
+                        <label htmlFor="S3">S3</label>
+                        <input type="radio" id="SFTP" name="connection-type" onClick={() => { setActiveConnection('SFTP') }} />
+                        <label htmlFor="SFTP">SFTP</label>
+                    </fieldset>
+                </ul>
 
-                </nav>
-                <div className="grid">
-                </div>
-                <div className="filesListed grid">
-                    {
-                        files.map((obj, index) => (
-                            <div className="fileReturned" key={index} id={obj.fileName}>
-                                <button name={obj.fileName} id={"button-" + obj.fileName} className={"secondary"} onClick={() => { fileSelector(obj.fileName, index, obj.fileExtensionType) }}>
-
-
-                                    <div className="fileReturned" id={index}>
-                                        {extension.getThumbnail(obj.fileExtensionType, obj.fileType)}
-                                    </div>
+            </nav>
+            <div className="grid">
+            </div>
+            <div className="filesListed grid">
+                {
+                    files.map((obj, index) => (
+                        <div className="fileReturned" key={index} id={obj.fileName}>
+                            <button name={obj.fileName} id={"button-" + obj.fileName} className={"secondary"} onClick={() => { fileSelector(obj.fileName, index, obj.fileExtensionType) }}>
 
 
-                                </button>
-                                <p className="fileReturnedText" extension={obj.fileExtension}>{obj.fileName}</p>
-                            </div>
-                        ))
-                    }
-                </div>
-                <div>
-                    {modal}
-                </div>
+                                <div className="fileReturned" id={index}>
+                                    {extension.getThumbnail(obj.fileExtensionType, obj.fileType)}
+                                </div>
+
+
+                            </button>
+                            <p className="fileReturnedText" extension={obj.fileExtension}>{obj.fileName}</p>
+                        </div>
+                    ))
+                }
+            </div>
+            <div>
+                {modal}
+            </div>
         </div>
     );
 };

@@ -30,7 +30,6 @@ export default function FileUploadForm({method}) {
 
   return (
     <div className="container">
-      <h2>Upload a File</h2>
       <form onSubmit={handleFileUpload} encType="multipart/form-data">
         <div className="container">
           <input ref={fileSelector} className="fileUpload" type="file" name="fileUpload" id="fileInput" />
