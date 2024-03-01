@@ -4,65 +4,70 @@ import extension from '../../../../utils/extensiontools'
 import FileUploadForm from './fileUploadForm'
 import FilePreviewRenderer from './filePreviewRenderer'
 
-const FileExplorer = function () {
+const FileExplorer = function ({ setPreview }) {
 
     const [modal, setModal] = useState(null)
 
-    const [files, setFiles] = useState([{
-        fileName: "No files found", // s3 contents Key value 
-        fileType: '-', // Directory or File
-        fileExtension: "Dir", // If File, add extension
-        fileExtensionType: "Dir", // If File, add extension type
-    }]); // State Data for file list
-    const [filesLoading, setFilesLoading] = useState({ busy: false, icon: <i class="fa fa-solid fa-arrows-rotate" style={{ 'color': '#FFFFF' }}></i> }) // Refresh Button State
+    const [files, setFiles] = useState(<div aria-busy="true"></div>); // State Data for file list
+    const [fileData, setFileData] = useState([]); // State Data for file list
+
+    const [filesLoading, setFilesLoading] = useState({ busy: false, icon: null }) // Refresh Button State
     const [fileDeleting, setFileDeleting] = useState({ busy: false, icon: <i className="fa fa-solid fa-trash"></i> }) // File Deletion Button State
     const [fileUploading, setFileUploading] = useState({ busy: false, icon: <i className="fa fa-solid fa-plus"></i> }) // File Upload Button State
-    const [fileOpening, setFileOpening] = useState({ busy: false, icon: <i class="fa fa-solid fa-eye"></i> }) // File Open Button State
-    const [connectionType, setConnectionType] = useState('SFTP');
+    const [fileOpening, setFileOpening] = useState({ busy: false, icon: <i className="fa fa-solid fa-eye"></i> }) // File Open Button State
+    const [connectionType, setConnectionType] = useState('S3');
 
     const [activeFile, setActiveFile] = useState({ fileName: null, index: null, fileExtensionType: null })
-    const [fileSelected, setFileSelected] = useState(null)
 
-    const clearSelected = () => {
-        for (let n = 0; n < files.length; n++) {
-            let file = document.getElementById("button-" + files[n].fileName);
-            if (file !== null) {
-                file.className = 'contrast';
-            }
-        }
+    const clearSelectedFile = () => {
+        setActiveFile({ fileName: null, index: null, fileExtensionType: null })
     };
 
+    const renderFiles = () => {
+
+        setFiles(() => {
+            let renderedFiles = []
+
+            fileData.map((obj, index) => (
+
+                renderedFiles.push(
+                    <div className="fileReturned" key={index} id={obj.fileName}>
+                        <button name={obj.fileName} id={"button-" + obj.fileName} className={(obj.fileName === activeFile.fileName ? "secondary contrast" : "secondary")} onClick={() => { fileSelector(obj.fileName, index, obj.fileExtensionType) }}>
+
+                            <div className="fileReturned" id={index}>
+                                {extension.getThumbnail(obj.fileExtensionType, obj.fileType)}
+                            </div>
+
+
+                        </button>
+                        <p className="fileReturnedText" extension={obj.fileExtension}>{obj.fileName}</p>
+                    </div>)
+
+            ))
+
+            return renderedFiles
+        }); // Update file state variable
+    };
+    const fetchFileData = async () => { setFileData(await localApi.requestFiles(connectionType)) }
 
     // Grab the file list
-    const fetchFiles = async () => {
-        setFilesLoading({ busy: true, text: null }) // make button loading
+    const refreshFiles = async () => {
+        console.log("should be loading")
 
+        setFilesLoading({ busy: true, icon: null })
+        setFiles(<div aria-busy="true"><p>Loading Files</p></div>)
         // Request file list data from Api
         try {
-            const fileData = await localApi.requestFiles(connectionType)
-
-            if (fileData === undefined) {
-
-                throw new Error('Missing File Data')
-
-            } else {
-                setFiles(fileData); // Update file state variable
-            }
-
+            await fetchFileData();
         } catch (error) {
-            console.error('Error fetching files'); // Handle error if API request fails
-
-            setFiles([{
-                fileName: "No files found", // s3 contents Key value 
-                fileType: '-', // Directory or File
-                fileExtension: "Dir", // If File, add extension
-                fileExtensionType: "Dir", // If File, add extension type
-            }]);
+            console.error('Error fetching files: ' + error); // Handle error if API request fails
+            setFileData([{ fileName: "No files found", fileType: '-', fileExtension: "Dir", fileExtensionType: "Dir" }]);
         } finally {
-            clearSelected();
+
         }
 
-        setFilesLoading({ busy: false, icon: (<i class="fa fa-solid fa-rotate-right"></i>) }) // Reset Loading State
+        setFilesLoading({ busy: false, icon: <i className="fa fa-solid fa-rotate-right"></i> })
+
     }
 
 
@@ -90,12 +95,8 @@ const FileExplorer = function () {
                 let response
                 response = await localApi.deleteFile(fileName, connectionType)
 
-                console.log("Logging Data")
-                console.log(response)
+                refreshFiles();
 
-                let file = document.getElementById(fileName)
-
-                file.remove();
             } catch (error) {
                 // Handle error if API request fails
                 console.error('Error fetching files:', error);
@@ -110,11 +111,11 @@ const FileExplorer = function () {
     }
 
     const openUploadModal = (connectionType) => {
-        setModal(
+        setPreview(
             <dialog open>
                 <article>
                     <header>
-                        <a href="#close" aria-label="Close" className="close" onClick={() => { setModal(null); setActiveFile({ fileName: null, index: null, fileExtensionType: null }) }}></a>
+                        <a href="#close" aria-label="Close" className="close" onClick={async () => { setPreview(null); refreshFiles(); clearSelectedFile(); }}></a>
                         File Upload
                     </header>
                     <FileUploadForm method={connectionType}></FileUploadForm>
@@ -124,11 +125,11 @@ const FileExplorer = function () {
     };
 
     const openPreviewModal = (selectedFileData, selectedFileType) => {
-        setModal(
+        setPreview(
             <dialog open>
                 <article>
                     <header>
-                        <a href="#close" aria-label="Close" className="close" onClick={() => { setModal(null); setActiveFile({ fileName: null, index: null, fileExtensionType: null }) }}></a>
+                        <a href="#close" aria-label="Close" className="close" onClick={() => { setPreview(null); clearSelectedFile() }}></a>
                         File Upload
                     </header>
                     <FilePreviewRenderer fileInputData={selectedFileData} fileType={selectedFileType}></FilePreviewRenderer>
@@ -137,112 +138,90 @@ const FileExplorer = function () {
         )
     }
 
-    const fileSelector = function (fileName, index, fileExtensionType) {
+    const fileSelector = async (fileName, index, fileExtensionType) => {
 
-        // If active file = the one just clicked on (i.e., file was double clicked)
-        if (activeFile.fileName === fileName) {
+        // If no fileName was passed to the function
+        if ((fileName === null)) {
 
-            setFileOpening({ busy: true, icon: undefined })
+            console.log("No File Name Passed To File Selector")
+
+
+        } else if (activeFile.fileName === null || activeFile.fileName === undefined) {
+
+            // If no file is currently selected
+            setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType });
+
+            
+        } else if (activeFile.fileName === fileName) {
+
+            // If the file clicked is the same as the one selected
+            setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType }); // Set the active file to the one just clicked on
+
 
             const FilePanePreview = async function (fileName, index, fileExtensionType) {
+                setFileOpening({ busy: true, icon: undefined }) // Set file opening state to busy
 
-                setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType });
+                let button = document.getElementById(`${index}`) // Get the button that was clicked on
+                let oldval = button.innerHTML // Store the button's innerHTML
 
-                let button = document.getElementById(`${index}`)
+                button.innerHTML = "" // Clear the button's innerHTML
+                button.setAttribute('aria-busy', 'true'); // Set the button's aria-busy attribute to true
 
-                let oldval = button.innerHTML
+                const response = await localApi.getFile(fileName, connectionType); // Query the file
+                const blob = new Blob([response.data]); // Create a blob from the file data
 
-                button.innerHTML = ""
-                button.setAttribute('aria-busy', 'true');
-
-                console.log(fileName);
-
-                if ((fileExtensionType === 0) || (fileExtensionType === 1) || (fileExtensionType === 2)) {
-                    try {
-                        const response = await localApi.getFile(fileName, connectionType);
-                        const blob = new Blob([response.data]);
-                        const fileSrc = URL.createObjectURL(blob);
-
-                        setFileOpening({ busy: false, icon: <i class="fa fa-solid fa-eye"></i> })
-
-                        setModal(
-                            <dialog open>
-                                <article className='filePreview'>
-                                    <header>
-                                        <button aria-label="Close" className="close" onClick={() => { setModal(null) }}></button>
-                                        File Preview
-                                    </header>
-                                    <h4>{fileName}</h4>
-                                    {/** If video, use video tag, else use img tag */}
-                                    {fileExtensionType === 2 ? (<video controls="true" autoPlay="true" src={fileSrc}></video>) : (<img src={fileSrc} alt="File Preview" />)}
-                                </article>
-                            </dialog>
-                        );
-
-                    } catch (error) {
-                        console.error('There was an error:', error);
-                    }
-                }
-
-
+                // Set the button's innerHTML back to its original value
                 button.innerHTML = (oldval === null ? "n/a" : oldval)
                 button.setAttribute('aria-busy', 'false')
 
-                setFileOpening({ busy: false, icon: <i class="fa fa-solid fa-eye"></i> });
-                setActiveFile({ fileName: null, index: null, fileExtensionType: null })
-                // Remove Contrast from the button
-                clearSelected();
+                // Open the preview modal
+                try {
+                    console.log("meow")
+                    openPreviewModal(blob, fileExtensionType);
+                } catch (error) {
+                    console.error('There was an error:', error);
+                }
 
+                setFileOpening({ busy: false, icon: <i className="fa fa-solid fa-eye"></i> });
             };
 
-            return (FilePanePreview(fileName, index, fileExtensionType));
-        } else if (((activeFile.fileName === null) || (activeFile.fileName === undefined)) && (fileName !== null)) {
-            clearSelected();
-            // find file by id and
-            const fileElement = document.getElementById("button-" + fileName)
-            fileElement.className = (fileElement.className + " contrast")
+            clearSelectedFile();
 
+            return (FilePanePreview(fileName, index, fileExtensionType));
+
+            
+        } else if (activeFile.fileName !== fileName) { 
+
+            // If the file clicked is different from the one selected
             setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType });
 
-        } else {
-
-            const currFile = document.getElementById("button-" + activeFile.fileName)
-            currFile.className = fileSelected
-
-            const fileElement = document.getElementById("button-" + fileName)
-            const currClasses = fileElement.className
-
-            setFileSelected(currClasses)
-            fileElement.className = (fileElement.className + " contrast")
-
-            setActiveFile(
-                {
-                    fileName: fileName,
-                    index: index,
-                    fileExtensionType: fileExtensionType
-                });
         }
-
     }
 
+
+    // Set the active connection type
     const setActiveConnection = (value) => {
         setConnectionType(value);
 
         console.log(value)
     }
 
+    
+    // Fetch files on load
     useEffect(() => {
-        fetchFiles();
-    }, []);
-
+        renderFiles();
+    }, [activeFile.fileName, fileData]);
 
     return (
-
-
         <div className="">
+
+            {useEffect(() => {
+                refreshFiles();
+            }, [connectionType])}
+
             <nav style={{ padding: "20px" }}>
                 <ul>
-                    <button aria-busy={filesLoading.busy} onClick={() => { fetchFiles() }} className="contrast fileExplorerButton">{filesLoading.icon}</button>
+                    <button aria-busy={filesLoading.busy} onClick={() => { refreshFiles(); }} className="contrast fileExplorerButton">{filesLoading.icon}</button>
                     <button aria-busy={fileOpening.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType)) }} className="contrast fileExplorerButton">{fileOpening.icon}</button>
                     <button aria-busy={fileDeleting.busy} onClick={() => { deleteFile(activeFile) }} className="contrast fileExplorerButton">{fileDeleting.icon}</button>
                     <button aria-busy={fileUploading.busy} onClick={() => { openUploadModal(connectionType) }} className="contrast fileExplorerButton">{fileUploading.icon}</button>
@@ -260,23 +239,8 @@ const FileExplorer = function () {
             </nav>
             <div className="grid">
             </div>
-            <div className="filesListed grid">
-                {
-                    files.map((obj, index) => (
-                        <div className="fileReturned" key={index} id={obj.fileName}>
-                            <button name={obj.fileName} id={"button-" + obj.fileName} className={"secondary"} onClick={() => { fileSelector(obj.fileName, index, obj.fileExtensionType) }}>
-
-
-                                <div className="fileReturned" id={index}>
-                                    {extension.getThumbnail(obj.fileExtensionType, obj.fileType)}
-                                </div>
-
-
-                            </button>
-                            <p className="fileReturnedText" extension={obj.fileExtension}>{obj.fileName}</p>
-                        </div>
-                    ))
-                }
+            <div className="filesListed">
+                {files}
             </div>
             <div>
                 {modal}
