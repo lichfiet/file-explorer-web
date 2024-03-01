@@ -50,9 +50,9 @@ p {
 }
 
 .fileUpload /* For the file display element buttons */ {
-  display: inline;
-  width: 100%;
-  margin: 10px;
+  display: auto;
+  width: 50%;
+  margin: auto;
   font-size: 75%;
 }
 
@@ -72,7 +72,7 @@ p {
   height: 100%;
   width: 100%;
   border-radius: 4px;
-  transition: all 500ms;
+  transition: all 100ms;
   overflow: wrap;
   word-break: break-all;
 

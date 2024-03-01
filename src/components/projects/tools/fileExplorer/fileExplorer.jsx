@@ -3,24 +3,21 @@ import localApi from '../../../../utils/apiHanding';
 import extension from '../../../../utils/extensiontools'
 import FileUploadForm from './fileUploadForm'
 import FilePreviewRenderer from './filePreviewRenderer'
-import { ConversationListInstance } from 'twilio/lib/rest/conversations/v1/conversation';
-import { render } from '@testing-library/react';
 
 const FileExplorer = function () {
 
     const [modal, setModal] = useState(null)
 
-    const [files, setFiles] = useState([]); // State Data for file list
-    const [fileData, setFileData] = useState([{ fileName: null, fileType: null, fileExtension: null, fileExtensionType: null }]); // State Data for file list
+    const [files, setFiles] = useState(<div aria-busy="true"></div>); // State Data for file list
+    const [fileData, setFileData] = useState([]); // State Data for file list
 
-    const [filesLoading, setFilesLoading] = useState({ busy: false, icon: <i className="fa fa-solid fa-arrows-rotate" style={{ 'color': '#FFFFF' }}></i> }) // Refresh Button State
+    const [filesLoading, setFilesLoading] = useState({ busy: false, icon: null }) // Refresh Button State
     const [fileDeleting, setFileDeleting] = useState({ busy: false, icon: <i className="fa fa-solid fa-trash"></i> }) // File Deletion Button State
     const [fileUploading, setFileUploading] = useState({ busy: false, icon: <i className="fa fa-solid fa-plus"></i> }) // File Upload Button State
     const [fileOpening, setFileOpening] = useState({ busy: false, icon: <i className="fa fa-solid fa-eye"></i> }) // File Open Button State
     const [connectionType, setConnectionType] = useState('SFTP');
 
     const [activeFile, setActiveFile] = useState({ fileName: null, index: null, fileExtensionType: null })
-    const [fileSelected, setFileSelected] = useState(null)
 
     const clearSelectedFile = () => {
         setActiveFile({ fileName: null, index: null, fileExtensionType: null })
@@ -37,82 +34,44 @@ const FileExplorer = function () {
                     <div className="fileReturned" key={index} id={obj.fileName}>
                         <button name={obj.fileName} id={"button-" + obj.fileName} className={(obj.fileName === activeFile.fileName ? "secondary contrast" : "secondary")} onClick={() => { fileSelector(obj.fileName, index, obj.fileExtensionType) }}>
 
-                        <div className="fileReturned" id={index}>
-                            {extension.getThumbnail(obj.fileExtensionType, obj.fileType)}
-                        </div>
+                            <div className="fileReturned" id={index}>
+                                {extension.getThumbnail(obj.fileExtensionType, obj.fileType)}
+                            </div>
 
 
-                    </button>
-                    <p className="fileReturnedText" extension={obj.fileExtension}>{obj.fileName}</p>
-                </div>)
+                        </button>
+                        <p className="fileReturnedText" extension={obj.fileExtension}>{obj.fileName}</p>
+                    </div>)
 
             ))
-            
-            return renderedFiles
-        }
-        ); // Update file state variable
-    }
 
+            return renderedFiles
+        }); // Update file state variable
+    };
+
+
+    const fetchFileData = async () => { setFileData(await localApi.requestFiles(connectionType)) }
 
     // Grab the file list
-    const fetchFiles = async () => {
-        setFilesLoading({ busy: true, text: null }) // make button loading
+    const refreshFiles = async () => {
+        console.log("should be loading")
 
+
+
+        setFilesLoading({ busy: true, icon: null })
+        setFiles(<div aria-busy="true"><p>Loading Files</p></div>)
         // Request file list data from Api
         try {
-            const fileData = await localApi.requestFiles(connectionType)
-
-            console.log("File Data")
-
-            if (fileData === undefined) {
-            
-                throw new Error('Missing File Data')
-
-            } else {
-                let meow = []
-
-                let Test = () => {
-
-                    fileData.map((obj, index) => (
-
-                        meow.push(
-                            <div className="fileReturned" key={index} id={obj.fileName}>
-                                <button name={obj.fileName} id={"button-" + obj.fileName} className={(obj.fileName === activeFile.fileName ? "secondary contrast" : "secondary")} onClick={() => { fileSelector(obj.fileName, index, obj.fileExtensionType) }}>
-
-                                <div className="fileReturned" id={index}>
-                                    {extension.getThumbnail(obj.fileExtensionType, obj.fileType)}
-                                </div>
-
-
-                            </button>
-                            <p className="fileReturnedText" extension={obj.fileExtension}>{obj.fileName}</p>
-                        </div>)
-
-                    ))
-                    
-                    console.log("map test")
-                    return meow
-                }
-
-                setFileData(fileData)
-                renderFiles();
-            }
-
+            await fetchFileData();
         } catch (error) {
             console.error('Error fetching files: ' + error); // Handle error if API request fails
-
-            // setFiles([{
-            //     fileName: "No files found", // s3 contents Key value 
-            //     fileType: '-', // Directory or File
-            //     fileExtension: "Dir", // If File, add extension
-            //     fileExtensionType: "Dir", // If File, add extension type
-            // }]);
-
+            setFileData([{ fileName: "No files found", fileType: '-', fileExtension: "Dir", fileExtensionType: "Dir" }]);
         } finally {
-            ;
+
         }
 
-        setFilesLoading({ busy: false, icon: (<i className="fa fa-solid fa-rotate-right"></i>) }) // Reset Loading State
+        setFilesLoading({ busy: false, icon: <i className="fa fa-solid fa-rotate-right"></i> })
+
     }
 
 
@@ -140,12 +99,8 @@ const FileExplorer = function () {
                 let response
                 response = await localApi.deleteFile(fileName, connectionType)
 
-                console.log("Logging Data")
-                console.log(response)
+                refreshFiles();
 
-                let file = document.getElementById(fileName)
-
-                file.remove();
             } catch (error) {
                 // Handle error if API request fails
                 console.error('Error fetching files:', error);
@@ -164,7 +119,7 @@ const FileExplorer = function () {
             <dialog open>
                 <article>
                     <header>
-                        <a href="#close" aria-label="Close" className="close" onClick={() => { setModal(null); setActiveFile({ fileName: null, index: null, fileExtensionType: null }) }}></a>
+                        <a href="#close" aria-label="Close" className="close" onClick={async () => { setModal(null); await refreshFiles(); }}></a>
                         File Upload
                     </header>
                     <FileUploadForm method={connectionType}></FileUploadForm>
@@ -284,29 +239,16 @@ const FileExplorer = function () {
                 button.setAttribute('aria-busy', 'false')
 
                 setFileOpening({ busy: false, icon: <i className="fa fa-solid fa-eye"></i> });
-                setActiveFile({ fileName: null, index: null, fileExtensionType: null })
-                // Remove Contrast from the button
+
                 clearSelectedFile();
 
             };
 
             return (FilePanePreview(fileName, index, fileExtensionType));
         } else if (((activeFile.fileName === null) || (activeFile.fileName === undefined)) && (fileName !== null)) {
-
             setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType });
-
-            renderFiles();
-
         } else {
-
-            setActiveFile(
-                {
-                    fileName: fileName,
-                    index: index,
-                    fileExtensionType: fileExtensionType
-                });
-
-            renderFiles();
+            setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType });
         }
 
     }
@@ -319,21 +261,22 @@ const FileExplorer = function () {
     }
 
     // Fetch files on load
-    useEffect(() => {
-        fetchFiles();
-    }, [connectionType]);
+
 
     useEffect(() => {
         renderFiles();
-    }, [activeFile.fileName], []);
+    }, [activeFile.fileName, fileData]);
 
     return (
-
-
         <div className="">
+
+            {useEffect(() => {
+                refreshFiles();
+            }, [connectionType])}
+
             <nav style={{ padding: "20px" }}>
                 <ul>
-                    <button aria-busy={filesLoading.busy} onClick={() => { fetchFiles() }} className="contrast fileExplorerButton">{filesLoading.icon}</button>
+                    <button aria-busy={filesLoading.busy} onClick={() => { refreshFiles(); }} className="contrast fileExplorerButton">{filesLoading.icon}</button>
                     <button aria-busy={fileOpening.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType)) }} className="contrast fileExplorerButton">{fileOpening.icon}</button>
                     <button aria-busy={fileDeleting.busy} onClick={() => { deleteFile(activeFile) }} className="contrast fileExplorerButton">{fileDeleting.icon}</button>
                     <button aria-busy={fileUploading.busy} onClick={() => { openUploadModal(connectionType) }} className="contrast fileExplorerButton">{fileUploading.icon}</button>
@@ -351,7 +294,7 @@ const FileExplorer = function () {
             </nav>
             <div className="grid">
             </div>
-            <div className="filesListed grid">
+            <div className="filesListed">
                 {files}
             </div>
             <div>
