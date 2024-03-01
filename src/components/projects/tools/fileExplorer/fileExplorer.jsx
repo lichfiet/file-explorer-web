@@ -3,34 +3,55 @@ import localApi from '../../../../utils/apiHanding';
 import extension from '../../../../utils/extensiontools'
 import FileUploadForm from './fileUploadForm'
 import FilePreviewRenderer from './filePreviewRenderer'
+import { ConversationListInstance } from 'twilio/lib/rest/conversations/v1/conversation';
+import { render } from '@testing-library/react';
 
 const FileExplorer = function () {
 
     const [modal, setModal] = useState(null)
 
-    const [files, setFiles] = useState([{
-        fileName: "No files found", // s3 contents Key value 
-        fileType: '-', // Directory or File
-        fileExtension: "Dir", // If File, add extension
-        fileExtensionType: "Dir", // If File, add extension type
-    }]); // State Data for file list
-    const [filesLoading, setFilesLoading] = useState({ busy: false, icon: <i class="fa fa-solid fa-arrows-rotate" style={{ 'color': '#FFFFF' }}></i> }) // Refresh Button State
+    const [files, setFiles] = useState([]); // State Data for file list
+    const [fileData, setFileData] = useState([{ fileName: null, fileType: null, fileExtension: null, fileExtensionType: null }]); // State Data for file list
+
+    const [filesLoading, setFilesLoading] = useState({ busy: false, icon: <i className="fa fa-solid fa-arrows-rotate" style={{ 'color': '#FFFFF' }}></i> }) // Refresh Button State
     const [fileDeleting, setFileDeleting] = useState({ busy: false, icon: <i className="fa fa-solid fa-trash"></i> }) // File Deletion Button State
     const [fileUploading, setFileUploading] = useState({ busy: false, icon: <i className="fa fa-solid fa-plus"></i> }) // File Upload Button State
-    const [fileOpening, setFileOpening] = useState({ busy: false, icon: <i class="fa fa-solid fa-eye"></i> }) // File Open Button State
+    const [fileOpening, setFileOpening] = useState({ busy: false, icon: <i className="fa fa-solid fa-eye"></i> }) // File Open Button State
     const [connectionType, setConnectionType] = useState('SFTP');
 
     const [activeFile, setActiveFile] = useState({ fileName: null, index: null, fileExtensionType: null })
     const [fileSelected, setFileSelected] = useState(null)
 
-    const clearSelected = () => {
-        for (let n = 0; n < files.length; n++) {
-            let file = document.getElementById("button-" + files[n].fileName);
-            if (file !== null) {
-                file.className = 'contrast';
-            }
-        }
+    const clearSelectedFile = () => {
+        setActiveFile({ fileName: null, index: null, fileExtensionType: null })
     };
+
+    const renderFiles = () => {
+
+        setFiles(() => {
+            let renderedFiles = []
+
+            fileData.map((obj, index) => (
+
+                renderedFiles.push(
+                    <div className="fileReturned" key={index} id={obj.fileName}>
+                        <button name={obj.fileName} id={"button-" + obj.fileName} className={(obj.fileName === activeFile.fileName ? "secondary contrast" : "secondary")} onClick={() => { fileSelector(obj.fileName, index, obj.fileExtensionType) }}>
+
+                        <div className="fileReturned" id={index}>
+                            {extension.getThumbnail(obj.fileExtensionType, obj.fileType)}
+                        </div>
+
+
+                    </button>
+                    <p className="fileReturnedText" extension={obj.fileExtension}>{obj.fileName}</p>
+                </div>)
+
+            ))
+            
+            return renderedFiles
+        }
+        ); // Update file state variable
+    }
 
 
     // Grab the file list
@@ -41,28 +62,57 @@ const FileExplorer = function () {
         try {
             const fileData = await localApi.requestFiles(connectionType)
 
-            if (fileData === undefined) {
+            console.log("File Data")
 
+            if (fileData === undefined) {
+            
                 throw new Error('Missing File Data')
 
             } else {
-                setFiles(fileData); // Update file state variable
+                let meow = []
+
+                let Test = () => {
+
+                    fileData.map((obj, index) => (
+
+                        meow.push(
+                            <div className="fileReturned" key={index} id={obj.fileName}>
+                                <button name={obj.fileName} id={"button-" + obj.fileName} className={(obj.fileName === activeFile.fileName ? "secondary contrast" : "secondary")} onClick={() => { fileSelector(obj.fileName, index, obj.fileExtensionType) }}>
+
+                                <div className="fileReturned" id={index}>
+                                    {extension.getThumbnail(obj.fileExtensionType, obj.fileType)}
+                                </div>
+
+
+                            </button>
+                            <p className="fileReturnedText" extension={obj.fileExtension}>{obj.fileName}</p>
+                        </div>)
+
+                    ))
+                    
+                    console.log("map test")
+                    return meow
+                }
+
+                setFileData(fileData)
+                renderFiles();
             }
 
         } catch (error) {
-            console.error('Error fetching files'); // Handle error if API request fails
+            console.error('Error fetching files: ' + error); // Handle error if API request fails
 
-            setFiles([{
-                fileName: "No files found", // s3 contents Key value 
-                fileType: '-', // Directory or File
-                fileExtension: "Dir", // If File, add extension
-                fileExtensionType: "Dir", // If File, add extension type
-            }]);
+            // setFiles([{
+            //     fileName: "No files found", // s3 contents Key value 
+            //     fileType: '-', // Directory or File
+            //     fileExtension: "Dir", // If File, add extension
+            //     fileExtensionType: "Dir", // If File, add extension type
+            // }]);
+
         } finally {
-            clearSelected();
+            ;
         }
 
-        setFilesLoading({ busy: false, icon: (<i class="fa fa-solid fa-rotate-right"></i>) }) // Reset Loading State
+        setFilesLoading({ busy: false, icon: (<i className="fa fa-solid fa-rotate-right"></i>) }) // Reset Loading State
     }
 
 
@@ -137,6 +187,51 @@ const FileExplorer = function () {
         )
     }
 
+    const newFileSelector = (fileName, index, fileExtensionType) => {
+        /**
+         * Behavior:
+         * 
+         * IF no file selected, set currently selected file and log it
+         * 
+         * IF file selected, and file clicked is the same as the one selected, open the file with openPreviewModal function
+         * 
+         * IF file selected, and file clicked is different, set the new file as the selected file and log it
+         */
+
+
+
+        // If no fileName was passed to the function
+        if ((fileName !== null)) {
+
+            console.log("No File Name Passed To File Selector")
+
+            // If no file is currently selected
+        } else if (activeFile.fileName === null || activeFile.fileName === undefined) {
+
+            // set the new file as the selected file
+            // re-render the file list
+
+            // If the file clicked is the same as the one selected
+        } else if (activeFile.fileName === fileName) {
+
+            // set file opening state 
+            // query the file
+            // and open the preview modal
+
+            // remove loading state
+            // clear selected file
+            // set active file to null
+
+
+            // If the file clicked is different from the one selected
+        } else if (activeFile.fileName !== fileName) {
+
+            // clear selected file
+            // set the new file as the selected file
+
+        }
+    }
+
     const fileSelector = function (fileName, index, fileExtensionType) {
 
         // If active file = the one just clicked on (i.e., file was double clicked)
@@ -163,7 +258,7 @@ const FileExplorer = function () {
                         const blob = new Blob([response.data]);
                         const fileSrc = URL.createObjectURL(blob);
 
-                        setFileOpening({ busy: false, icon: <i class="fa fa-solid fa-eye"></i> })
+                        setFileOpening({ busy: false, icon: <i className="fa fa-solid fa-eye"></i> })
 
                         setModal(
                             <dialog open>
@@ -188,32 +283,21 @@ const FileExplorer = function () {
                 button.innerHTML = (oldval === null ? "n/a" : oldval)
                 button.setAttribute('aria-busy', 'false')
 
-                setFileOpening({ busy: false, icon: <i class="fa fa-solid fa-eye"></i> });
+                setFileOpening({ busy: false, icon: <i className="fa fa-solid fa-eye"></i> });
                 setActiveFile({ fileName: null, index: null, fileExtensionType: null })
                 // Remove Contrast from the button
-                clearSelected();
+                clearSelectedFile();
 
             };
 
             return (FilePanePreview(fileName, index, fileExtensionType));
         } else if (((activeFile.fileName === null) || (activeFile.fileName === undefined)) && (fileName !== null)) {
-            clearSelected();
-            // find file by id and
-            const fileElement = document.getElementById("button-" + fileName)
-            fileElement.className = (fileElement.className + " contrast")
 
             setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType });
 
+            renderFiles();
+
         } else {
-
-            const currFile = document.getElementById("button-" + activeFile.fileName)
-            currFile.className = fileSelected
-
-            const fileElement = document.getElementById("button-" + fileName)
-            const currClasses = fileElement.className
-
-            setFileSelected(currClasses)
-            fileElement.className = (fileElement.className + " contrast")
 
             setActiveFile(
                 {
@@ -221,20 +305,27 @@ const FileExplorer = function () {
                     index: index,
                     fileExtensionType: fileExtensionType
                 });
+
+            renderFiles();
         }
 
     }
 
+    // Set the active connection type
     const setActiveConnection = (value) => {
         setConnectionType(value);
 
         console.log(value)
     }
 
+    // Fetch files on load
     useEffect(() => {
         fetchFiles();
-    }, []);
+    }, [connectionType]);
 
+    useEffect(() => {
+        renderFiles();
+    }, [activeFile.fileName], []);
 
     return (
 
@@ -261,22 +352,7 @@ const FileExplorer = function () {
             <div className="grid">
             </div>
             <div className="filesListed grid">
-                {
-                    files.map((obj, index) => (
-                        <div className="fileReturned" key={index} id={obj.fileName}>
-                            <button name={obj.fileName} id={"button-" + obj.fileName} className={"secondary"} onClick={() => { fileSelector(obj.fileName, index, obj.fileExtensionType) }}>
-
-
-                                <div className="fileReturned" id={index}>
-                                    {extension.getThumbnail(obj.fileExtensionType, obj.fileType)}
-                                </div>
-
-
-                            </button>
-                            <p className="fileReturnedText" extension={obj.fileExtension}>{obj.fileName}</p>
-                        </div>
-                    ))
-                }
+                {files}
             </div>
             <div>
                 {modal}

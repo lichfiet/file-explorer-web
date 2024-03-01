@@ -50,18 +50,17 @@ const Projects = function () {
 
                 </div>
                 <article className="overrideArticle">
-                <header>
-                    {projDesc}
-                </header>
-                <body>
+                    <header>
+                        {projDesc}
+                    </header>
+
                     <div className="container-fluid tool">
                         {/** This is the selected tool */ selectedOption}
                     </div>
-                </body>
-                <footer>
-               
-                </footer>
-            </article>
+
+                    <footer>
+                    </footer>
+                </article>
             </article>
 
         </div>
