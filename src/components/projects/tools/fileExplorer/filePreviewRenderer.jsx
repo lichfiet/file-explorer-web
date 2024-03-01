@@ -10,8 +10,13 @@ export default function FilePreviewRenderer(props) {
             return (
                 <>
                     <h4>{fileName}</h4>
-                    {/** If video, use video tag, else use img tag */}
-                    {props.fileType === 2 ? (<video controls="true" autoPlay="true" src={fileSrc}></video>) : (<img src={fileSrc} alt="File Preview" />)}
+                    <div className="file-preview-container">
+                        {props.fileType === 2 ? (
+                            <video controls="true" autoPlay="true" className="file-preview-video" src={fileSrc}></video>
+                        ) : (
+                            <img className="file-preview-image" src={fileSrc} alt="File Preview" />
+                        )}
+                    </div>
                 </>
             );
 
@@ -21,6 +26,7 @@ export default function FilePreviewRenderer(props) {
             return (
                 <p>There was an error loading the file</p>
             );
+            
         }
     }
 

@@ -173,10 +173,22 @@ p {
   background-color: #212646;
 }
 
-.filePreview {
-  position: absolute;
-  left: vw / 2;
-  top: vh / 2;
-  transform: translate(vh / 2, vw /2);
-  width: 10000px;
+.file-preview-container {
+  /* width: 500px; */
+  height: 500px;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+.file-preview-video {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.file-preview-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }

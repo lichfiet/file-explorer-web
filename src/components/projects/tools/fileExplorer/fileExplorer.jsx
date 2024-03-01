@@ -4,7 +4,7 @@ import extension from '../../../../utils/extensiontools'
 import FileUploadForm from './fileUploadForm'
 import FilePreviewRenderer from './filePreviewRenderer'
 
-const FileExplorer = function () {
+const FileExplorer = function ({ setPreview }) {
 
     const [modal, setModal] = useState(null)
 
@@ -48,15 +48,11 @@ const FileExplorer = function () {
             return renderedFiles
         }); // Update file state variable
     };
-
-
     const fetchFileData = async () => { setFileData(await localApi.requestFiles(connectionType)) }
 
     // Grab the file list
     const refreshFiles = async () => {
         console.log("should be loading")
-
-
 
         setFilesLoading({ busy: true, icon: null })
         setFiles(<div aria-busy="true"><p>Loading Files</p></div>)
@@ -115,12 +111,11 @@ const FileExplorer = function () {
     }
 
     const openUploadModal = (connectionType) => {
-
-        setModal(
+        setPreview(
             <dialog open>
                 <article>
                     <header>
-                        <a href="#close" aria-label="Close" className="close" onClick={async () => { setModal(null); await refreshFiles(); }}></a>
+                        <a href="#close" aria-label="Close" className="close" onClick={async () => { setPreview(null); refreshFiles(); clearSelectedFile(); }}></a>
                         File Upload
                     </header>
                     <FileUploadForm method={connectionType}></FileUploadForm>
@@ -130,11 +125,11 @@ const FileExplorer = function () {
     };
 
     const openPreviewModal = (selectedFileData, selectedFileType) => {
-        setModal(
+        setPreview(
             <dialog open>
                 <article>
                     <header>
-                        <a href="#close" aria-label="Close" className="close" onClick={() => { setModal(null); clearSelectedFile() }}></a>
+                        <a href="#close" aria-label="Close" className="close" onClick={() => { setPreview(null); clearSelectedFile() }}></a>
                         File Upload
                     </header>
                     <FilePreviewRenderer fileInputData={selectedFileData} fileType={selectedFileType}></FilePreviewRenderer>
@@ -181,6 +176,7 @@ const FileExplorer = function () {
 
                 // Open the preview modal
                 try {
+                    console.log("meow")
                     openPreviewModal(blob, fileExtensionType);
                 } catch (error) {
                     console.error('There was an error:', error);
@@ -210,9 +206,8 @@ const FileExplorer = function () {
         console.log(value)
     }
 
+    
     // Fetch files on load
-
-
     useEffect(() => {
         renderFiles();
     }, [activeFile.fileName, fileData]);
