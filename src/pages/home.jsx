@@ -23,12 +23,12 @@ const Projects = function () {
 
             <hgroup>
                 <h2 style={{ color: "white" }}>File Explorer</h2>
-                <h2></h2>
+                <p>Meow meow meow</p>
             </hgroup>
             <article className="overrideArticle">
-
-                <FileExplorer setPreview={setPreview} />
-
+                <div className="container-fluid">
+                    <FileExplorer setPreview={setPreview} />
+                </div>
             </article>
 
         </div>

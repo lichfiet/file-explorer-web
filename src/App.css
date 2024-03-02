@@ -123,6 +123,14 @@ p {
   color: white;
 }
 
+.toggle {
+  border-color: #4f5055;
+}
+
+.toggle-text {
+  color: white;
+}
+
 
 
 /* Xml to Json */

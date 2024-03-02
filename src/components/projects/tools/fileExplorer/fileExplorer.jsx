@@ -239,10 +239,10 @@ const FileExplorer = function ({ setPreview }) {
                 {/** S3 or SFTP radio buttons */}
                 <ul>
                     <fieldset>
-                        <input type="radio" id="S3" name="connection-type" onClick={() => { setActiveConnection('S3') }} />
-                        <label htmlFor="S3">S3</label>
-                        <input type="radio" id="SFTP" name="connection-type" onClick={() => { setActiveConnection('SFTP') }} />
-                        <label htmlFor="SFTP">SFTP</label>
+                        <input className="toggle" type="radio" id="S3" name="connection-type" onClick={() => { setActiveConnection('S3') }} />
+                        <label className="toggle-text" htmlFor="S3">S3</label>
+                        <input className="toggle" type="radio" id="SFTP" name="connection-type" onClick={() => { setActiveConnection('SFTP') }} />
+                        <label className="toggle-text" htmlFor="SFTP">SFTP</label>
                     </fieldset>
                 </ul>
             </nav>
