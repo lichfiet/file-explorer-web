@@ -6,16 +6,8 @@ import '@picocss/pico'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
-
   return (
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<NavBar />}>
-          <Route index element={<Projects />} />
-          <Route path="home" element={<HomePage />}></Route>
-          </Route>
-        </Routes>
-      </BrowserRouter>
+    <Projects />
   );
 }
 

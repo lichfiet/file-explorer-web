@@ -9,7 +9,6 @@ export default function FilePreviewRenderer(props) {
 
             return (
                 <>
-                    <h4>{fileName}</h4>
                     <div className="file-preview-container">
                         {props.fileType === 2 ? (
                             <video controls="true" autoPlay="true" className="file-preview-video" src={fileSrc}></video>

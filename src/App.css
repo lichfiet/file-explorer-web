@@ -6,7 +6,7 @@
 }
 
 .background {
-  background-color: #362a179a;
+  background-color: #0f0f11;
 }
 
 
@@ -58,7 +58,7 @@ p {
 
 .filesListed /* For the file display element buttons */ {
   display: grid;
-  gap: 1rem;
+  gap: 0rem;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
 }
 
@@ -80,15 +80,16 @@ p {
   background-position: center;
   background-repeat: no-repeat;
 
-  color: #ffffff;
+  color: #2a2b30;
 }
 
 .fileReturnedText {
   margin: 0px;
   word-break: break-all;
   text-align: center;
-  font-size: 40%;
+  font-size: 35%;
   padding-bottom: 15px;
+  color: white;
 }
 
 .fileExplorerButton {
@@ -98,15 +99,36 @@ p {
   padding-left: 15px;
   padding-right: 17px;
   width: 50px;
-  background-color: #31333f;
+  background-color: #ebebeb;
   border-color: #2b2d31;
-  color: #ffffff;
+  color: #222125;
 }
+
+.fileReturnedButton {
+  background-color: #e9e9f1;
+  border-color: #2b2d3100;
+  color: #2a2b30;
+}
+
+.fileReturnedButtonSelected {
+  background-color: #3a3a3d;
+  color: white;
+}
+
+.fileReturnedIcon {
+  color: #2a2b30;
+}
+
+.fileReturnedIconSelected {
+  color: white;
+}
+
+
 
 /* Xml to Json */
 
 .xmlToJsonInput {
-  background-color: #26272c;
+  background-color: #292a2e;
   color: white;
 }
 
@@ -138,8 +160,8 @@ p {
 .overrideArticle {
   padding-top: 2%;
   padding-bottom: 2%;
-  background-color: #dfdace;
-  filter: drop-shadow(0px 0px 5px rgb(49, 49, 49))
+  background-color: #1f2129;
+  filter: drop-shadow(0px 0px 5px rgb(0, 0, 0));
   /* background-color: #191a1f */
 }
 
@@ -189,6 +211,21 @@ p {
 
 .file-preview-image {
   max-width: 100%;
+  width: 600%;
   max-height: 100%;
   object-fit: contain;
+}
+
+.modals {
+  background-color: #0f0f11;
+}
+
+.modals-header {
+  background-color: #1a1a1d;
+  color: whitesmoke;
+}
+
+
+.dialogs {
+  background-color: #2d2e2fbf;
 }
