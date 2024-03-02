@@ -21,11 +21,12 @@ const Projects = function () {
             <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet"></link>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet"></link>
 
+            <hgroup>
+                <h2 style={{ color: "white" }}>File Explorer</h2>
+                <h2></h2>
+            </hgroup>
             <article className="overrideArticle">
-                <hgroup>
-                    <h2 style={{ color: "white" }}>File Explorer</h2>
-                    <h2></h2>
-                </hgroup>
+
                 <FileExplorer setPreview={setPreview} />
 
             </article>

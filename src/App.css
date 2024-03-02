@@ -6,7 +6,7 @@
 }
 
 .background {
-  background-color: #0f0f11;
+  background-color: #111114;
 }
 
 
@@ -111,7 +111,7 @@ p {
 }
 
 .fileReturnedButtonSelected {
-  background-color: #3a3a3d;
+  background-color: #313135;
   color: white;
 }
 
@@ -158,9 +158,9 @@ p {
 
 /* OVERRIDES */
 .overrideArticle {
-  padding-top: 2%;
+  padding-top: 0.5%;
   padding-bottom: 2%;
-  background-color: #1f2129;
+  background-color: #1b1d24;
   filter: drop-shadow(0px 0px 5px rgb(0, 0, 0));
   /* background-color: #191a1f */
 }

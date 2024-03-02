@@ -245,10 +245,8 @@ const FileExplorer = function ({ setPreview }) {
                         <label htmlFor="SFTP">SFTP</label>
                     </fieldset>
                 </ul>
-
             </nav>
-            <div className="grid">
-            </div>
+            <hr style={{color: "white", marginTop: "0px"}}></hr>
             <div className="filesListed">
                 {files}
             </div>
