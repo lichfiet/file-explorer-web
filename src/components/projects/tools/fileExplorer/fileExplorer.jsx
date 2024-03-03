@@ -15,10 +15,39 @@ const FileExplorer = function ({ setModal }) {
     const [fileOpening, setFileOpening] = useState({ busy: false, icon: <i className="fa fa-solid fa-eye"></i> }) // File Open Button State
     const [connectionType, setConnectionType] = useState('S3');
 
-    const [activeFile, setActiveFile] = useState({ fileName: null, index: null, fileExtensionType: null })
+    const [activeFile, setActiveFile] = useState({ fileName: null, index: null, fileExtensionType: null });
+    const [openingFile, setOpeningFile] = useState({ fileName: null, index: null, fileExtensionType: null });
+
+    // Set the active connection type
+    const setActiveConnection = (value) => {
+        setConnectionType(value);
+    }
+
+    const setOpening = (fileName, index) => {
+
+        const btn = document.getElementById(`${index}`)
+
+        setOpeningFile({icon: btn.innerHTML, index: index});
+
+        btn.innerHTML = null
+        btn.setAttribute('aria-busy', 'true');
+
+    };
+
+    const setClosing = (index) => {
+
+        const btn = document.getElementById(`${index}`)
+
+        btn.innerHTML = openingFile.icon
+        btn.setAttribute('aria-busy', 'false');
+
+        setOpeningFile({icon: null, index: null});
+    };
 
     const clearSelectedFile = () => {
-        setActiveFile({ fileName: null, index: null, fileExtensionType: null })
+
+        setActiveFile({ fileName: null, index: null, fileExtensionType: null });
+
     };
 
     const renderFiles = () => {
@@ -196,14 +225,6 @@ const FileExplorer = function ({ setModal }) {
             setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType });
 
         }
-    }
-
-
-    // Set the active connection type
-    const setActiveConnection = (value) => {
-        setConnectionType(value);
-
-        console.log(value)
     }
 
     
