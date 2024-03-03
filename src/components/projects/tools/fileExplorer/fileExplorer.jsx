@@ -23,27 +23,6 @@ const FileExplorer = function ({ setModal }) {
         setConnectionType(value);
     }
 
-    const setOpening = (fileName, index) => {
-
-        const btn = document.getElementById(`${index}`)
-
-        setOpeningFile({icon: btn.innerHTML, index: index});
-
-        btn.innerHTML = null
-        btn.setAttribute('aria-busy', 'true');
-
-    };
-
-    const setClosing = (index) => {
-
-        const btn = document.getElementById(`${index}`)
-
-        btn.innerHTML = openingFile.icon
-        btn.setAttribute('aria-busy', 'false');
-
-        setOpeningFile({icon: null, index: null});
-    };
-
     const clearSelectedFile = () => {
 
         setActiveFile({ fileName: null, index: null, fileExtensionType: null });
