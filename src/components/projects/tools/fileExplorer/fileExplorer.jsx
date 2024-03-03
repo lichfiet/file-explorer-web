@@ -4,9 +4,7 @@ import extension from '../../../../utils/extensiontools'
 import FileUploadForm from './fileUploadForm'
 import FilePreviewRenderer from './filePreviewRenderer'
 
-const FileExplorer = function ({ setPreview }) {
-
-    const [modal, setModal] = useState(null)
+const FileExplorer = function ({ setModal }) {
 
     const [files, setFiles] = useState(<div aria-busy="true"></div>); // State Data for file list
     const [fileData, setFileData] = useState([]); // State Data for file list
@@ -29,7 +27,6 @@ const FileExplorer = function ({ setPreview }) {
             let renderedFiles = []
 
             fileData.map((obj, index) => (
-
                 renderedFiles.push(
                     <div className="fileReturned" key={index} id={obj.fileName}>
                         <button name={obj.fileName} id={"button-" + obj.fileName} className={(obj.fileName === activeFile.fileName ? "fileReturnedButtonSelected secondary" : "fileReturnedButton secondary")} onClick={() => { fileSelector(obj.fileName, index, obj.fileExtensionType) }}>
@@ -42,12 +39,12 @@ const FileExplorer = function ({ setPreview }) {
                         </button>
                         <p className="fileReturnedText" extension={obj.fileExtension}>{obj.fileName}</p>
                     </div>)
-
             ))
 
             return renderedFiles
         }); // Update file state variable
     };
+    
     const fetchFileData = async () => { setFileData(await localApi.requestFiles(connectionType)) }
 
     // Grab the file list
@@ -69,7 +66,6 @@ const FileExplorer = function ({ setPreview }) {
         setFilesLoading({ busy: false, icon: <i className="fa fa-solid fa-rotate-right"></i> })
 
     }
-
 
     // Delete Selected File
     const deleteFile = async () => {
@@ -111,11 +107,11 @@ const FileExplorer = function ({ setPreview }) {
     }
 
     const openUploadModal = (connectionType) => {
-        setPreview(
+        setModal(
             <dialog open className="dialogs">
                 <article className="modals">
                     <header className='modals-header'>
-                        <a href="#close" aria-label="Close" className="close" onClick={async () => { setPreview(null); refreshFiles(); clearSelectedFile(); }}></a>
+                        <a href="#close" aria-label="Close" className="close" onClick={async () => { setModal(null); refreshFiles(); clearSelectedFile(); }}></a>
                         File Upload
                     </header>
                     <FileUploadForm method={connectionType}></FileUploadForm>
@@ -124,80 +120,74 @@ const FileExplorer = function ({ setPreview }) {
         )
     };
 
-    const openPreviewModal = (selectedFileData, selectedFileType) => {
-        setPreview(
+    const openPreviewModal = (selectedFileData, selectedFileType, selectedFileName) => {
+        setModal(
             <dialog open className="dialogs">
                 <article className="modals">
                     <header className='modals-header'>
-                        <a href="#close" aria-label="Close" className="close" onClick={() => { setPreview(null); clearSelectedFile() }}></a>
+                        <a href="#close" aria-label="Close" className="close" onClick={() => { setModal(null); clearSelectedFile() }}></a>
                         {activeFile.fileName}
                     </header>
-                    <FilePreviewRenderer fileInputData={selectedFileData} fileType={selectedFileType}></FilePreviewRenderer>
+                    <FilePreviewRenderer fileInputData={selectedFileData} fileType={selectedFileType} fileName={selectedFileName}></FilePreviewRenderer>
                 </article>
             </dialog>
         )
     }
 
+    const getFilePreview = async function (fileName, index, fileExtensionType) {
+
+        let button = document.getElementById(`${index}`) // Get the button that was clicked on
+        let oldval = button.innerHTML // Store the button's innerHTML
+
+        try {
+
+            setFileOpening({ busy: true, icon: undefined }) // Set file opening state to busy
+
+            button.innerHTML = null // Clear the button's innerHTML
+            button.setAttribute('aria-busy', 'true'); // Set the button's aria-busy attribute to true
+
+            const response = await localApi.getFile(fileName, connectionType); // Query the file
+
+            const blob = new Blob([response.data], { type: `image/${extension.getFromFileName(fileName)}` }); // Create a blob from the file data
+
+            // Set the button's innerHTML back to its original value
+            button.innerHTML = (oldval === null ? "n/a" : oldval)
+            button.setAttribute('aria-busy', 'false')
+
+            // Open the preview modal
+            try {
+                console.log("meow")
+                openPreviewModal(blob, fileExtensionType, fileName);
+            } catch (error) {
+                console.error('There was an error:', error);
+            }
+
+            setFileOpening({ busy: false, icon: <i className="fa fa-solid fa-eye"></i> });
+        } catch (error) { } finally {
+
+            setFileOpening({ busy: false, icon: <i className="fa fa-solid fa-eye"></i> });
+
+            button.innerHTML = (oldval === null ? "n/a" : oldval)
+            button.setAttribute('aria-busy', 'false')
+        }
+
+    };
+
+    // Run every time file is selected
     const fileSelector = async (fileName, index, fileExtensionType) => {
 
-        // If no fileName was passed to the function
-        if ((fileName === null)) {
-
+        if ((fileName === null)) { // If no fileName was passed to the function
             console.log("No File Name Passed To File Selector")
 
-
-        } else if (activeFile.fileName === null || activeFile.fileName === undefined) {
-
-            // If no file is currently selected
+        } else if (activeFile.fileName === null || activeFile.fileName === undefined) { // If no file is currently selected
             setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType });
 
-            
-        } else if (activeFile.fileName === fileName) {
-
-            // If the file clicked is the same as the one selected
+        } else if (activeFile.fileName === fileName) { // If the file clicked is the same as the one selected
             setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType }); // Set the active file to the one just clicked on
-
-
-            const FilePanePreview = async function (fileName, index, fileExtensionType) {
-                let button = document.getElementById(`${index}`) // Get the button that was clicked on
-                let oldval = button.innerHTML // Store the button's innerHTML
-
-                try {
-
-                    setFileOpening({ busy: true, icon: undefined }) // Set file opening state to busy
-    
-                    button.innerHTML = null // Clear the button's innerHTML
-                    button.setAttribute('aria-busy', 'true'); // Set the button's aria-busy attribute to true
-                    
-                    const response = await localApi.getFile(fileName, connectionType); // Query the file
-                    const blob = new Blob([response.data]); // Create a blob from the file data
-    
-                    // Set the button's innerHTML back to its original value
-                    button.innerHTML = (oldval === null ? "n/a" : oldval)
-                    button.setAttribute('aria-busy', 'false')
-    
-                    // Open the preview modal
-                    try {
-                        console.log("meow")
-                        openPreviewModal(blob, fileExtensionType);
-                    } catch (error) {
-                        console.error('There was an error:', error);
-                    }
-    
-                    setFileOpening({ busy: false, icon: <i className="fa fa-solid fa-eye"></i> });
-                } catch (error) {} finally {
-
-                    setFileOpening({ busy: false, icon: <i className="fa fa-solid fa-eye"></i> });
-
-                    button.innerHTML = (oldval === null ? "n/a" : oldval)
-                    button.setAttribute('aria-busy', 'false')
-                }
-
-            };
 
             clearSelectedFile();
 
-            return (FilePanePreview(fileName, index, fileExtensionType));
+            return (getFilePreview(fileName, index, fileExtensionType));
 
             
         } else if (activeFile.fileName !== fileName) { 
@@ -246,12 +236,9 @@ const FileExplorer = function ({ setPreview }) {
                     </fieldset>
                 </ul>
             </nav>
-            <hr style={{color: "white", marginTop: "0px"}}></hr>
+            <hr style={{marginTop: "0px"}}></hr>
             <div className="filesListed">
                 {files}
-            </div>
-            <div>
-                {modal}
             </div>
         </div>
     );

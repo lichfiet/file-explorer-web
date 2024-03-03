@@ -1,30 +1,32 @@
 export default function FilePreviewRenderer(props) {
 
-    if ((props.fileType === 0) || (props.fileType === 1) || (props.fileType === 2)) {
+        const fileType = props.fileType
+        const fileName = props.fileName
+        const fileExtension = props.fileExtension
+        const fileInputData = props.fileInputData
 
-        const fileSrc = URL.createObjectURL(props.fileInputData); // Create a URL for the file input data
+        const fileSrc = URL.createObjectURL(fileInputData); // Create a URL for the file input data
 
         try {
 
-
             let Video = () => { return <video controls="true" autoPlay="true" className="file-preview-video" src={fileSrc}></video> };
             let Image = () => { return <img className="file-preview-image" src={fileSrc} alt="File Preview" /> };
+            let Text = () => { return <p>Text file</p> };
 
             let Media = () => {
                 if (props.fileType === 2 /* Video */) {
-                    return (<Video src={fileSrc} />)
+                    return (<Video src={fileSrc + ".mp4"} />)
                 } else if (props.fileType === 0 /* Image */) {
                     return (<Image src={fileSrc} />)
                 } else if (props.fileType === 1 /* Text */) {
-                    return <p>Text file</p>
+                    return (<Text />)
                 }
             }
+
             return (
-                <>
-                    <div className="file-preview-container">
-                        <Media />
-                    </div>
-                </>
+                <div className="file-preview-container">
+                    <Media />
+                </div>
             );
 
         } catch (error) {
@@ -35,6 +37,5 @@ export default function FilePreviewRenderer(props) {
             );
 
         }
-    }
 
 }

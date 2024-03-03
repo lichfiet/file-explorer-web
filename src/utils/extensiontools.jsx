@@ -1,7 +1,7 @@
 const extension = {
 
     getFromFileName: function (fileName) {
-        return (fileName.split('.').pop());
+        return ((fileName.split('.').pop()) === "jpg" ? "jpeg" : (fileName.split('.').pop()))
     },
 
     checkValid: function (fileExtension) {
@@ -9,14 +9,11 @@ const extension = {
         const def = (fileExtension === undefined ? true : false)
 
         if (RegExp((/^(jpg|jpeg|png)$/i)).test(fileExtension) === true || def === true) {
-            return ([0, null, "JPG/JPEG/PNG"]) // unsure what other value to return
-
+            return ([0, "image/", "JPG/JPEG/PNG"]) 
         } else if (RegExp((/^(gif)$/i)).test(fileExtension) === true) {
-            return ([1, null, "GIF"]) // unsure what other value to return
-
+            return ([1, "image/", "GIF"])
         } else if (RegExp((/^(mov|avi|mp4)$/i)).test(fileExtension) === true) {
-            return ([2, null, "MOV/AVI/MP4"]) // unsure what other value to return
-
+            return ([2, "video/", "MOV/AVI/MP4"])
         } else {
             return ([99, 99, 99])
         }
