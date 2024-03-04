@@ -1,10 +1,10 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react"; // Make sure to import useState
 
-import FileExplorer from '../components/projects/tools/fileExplorer/fileExplorer'
+import FileExplorer from '../components/fileExplorer/fileExplorer'
 import XmlToJson from '../components/projects/tools/xmlToJson/xmlToJson'
 
-const Projects = function () {
+const Home = function () {
 
     const [modal, setModal] = useState(undefined);
 
@@ -22,20 +22,29 @@ const Projects = function () {
             }}>
 
                 {modal}
+                <nav>
+                    <hgroup>
+                        <h2 style={{ color: "white" }}>File Explorer</h2>
+                        <p>By Trevor Lichfield</p>
 
-                <hgroup>
-                    <h2 style={{ color: "white" }}>File Explorer</h2>
-                    <p>Meow meow meow</p>
-                </hgroup>
+                    </hgroup>
+                    <ul>
+                        <li><a className="contrast socialMedia outline" href="https://github.com/lichfiet"><i className="socialMediaIcon fab fa-github"></i></a></li>
+                        <li><a className="contrast socialMedia outline" href="https://github.com/lichfiet"><i className="socialMediaIcon fab fa-github"></i></a></li>
+                        <li><a className="contrast socialMedia outline" href="https://github.com/lichfiet"><i className="socialMediaIcon fab fa-github"></i></a></li>
+                        <li><a className="contrast socialMedia outline" href="https://www.linkedin.com/in/tlichfield/"><i className="socialMediaIcon fab fa-linkedin-in"></i></a></li>
+                    </ul>
+
+                </nav>
+
                 <article className="overrideArticle">
                     <div className="container-fluid">
                         <FileExplorer setModal={setModal} />
                     </div>
                 </article>
-
             </div>
         </>
     )
 }
 
-export default Projects;
+export default Home;

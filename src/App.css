@@ -148,6 +148,7 @@ p {
 .socialMediaIcon {
   font-size: 150%;
   padding: 0px;
+  color: white;
 }
 
 .navTitle {
@@ -160,7 +161,7 @@ p {
 }
 
 .nav-link {
-  color: #212646
+  color: #ffffff
 }
 
 
@@ -192,15 +193,6 @@ p {
   margin-bottom: 30px;
   background-color: rgba(211, 211, 211, 0.925);
   filter: drop-shadow( 7px 7px 0px rgba(65, 65, 65, 0.705))
-}
-
-.homeIntro {
-  display: grid;
-  grid-template-columns: 3fr 1fr;
-}
-
-.homeIntroContainer {
-  background-color: #212646;
 }
 
 .file-preview-container {

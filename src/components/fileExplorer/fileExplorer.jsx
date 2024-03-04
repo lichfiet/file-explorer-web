@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import localApi from '../../../../utils/apiHanding';
-import extension from '../../../../utils/extensiontools'
+import localApi from '../../utils/apiHanding';
+import extension from '../../utils/extensiontools'
 import FileUploadForm from './fileUploadForm'
 import FilePreviewRenderer from './filePreviewRenderer'
+import Toggle from '../buttons/toggle'
 
 const FileExplorer = function ({ setModal }) {
 
@@ -29,6 +30,7 @@ const FileExplorer = function ({ setModal }) {
 
     };
 
+    // Re-renders the file list. Run every time fileData is updated or activeFile is updated
     const renderFiles = () => {
 
         setFiles(() => {
@@ -53,14 +55,16 @@ const FileExplorer = function ({ setModal }) {
         }); // Update file state variable
     };
     
-    const fetchFileData = async () => { setFileData(await localApi.requestFiles(connectionType)) }
-
-    // Grab the file list
+    
+    // Grabs the file list. Run every time the refresh button is clicked or the connection type is changed
     const refreshFiles = async () => {
-        console.log("should be loading")
+
+        const fetchFileData = async () => { setFileData(await localApi.requestFiles(connectionType)) }
 
         setFilesLoading({ busy: true, icon: null })
-        setFiles(<div aria-busy="true"><p>Loading Files</p></div>)
+        setFiles(<div aria-busy="true">
+            <p>Loading Files</p>
+        </div>)
         // Request file list data from Api
         try {
             await fetchFileData();
@@ -210,36 +214,34 @@ const FileExplorer = function ({ setModal }) {
     // Fetch files on load
     useEffect(() => {
         renderFiles();
-    }, [activeFile.fileName, fileData]);
+    }, [activeFile, fileData]);
 
     return (
-        <div className="">
+        <div className="container">
 
             {useEffect(() => {
                 refreshFiles();
             }, [connectionType])}
 
+            {/** File Explorer Nav */}
             <nav style={{ padding: "20px" }}>
-                <ul>
+                <ul /** file explorer buttons */ >
                     <button aria-busy={filesLoading.busy} onClick={() => { refreshFiles(); }} className="contrast fileExplorerButton">{filesLoading.icon}</button>
                     <button aria-busy={fileOpening.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType)) }} className="contrast fileExplorerButton">{fileOpening.icon}</button>
                     <button aria-busy={fileDeleting.busy} onClick={() => { deleteFile(activeFile) }} className="contrast fileExplorerButton">{fileDeleting.icon}</button>
                     <button aria-busy={fileUploading.busy} onClick={() => { openUploadModal(connectionType) }} className="contrast fileExplorerButton">{fileUploading.icon}</button>
                 </ul>
-                {/** S3 or SFTP radio buttons */}
-                <ul>
-                    <fieldset>
-                        <input className="toggle" type="radio" id="S3" name="connection-type" onClick={() => { setActiveConnection('S3') }} />
-                        <label className="toggle-text" htmlFor="S3">S3</label>
-                        <input className="toggle" type="radio" id="SFTP" name="connection-type" onClick={() => { setActiveConnection('SFTP') }} />
-                        <label className="toggle-text" htmlFor="SFTP">SFTP</label>
-                    </fieldset>
+                <ul /** S3 or SFTP radio button */ > 
+                <Toggle func={setActiveConnection} text1={'S3'} text2={'SFTP'} opt1Param={'S3'} opt2Param={'SFTP'} stateVar={connectionType} />
                 </ul>
             </nav>
+
             <hr style={{marginTop: "0px"}}></hr>
+
             <div className="filesListed">
                 {files}
             </div>
+
         </div>
     );
 };
