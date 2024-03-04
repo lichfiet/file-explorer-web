@@ -2,7 +2,6 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react"; // Make sure to import useState
 
 import FileExplorer from '../components/fileExplorer/fileExplorer'
-import XmlToJson from '../components/projects/tools/xmlToJson/xmlToJson'
 
 const Home = function () {
 
