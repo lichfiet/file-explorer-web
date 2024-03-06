@@ -50,8 +50,8 @@ p {
 }
 
 .fileUpload /* For the file display element buttons */ {
-  display: auto;
-  width: 50%;
+  display: inline;
+  width: 45%;
   margin: auto;
   font-size: 75%;
 }

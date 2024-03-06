@@ -1,42 +1,80 @@
 import { useRef, useState } from 'react';
 import localApi from '../../utils/apiHanding';
 
-export default function FileUploadForm({method}) {
+export default function FileUploadForm({ method }) {
   const fileSelector = useRef(null);
-  const [uploadLoading, setUploadLoading] = useState({busy: false, text: "Upload", response: null});
+  const dropZoneRef = useRef(null);
+  const [uploadLoading, setUploadLoading] = useState({
+    busy: false,
+    text: "Upload",
+    response: null
+  });
+  const [uploadedFiles, setUploadedFiles] = useState([]);
 
-  const handleFileUpload = async (event) => {
-
-    setUploadLoading({busy: true, text: "Uploading..."})
-
-    const fileInput = fileSelector.current.files[0];
-
-    const formData = new FormData();
-    formData.append('fileUpload', fileInput);
+  const handleFileUpload = async (files) => {
+    setUploadLoading({ busy: true, text: "Uploading..." });
 
     try {
-      
-      const response = await localApi.uploadFile(formData, method);
-      console.log('Response:', response);
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append('fileUpload', file);
 
-      (response.status === 200 ? setUploadLoading({busy: false, text: "Upload", response: <p>File "{fileSelector.current.files[0].name}" Uploaded Successfully</p>}) : setUploadLoading({busy: false, text: "Upload", response: <p>Bad Upload</p>}))
+        const response = await localApi.uploadFile(formData, method);
+        console.log('Response:', response);
+
+        if (response.status === 200) {
+          setUploadedFiles(prevFiles => [...prevFiles, file.name]);
+        } else {
+          setUploadLoading({ busy: false, text: "Upload", response: <p>Bad Upload</p> });
+        }
+      }
+
+      setUploadLoading({ busy: false, text: "Upload", response: <p>All files uploaded successfully</p> });
 
     } catch (error) {
       console.error('Error uploading file:', error);
-      setUploadLoading({busy: false, text: "Upload", response: <p>Missing File, please select a file</p>})
+      setUploadLoading({ busy: false, text: "Upload", response: <p>Missing File, please select a file</p> });
     }
+  };
 
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const files = Array.from(event.dataTransfer.files);
+    handleFileUpload(files);
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
+
+  const handleFileSelect = (event) => {
+    const files = Array.from(fileSelector.current.files);
+    handleFileUpload(files);
   };
 
   return (
     <div className="container">
-      <form onSubmit={handleFileUpload} encType="multipart/form-data">
-        <div className="container">
-          <input ref={fileSelector} className="fileUpload" type="file" name="fileUpload" id="fileInput" />
-        </div>
-      </form>
-      <button className="contrast fileUpload" aria-busy={uploadLoading.busy} onClick={() => {handleFileUpload()}}>{uploadLoading.text}</button>
+      <div className="container" ref={dropZoneRef} onDrop={handleDrop} onDragOver={handleDragOver} style={{ border: '2px dashed white', padding: '20px', display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column"}}>
+        <p style={{padding: "10vh"}}>Drop files here</p>
+        <a href="#" onClick={() => fileSelector.current.click()} style={{ textDecoration: 'none' }}>
+          <div style={{ marginBottom: '', display: 'inline-block' }}>
+            Click here to upload files
+          </div>
+        </a>
+        <input ref={fileSelector} className="fileUpload" type="file" name="fileUpload" id="fileInput" multiple accept="image/*,video/*" style={{ display: 'none' }} onChange={handleFileSelect} />
+      </div>
+      <button className="outline secondary fileUpload" aria-busy={uploadLoading.busy} onClick={() => handleFileUpload(Array.from(fileSelector.current.files))}>{uploadLoading.text}</button>
       {uploadLoading.response}
+      {uploadedFiles.length > 0 && (
+        <div>
+          <h3>Uploaded Files:</h3>
+          <ul>
+            {uploadedFiles.map((fileName, index) => (
+              <li key={index}>{fileName}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
