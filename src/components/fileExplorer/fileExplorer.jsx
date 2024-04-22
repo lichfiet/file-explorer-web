@@ -85,7 +85,6 @@ const FileExplorer = function ({ setModal }) {
 
     // Re-renders the file list. Run every time fileData is updated or activeFile is updated
     const renderFiles = () => {
-
         setFiles(() => {
             let renderedFiles = []
 
@@ -130,8 +129,10 @@ const FileExplorer = function ({ setModal }) {
             setFileData(fileList);
 
         } catch (error) {
+            createRefs([{ fileName: "No Files Found", fileType: "-", fileExtension: "txt", fileExtensionType: 1 }]);
+            setFileData([{ fileName: "No Files Found", fileType: "-", fileExtension: "txt", fileExtensionType: 1 }]);
+
             console.log('Error fetching files: ' + error.message); // Handle error if API request fails
-            setFileData([{ fileName: "No files found", fileType: '-', fileExtension: "Dir", fileExtensionType: "Dir" }]);
         } finally {
             explorerButtonLoading.refresh(false) // Set the file list to a loading state
             setQueryingFiles(false); // Set querying state to false
@@ -178,7 +179,9 @@ const FileExplorer = function ({ setModal }) {
 
             openPreviewModal(blob, fileExtensionType, fileName);
 
-        } catch (error) { console.log(error) } finally {
+        } catch (error) { 
+            console.log(error) 
+        } finally {
 
             explorerButtonLoading.preview(false); // Set the file preview button state to not busy
 

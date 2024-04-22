@@ -1,0 +1,16 @@
+version: '3'
+services:
+  explorer-web:
+    ports:
+      - 3000:3000
+    volumes:
+      - ./vite:/app
+    depends_on:
+      - backend
+
+  explorer-api:
+    image: explorer-api
+    ports:
+      - 4000:4000
+    volumes:
+      - ./backend:/app
