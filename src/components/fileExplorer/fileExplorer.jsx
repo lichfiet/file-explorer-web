@@ -129,8 +129,8 @@ const FileExplorer = function ({ setModal }) {
             setFileData(fileList);
 
         } catch (error) {
-            createRefs([{ fileName: "No Files Found", fileType: "-", fileExtension: "txt", fileExtensionType: 1 }]);
             setFileData([{ fileName: "No Files Found", fileType: "-", fileExtension: "txt", fileExtensionType: 1 }]);
+            createRefs([{ fileName: "No Files Found", fileType: "-", fileExtension: "txt", fileExtensionType: 1 }]);
 
             console.log('Error fetching files: ' + error.message); // Handle error if API request fails
         } finally {
