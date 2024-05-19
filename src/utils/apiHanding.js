@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const apiUrl = "http://localhost:8443"
+const apiUrl = "http://54.151.9.54:8443"
 
 const localApi = {
 
