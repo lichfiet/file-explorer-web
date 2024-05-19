@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const apiUrl = "http://54.151.9.54:8443"
+const apiUrl = "https://backend.trevorlichfield.com:8443"
 
 const localApi = {
 
