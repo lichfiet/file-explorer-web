@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, createRef } from 'react';
 import localApi from '../../utils/apiHanding';
 import extension from '../../utils/extensiontools'
 import FileUploadForm from './fileUploadForm'
+import FileEditForm from './fileEditModal.jsx';
 import FilePreviewRenderer from './filePreviewRenderer'
 import Toggle from '../buttons/toggle.jsx'
 
@@ -15,6 +16,8 @@ const FileExplorer = function ({ setModal }) {
     const [deleteButtonState, setDeleteButtonState] = useState({ busy: false, icon: <i className="fa fa-solid fa-trash"></i> }) // File Deletion Button State
     const [fileUploading, setFileUploading] = useState({ busy: false, icon: <i className="fa fa-solid fa-plus"></i> }) // File Upload Button State
     const [previewButtonState, setPreviewButtonState] = useState({ busy: false, icon: <i className="fa fa-solid fa-eye"></i> }) // File Open Button State
+    const [editButtonState, setEditButtonState] = useState({ busy: false, icon: <i class="fa fa-regular fa-pen-to-square"></i> }) // File Open Button State
+
 
     const [connectionType, setConnectionType] = useState('S3');
     const [activeFile, setActiveFile] = useState({ fileName: null, index: null, fileExtensionType: null });
@@ -153,6 +156,43 @@ const FileExplorer = function ({ setModal }) {
         )
     };
 
+    const fileEditorController = async (fileName, index, connectionType) => {
+
+        const openEditModal = (fileName, connectionType) => {
+            setModal(
+                <dialog open className="dialogs">
+                    <article className="modals">
+                        <header className='modals-header'>
+                            <a href="#close" aria-label="Close" className="close" onClick={async () => { setModal(null); refreshFiles(); selectedFile.clear(); }}></a>
+                            Editing {fileName}
+                        </header>
+                        <FileEditForm method={connectionType} fileName={fileName}></FileEditForm>
+                    </article>
+                </dialog>
+            )
+        };
+
+
+        console.log("Editing File: " + fileName)
+
+        try {
+            editButtonState.busy = true; // Set the file opening state to busy
+            selectedFile.setLoading(index); // Set the selected file to a loading state
+
+            openEditModal(fileName, connectionType);
+        } catch (error) { 
+            console.log(error) 
+        } finally {
+
+            editButtonState.busy = false; // Set the file preview button state to not busy
+
+            selectedFile.setNotLoading(index);
+            selectedFile.clear();
+        }
+
+    }
+
+
     const getFilePreview = async function (fileName, index, fileExtensionType) {
 
         const openPreviewModal = (selectedFileData, selectedFileType, selectedFileName) => {
@@ -190,7 +230,6 @@ const FileExplorer = function ({ setModal }) {
 
             setQueryingFiles(false); // Set querying state to false
         }
-
     };
 
     // Run every time file is selected
@@ -238,6 +277,7 @@ const FileExplorer = function ({ setModal }) {
                     <button aria-busy={previewButtonState.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType)) }} className="contrast fileExplorerButton">{previewButtonState.icon}</button>
                     <button aria-busy={deleteButtonState.busy} onClick={() => { selectedFile.delete(activeFile.index) }} className="contrast fileExplorerButton">{deleteButtonState.icon}</button>
                     <button aria-busy={fileUploading.busy} onClick={() => { openUploadModal(connectionType) }} className="contrast fileExplorerButton">{fileUploading.icon}</button>
+                    <button aria-busy={editButtonState.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileEditorController(activeFile.fileName, activeFile.index, connectionType)) }} className="contrast fileExplorerButton">{editButtonState.icon}</button>
                 </ul>
                 <ul /** S3 or SFTP radio button */ >
                     <Toggle func={setActiveConnection} text1={'S3'} text2={'SFTP'} opt1Param={'S3'} opt2Param={'SFTP'} stateVar={connectionType} />

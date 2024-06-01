@@ -12,11 +12,13 @@ const localApi = {
 
             console.log("Getting file list from Backend API");
 
-            const response = await axios.get(`${apiUrl}/listFilesDev/`, {headers: {
-                'method': `${connectionType}`,
-                'sessionid': 'true',
-                'Access-Control-Allow-Credentials': 'true',
-            }})
+            const response = await axios.get(`${apiUrl}/listFilesDev/`, {
+                headers: {
+                    'method': `${connectionType}`,
+                    'sessionid': 'true',
+                    'Access-Control-Allow-Credentials': 'true',
+                }
+            })
 
             console.log("Retrieved file list");
             console.log(response.data)
@@ -28,7 +30,7 @@ const localApi = {
             }
         } catch (error) {
             console.error('There was an error:', error);
-            return(undefined);
+            return (undefined);
         } finally {
         }
     },
@@ -37,7 +39,7 @@ const localApi = {
         try {
             console.log("Attempting upload");
             const response = await axios.post(`${apiUrl}/uploadFile/`, formData, {
-                headers : {
+                headers: {
                     'Content-Type': 'multipart/form-data',
                     'method': method,
                     'sessionid': 'true',
@@ -50,7 +52,7 @@ const localApi = {
                 throw new Error('Network response was not ok: ' + response.body);
             } else {
                 console.log("Uploaded File");
-                return {status: response.status, data: response.data}
+                return { status: response.status, data: response.data }
             }
 
         } catch (error) {
@@ -99,11 +101,13 @@ const localApi = {
         try {
 
             console.log("Deleting file from client");
-            const response = await axios.delete(`${apiUrl}/deleteFile/${fileName}/`, {headers: {
-                'method': `${connectionType}`,
-                'sessionid': 'true',
-                'Access-Control-Allow-Credentials': 'true'
-            }});
+            const response = await axios.delete(`${apiUrl}/deleteFile/${fileName}/`, {
+                headers: {
+                    'method': `${connectionType}`,
+                    'sessionid': 'true',
+                    'Access-Control-Allow-Credentials': 'true'
+                }
+            });
             console.log("Retrieved response");
 
             if (!response.status === 200) {
@@ -127,11 +131,31 @@ const localApi = {
 
         }
 
+    },
+    modifyFile: async (fileName, connectionType, fileProperties) => {
+        console.log("Modifying file");
+
+        try {
+            const response = await axios.put(`${apiUrl}/modifyFile/${fileName}/`, fileProperties, {
+                headers: {
+                    'method': `${connectionType}`,
+                    'Access-Control-Allow-Credentials': 'true'
+                }, 
+            });
+
+            console.log(fileProperties)
+
+            response.status != 200 ? () => { throw new Error('Network response was not ok') } : () => { console.log("File modified"); return response };
+            
+        } catch (err) {
+            console.error('There was an error attempting to modify the file:', err);
+        } finally {
+            console.log("Epic request executed")
+        }
+
     }
 
-
 }
-
 
 
 
