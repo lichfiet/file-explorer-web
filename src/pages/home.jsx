@@ -28,10 +28,8 @@ const Home = function () {
 
                     </hgroup>
                     <ul>
-                        <li><a className="contrast socialMedia outline" href="https://github.com/lichfiet"><i className="socialMediaIcon fab fa-github"></i></a></li>
-                        <li><a className="contrast socialMedia outline" href="https://github.com/lichfiet"><i className="socialMediaIcon fab fa-github"></i></a></li>
-                        <li><a className="contrast socialMedia outline" href="https://github.com/lichfiet"><i className="socialMediaIcon fab fa-github"></i></a></li>
-                        <li><a className="contrast socialMedia outline" href="https://www.linkedin.com/in/tlichfield/"><i className="socialMediaIcon fab fa-linkedin-in"></i></a></li>
+                        <li><a className="contrast socialMedia outline" href="https://github.com/lichfiet" target="blank"><i className="socialMediaIcon fab fa-github"></i></a></li>
+                        <li><a className="contrast socialMedia outline" href="https://www.linkedin.com/in/trevorlichfield/" target="blank"><i className="socialMediaIcon fab fa-linkedin-in"></i></a></li>
                     </ul>
 
                 </nav>

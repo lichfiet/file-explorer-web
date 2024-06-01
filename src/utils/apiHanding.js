@@ -153,8 +153,31 @@ const localApi = {
             console.log("Epic request executed")
         }
 
-    }
+    },
+    downloadFile: async (fileName, connectionType) => {
+        try {
+            console.log("Downloading file from FTP Client");
+            const response = await axios.get(`${apiUrl}/downloadFile/${fileName}/`, {
+                responseType: 'blob', // Set responseType to 'blob'
+                headers: {
+                    method: `${connectionType}`,
+                    'sessionid': 'true',
+                    'Access-Control-Allow-Credentials': 'true',
+                }
+            });
+            console.log("Retrieved file list");
 
+            if (!response.status === 200) {
+                throw new Error('Network response was not ok');
+            } else {
+                return (response)
+            }
+        } catch (error) {
+            console.error('There was an error:', error);
+        } finally {
+            console.log("Epic request")
+        }
+    }
 }
 
 
