@@ -48,10 +48,8 @@ Before you can start development, you will need a running instance of the [file-
 ### To Do List:
 - Clean up code *(In progress always)*
 - Store S3 and SFTP config information in SQL db and retrieve based on user
-- SSL for production (Might do SSL through Kubernetes and EKS and leave backend using http)
-- Optimize the FTP Wrapper to use the "exists" function. Looping through the file array is slow.
-- Cleanup SFTP code make easier to use (It's a mess, not sure how it works but it works on my machine)
-- Change S3 method to use postgres to index files and folder, and change S3 keys to UUIDs
+- Optimize the SFTP Wrapper and code, make easier to use (It's a mess, not sure how it works but it works on my machine)
+- Add folders and pagination to file output and storage
 - Create a scalable service for handling file uploads, and file downloads.
 - API Reference
 - Auth with api key or jwt token verification.
