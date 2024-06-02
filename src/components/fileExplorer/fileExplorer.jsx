@@ -4,7 +4,10 @@ import extension from '../../utils/extensiontools'
 import FileUploadForm from './fileUploadForm'
 import FileEditForm from './fileEditModal.jsx';
 import FilePreviewRenderer from './filePreviewRenderer'
+import FolderCreateForm from './folderCreateModal'
+
 import Toggle from '../buttons/toggle.jsx'
+import { act } from 'react';
 
 const FileExplorer = function ({ setModal }) {
 
@@ -17,10 +20,13 @@ const FileExplorer = function ({ setModal }) {
     const [fileUploading, setFileUploading] = useState({ busy: false, icon: <i className="fa fa-solid fa-arrow-up-from-bracket"></i> }) // File Upload Button State
     const [previewButtonState, setPreviewButtonState] = useState({ busy: false, icon: <i className="fa fa-solid fa-eye"></i> }) // File Open Button State
     const [editButtonState, setEditButtonState] = useState({ busy: false, icon: <i class="fa fa-regular fa-pen-to-square"></i> }) // File Open Button State
-
+    const [createFolderButtonState, setCreateFolderButtonState] = useState({ busy: false, icon: <i className="fa fa-solid fa-folder-plus"></i> }) // Create Folder Button State
+    const [upDirectoryButtonState, setUpDirectoryButtonState] = useState({ busy: false, icon: <i className="fa fa-solid fa-arrow-up"></i> })
+    const [previousDirectoryButtonState, setPreviousDirectoryButtonState] = useState({ busy: false, icon: <i className="fa fa-solid fa-arrow-left"></i> })
 
     const [connectionType, setConnectionType] = useState('S3');
     const [activeFile, setActiveFile] = useState({ fileName: null, index: null, fileExtensionType: null });
+    const [currentDirectory, setCurrentDirectory] = useState(null);
 
     const fileIconRefs = useRef([]); // Create a reference to the file list
     const fileBusyRefs = useRef([]); // Create a reference to the file list
@@ -45,6 +51,12 @@ const FileExplorer = function ({ setModal }) {
         },
         upload: (boolean) => {
             (boolean === true ? setFileUploading({ busy: true, icon: null }) : setFileUploading({ busy: false, icon: <i className="fa fa-solid fa-plus"></i> }))
+        },
+        edit: (boolean) => {
+            (boolean === true ? setEditButtonState({ busy: true, icon: null }) : setEditButtonState({ busy: false, icon: <i className="fa fa-regular fa-pen-to-square"></i> }))
+        },
+        create: (boolean) => {
+            (boolean === true ? setCreateFolderButtonState({ busy: true, icon: null }) : setCreateFolderButtonState({ busy: false, icon: <i className="fa fa-solid fa-folder-plus"></i> }))
         }
     };
 
@@ -67,6 +79,14 @@ const FileExplorer = function ({ setModal }) {
             try {
                 if (activeFile.fileName === null) {
                     throw new Error("No File Selected")
+                } else if (activeFile.fileExtensionType = 3) {
+                    explorerButtonLoading.delete(true) // Set file deletion state to busy
+                    selectedFile.setLoading(index); // Set the deleting file to a loading state
+
+                    const response = async () => { await localApi.deleteFolder(activeFile.fileName, connectionType); }
+                    console.log(await response());
+
+                    refreshFiles();
                 } else {
                     explorerButtonLoading.delete(true) // Set file deletion state to busy
                     selectedFile.setLoading(index); // Set the deleting file to a loading state
@@ -156,7 +176,7 @@ const FileExplorer = function ({ setModal }) {
         )
     };
 
-    const fileEditorController = async (fileName, index, connectionType) => {
+    const fileEditorOpener = async (fileName, index, connectionType) => {
 
         const openEditModal = (fileName, connectionType) => {
             setModal(
@@ -180,8 +200,8 @@ const FileExplorer = function ({ setModal }) {
             selectedFile.setLoading(index); // Set the selected file to a loading state
 
             openEditModal(fileName, connectionType);
-        } catch (error) { 
-            console.log(error) 
+        } catch (error) {
+            console.log(error)
         } finally {
 
             editButtonState.busy = false; // Set the file preview button state to not busy
@@ -219,8 +239,8 @@ const FileExplorer = function ({ setModal }) {
 
             openPreviewModal(blob, fileExtensionType, fileName);
 
-        } catch (error) { 
-            console.log(error) 
+        } catch (error) {
+            console.log(error)
         } finally {
 
             explorerButtonLoading.preview(false); // Set the file preview button state to not busy
@@ -257,6 +277,33 @@ const FileExplorer = function ({ setModal }) {
         }
     }
 
+    const folderCreatorOpener = async () => {
+
+        const openFolderCreatorModal = () => {
+            setModal(
+                <dialog open className="dialogs">
+                    <article className="modals">
+                        <header className='modals-header'>
+                            <a href="#close" aria-label="Close" className="close" onClick={async () => { setModal(null); refreshFiles(); selectedFile.clear(); }}></a>
+                            Create Folder
+                        </header>
+                        <FolderCreateForm method={connectionType}></FolderCreateForm>
+                    </article>
+                </dialog>
+            )
+        }
+
+        try {
+            explorerButtonLoading.create(true); // Set the modal opening state to busy
+            openFolderCreatorModal(connectionType);
+        } catch (error) {
+            console.log(error)
+        } finally {
+            explorerButtonLoading.create(false); // Set the modal opening state to not busy
+        }
+    };
+
+
 
     // Fetch files on load
     useEffect(() => {
@@ -266,28 +313,38 @@ const FileExplorer = function ({ setModal }) {
     return (
         <div className="container">
 
-            {useEffect(() => {
-                refreshFiles();
-            }, [connectionType])}
+            <div className="fileExplorerContainer">
+                <div className="fileExplorerDirectoryMap"></div>
 
-            {/** File Explorer Nav */}
-            <nav style={{ padding: "20px" }}>
-                <ul /** file explorer buttons */ >
-                    <button aria-busy={refreshButtonState.busy} onClick={() => { refreshFiles(); }} className="contrast fileExplorerButton">{refreshButtonState.icon}</button>
-                    <button aria-busy={previewButtonState.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType)) }} className="contrast fileExplorerButton">{previewButtonState.icon}</button>
-                    <button aria-busy={deleteButtonState.busy} onClick={() => { selectedFile.delete(activeFile.index) }} className="contrast fileExplorerButton">{deleteButtonState.icon}</button>
-                    <button aria-busy={fileUploading.busy} onClick={() => { openUploadModal(connectionType) }} className="contrast fileExplorerButton">{fileUploading.icon}</button>
-                    <button aria-busy={editButtonState.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileEditorController(activeFile.fileName, activeFile.index, connectionType)) }} className="contrast fileExplorerButton">{editButtonState.icon}</button>
-                </ul>
-                <ul /** S3 or SFTP radio button */ >
-                    <Toggle func={setActiveConnection} text1={'S3'} text2={'SFTP'} opt1Param={'S3'} opt2Param={'SFTP'} stateVar={connectionType} />
-                </ul>
-            </nav>
+                {useEffect(() => {
+                    refreshFiles();
+                }, [connectionType])}
 
-            <hr style={{ marginTop: "0px" }}></hr>
+                {/** File Explorer Nav */}
+                <nav style={{ padding: "20px" }}>
 
-            <div className="filesListed" /** File List */>
-                {files /** updated by fileSelector function */}
+                    <ul /** directory buttons */>
+                        <button aria-busy={previousDirectoryButtonState.busy} onClick={() => { /** TBA */ }} className="contrast fileExplorerButton">{previousDirectoryButtonState.icon}</button>
+                        <button aria-busy={upDirectoryButtonState.busy} onClick={() => { /** TBA */ }} className="contrast fileExplorerButton">{upDirectoryButtonState.icon}</button>
+                        <button aria-busy={createFolderButtonState.busy} onClick={() => { folderCreatorOpener() }} className="contrast fileExplorerButton">{createFolderButtonState.icon}</button>
+                    </ul>
+                    <ul /** file function buttons */ >
+                        <button aria-busy={fileUploading.busy} onClick={() => { openUploadModal(connectionType) }} className="contrast fileExplorerButton">{fileUploading.icon}</button>
+                        <button aria-busy={deleteButtonState.busy} onClick={() => { selectedFile.delete(activeFile.index) }} className="contrast fileExplorerButton">{deleteButtonState.icon}</button>
+                        <button aria-busy={previewButtonState.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType)) }} className="contrast fileExplorerButton">{previewButtonState.icon}</button>
+                        <button aria-busy={editButtonState.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileEditorOpener(activeFile.fileName, activeFile.index, connectionType)) }} className="contrast fileExplorerButton">{editButtonState.icon}</button>
+                        <button aria-busy={refreshButtonState.busy} onClick={() => { refreshFiles(); }} className="contrast fileExplorerButton">{refreshButtonState.icon}</button>
+                    </ul>
+                    <ul /** S3 or SFTP radio button */ >
+                        <Toggle func={setActiveConnection} text1={'S3'} text2={'SFTP'} opt1Param={'S3'} opt2Param={'SFTP'} stateVar={connectionType} />
+                    </ul>
+                </nav>
+
+                <hr style={{ marginTop: "0px" }}></hr>
+
+                <div className="filesListed" /** File List */>
+                    {files /** updated by fileSelector function */}
+                </div>
             </div>
 
         </div>

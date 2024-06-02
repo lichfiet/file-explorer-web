@@ -64,10 +64,12 @@ const localApi = {
 
     getFile: async (fileName, connectionType) => {
 
+        const encodedFileName = encodeURIComponent(fileName);
+
         try {
 
             console.log("Getting file from FTP Client");
-            const response = await axios.get(`${apiUrl}/getFile/${fileName}/`, {
+            const response = await axios.get(`${apiUrl}/getFile/${encodedFileName}`, {
                 responseType: 'blob', // Set responseType to 'blob'
                 headers: {
                     method: `${connectionType}`,
@@ -98,10 +100,12 @@ const localApi = {
 
     deleteFile: async (fileName, connectionType) => {
 
+        const encodedFileName = encodeURIComponent(fileName);
+
         try {
 
             console.log("Deleting file from client");
-            const response = await axios.delete(`${apiUrl}/deleteFile/${fileName}/`, {
+            const response = await axios.delete(`${apiUrl}/deleteFile/${encodedFileName}/`, {
                 headers: {
                     'method': `${connectionType}`,
                     'sessionid': 'true',
@@ -133,10 +137,11 @@ const localApi = {
 
     },
     modifyFile: async (fileName, connectionType, fileProperties) => {
-        console.log("Modifying file");
+        
+        const encodedFileName = encodeURIComponent(fileName);
 
         try {
-            const response = await axios.put(`${apiUrl}/modifyFile/${fileName}/`, fileProperties, {
+            const response = await axios.put(`${apiUrl}/modifyFile/${encodedFileName}/`, fileProperties, {
                 headers: {
                     'method': `${connectionType}`,
                     'Access-Control-Allow-Credentials': 'true'
@@ -177,7 +182,55 @@ const localApi = {
         } finally {
             console.log("Epic request")
         }
-    }
+    },
+    createFolder: async (folderName, connectionType) => {
+        
+        const encodedFolderName = encodeURIComponent(folderName); 
+
+        try {
+            console.log("Creating folder");
+            const response = await axios.post(`${apiUrl}/createFolder/${encodedFolderName}/`, null, {
+                headers: {
+                    'method': `${connectionType}`,
+                    'Access-Control-Allow-Credentials': 'true'
+                }
+            });
+
+            if (!response.status === 200) {
+                throw new Error('Network response was not ok');
+            } else {
+                return (response)
+            }
+        } catch (error) {
+            console.error('There was an error:', error);
+        } finally {
+            console.log("Epic request")
+        }
+    },
+    deleteFolder: async (folderName, connectionType) => {
+        
+        const encodedFolderName = encodeURIComponent(folderName);
+
+        try {
+            console.log("Deleting folder");
+            const response = await axios.delete(`${apiUrl}/deleteFolder/${encodedFolderName}/`, {
+                headers: {
+                    'method': `${connectionType}`,
+                    'Access-Control-Allow-Credentials': 'true'
+                }
+            });
+
+            if (!response.status === 200) {
+                throw new Error('Network response was not ok');
+            } else {
+                return (response)
+            }
+        } catch (error) {
+            console.error('There was an error:', error);
+        } finally {
+            console.log("Epic request")
+        }
+    },
 }
 
 
