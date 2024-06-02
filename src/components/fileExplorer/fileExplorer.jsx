@@ -5,9 +5,12 @@ import FileUploadForm from './fileUploadForm'
 import FileEditForm from './fileEditModal.jsx';
 import FilePreviewRenderer from './filePreviewRenderer'
 import FolderCreateForm from './folderCreateModal'
+import FileNavigationTree from './fileTree.jsx';
+
+
 
 import Toggle from '../buttons/toggle.jsx'
-import { act } from 'react';
+
 
 const FileExplorer = function ({ setModal }) {
 
@@ -16,23 +19,24 @@ const FileExplorer = function ({ setModal }) {
 
     // Button States
     const [refreshButtonState, setRefreshButtonState] = useState({ busy: false, icon: null }) // Refresh Button State
-    const [deleteButtonState, setDeleteButtonState] = useState({ busy: false, icon: <i className="fa fa-solid fa-trash"></i> }) // File Deletion Button State
-    const [fileUploading, setFileUploading] = useState({ busy: false, icon: <i className="fa fa-solid fa-arrow-up-from-bracket"></i> }) // File Upload Button State
-    const [previewButtonState, setPreviewButtonState] = useState({ busy: false, icon: <i className="fa fa-solid fa-eye"></i> }) // File Open Button State
-    const [editButtonState, setEditButtonState] = useState({ busy: false, icon: <i class="fa fa-regular fa-pen-to-square"></i> }) // File Open Button State
-    const [createFolderButtonState, setCreateFolderButtonState] = useState({ busy: false, icon: <i className="fa fa-solid fa-folder-plus"></i> }) // Create Folder Button State
-    const [upDirectoryButtonState, setUpDirectoryButtonState] = useState({ busy: false, icon: <i className="fa fa-solid fa-arrow-up"></i> })
-    const [previousDirectoryButtonState, setPreviousDirectoryButtonState] = useState({ busy: false, icon: <i className="fa fa-solid fa-arrow-left"></i> })
+    const [deleteButtonState, setDeleteButtonState] = useState({ busy: false, icon: <i className="squareIcon fa fa-solid fa-trash"></i> }) // File Deletion Button State
+    const [fileUploading, setFileUploading] = useState({ busy: false, icon: <i className="squareIcon fa fa-solid fa-arrow-up-from-bracket"></i> }) // File Upload Button State
+    const [previewButtonState, setPreviewButtonState] = useState({ busy: false, icon: <i className="squareIcon fa fa-solid fa-eye"></i> }) // File Open Button State
+    const [editButtonState, setEditButtonState] = useState({ busy: false, icon: <i className="squareIcon fa fa-regular fa-pen-to-square"></i> }) // File Open Button State
+    const [createFolderButtonState, setCreateFolderButtonState] = useState({ busy: false, icon: <i className="squareIcon fa fa-solid fa-folder-plus"></i> }) // Create Folder Button State
+    const [upDirectoryButtonState, setUpDirectoryButtonState] = useState({ busy: false, icon: <i className="squareIcon fa fa-solid fa-arrow-up"></i> })
+    const [previousDirectoryButtonState, setPreviousDirectoryButtonState] = useState({ busy: false, icon: <i className="squareIcon fa fa-solid fa-arrow-left"></i> })
 
     const [connectionType, setConnectionType] = useState('S3');
-    const [activeFile, setActiveFile] = useState({ fileName: null, index: null, fileExtensionType: null });
-    const [currentDirectory, setCurrentDirectory] = useState(null);
+    const [activeFile, setActiveFile] = useState({ fileName: null, index: null, fileExtensionType: null, directory: null });
+    const [currentDirectory, setCurrentDirectory] = useState('');
+    const [directoryHistory, setDirectoryHistory] = useState([]);
 
     const fileIconRefs = useRef([]); // Create a reference to the file list
     const fileBusyRefs = useRef([]); // Create a reference to the file list
     const fileBusy = useRef();
 
-    const [queryingFiles, setQueryingFiles] = useState(false);
+    const [fileRetrievalInProgress, setFileRetrievalInProgress] = useState(false);
 
     // Set the active connection type
     const setActiveConnection = (value) => {
@@ -41,28 +45,28 @@ const FileExplorer = function ({ setModal }) {
 
     const explorerButtonLoading = {
         refresh: (boolean) => {
-            (boolean === true ? setRefreshButtonState({ busy: true, icon: null }) : setRefreshButtonState({ busy: false, icon: <i className="fa fa-solid fa-rotate-right"></i> }))
+            (boolean === true ? setRefreshButtonState({ busy: true, icon: null }) : setRefreshButtonState({ busy: false, icon: <i className="squareIcon fa fa-solid fa-rotate-right"></i> }))
         },
         preview: (boolean) => {
-            (boolean === true ? setPreviewButtonState({ busy: true, icon: undefined }) : setPreviewButtonState({ busy: false, icon: <i className="fa fa-solid fa-eye"></i> }))
+            (boolean === true ? setPreviewButtonState({ busy: true, icon: undefined }) : setPreviewButtonState({ busy: false, icon: <i className="squareIcon fa fa-solid fa-eye"></i> }))
         },
         delete: (boolean) => {
-            (boolean === true ? setDeleteButtonState({ busy: true, icon: null }) : setDeleteButtonState({ busy: false, icon: <i className="fa fa-solid fa-trash"></i> }))
+            (boolean === true ? setDeleteButtonState({ busy: true, icon: null }) : setDeleteButtonState({ busy: false, icon: <i className="squareIcon fa fa-solid fa-trash"></i> }))
         },
         upload: (boolean) => {
-            (boolean === true ? setFileUploading({ busy: true, icon: null }) : setFileUploading({ busy: false, icon: <i className="fa fa-solid fa-plus"></i> }))
+            (boolean === true ? setFileUploading({ busy: true, icon: null }) : setFileUploading({ busy: false, icon: <i className="squareIcon fa fa-solid fa-plus"></i> }))
         },
         edit: (boolean) => {
-            (boolean === true ? setEditButtonState({ busy: true, icon: null }) : setEditButtonState({ busy: false, icon: <i className="fa fa-regular fa-pen-to-square"></i> }))
+            (boolean === true ? setEditButtonState({ busy: true, icon: null }) : setEditButtonState({ busy: false, icon: <i className="squareIcon fa fa-regular fa-pen-to-square"></i> }))
         },
         create: (boolean) => {
-            (boolean === true ? setCreateFolderButtonState({ busy: true, icon: null }) : setCreateFolderButtonState({ busy: false, icon: <i className="fa fa-solid fa-folder-plus"></i> }))
+            (boolean === true ? setCreateFolderButtonState({ busy: true, icon: null }) : setCreateFolderButtonState({ busy: false, icon: <i className="squareIcon fa fa-solid fa-folder-plus"></i> }))
         }
     };
 
     const selectedFile = {
         clear: () => {
-            setActiveFile({ fileName: null, index: null, fileExtensionType: null });
+            setActiveFile({ fileName: null, index: null, fileExtensionType: null, directory: null });
         },
         setLoading: async (index) => {
             let icon = fileIconRefs.current[index].current;
@@ -83,7 +87,7 @@ const FileExplorer = function ({ setModal }) {
                     explorerButtonLoading.delete(true) // Set file deletion state to busy
                     selectedFile.setLoading(index); // Set the deleting file to a loading state
 
-                    const response = async () => { await localApi.deleteFolder(activeFile.fileName, connectionType); }
+                    const response = async () => { await localApi.deleteFolder(activeFile.directory, connectionType); }
                     console.log(await response());
 
                     refreshFiles();
@@ -91,7 +95,7 @@ const FileExplorer = function ({ setModal }) {
                     explorerButtonLoading.delete(true) // Set file deletion state to busy
                     selectedFile.setLoading(index); // Set the deleting file to a loading state
 
-                    const response = async () => { await localApi.deleteFile(activeFile.fileName, connectionType); }
+                    const response = async () => { await localApi.deleteFile(activeFile.directory, connectionType); }
                     console.log(await response())
 
                     refreshFiles();
@@ -100,7 +104,7 @@ const FileExplorer = function ({ setModal }) {
                 console.log('Error fetching files:', error.message);
             } finally {
                 explorerButtonLoading.delete(false) // Set file delete button state to not busy
-                setActiveFile({ fileName: null, index: null, fileExtensionType: null });
+                setActiveFile({ fileName: null, index: null, fileExtensionType: null, directory: null });
             }
         }
     }
@@ -113,13 +117,13 @@ const FileExplorer = function ({ setModal }) {
 
             fileData.map((obj, index) => (
                 renderedFiles.push(
-                    <div className="fileReturned" key={index} id={obj.fileName}>
-                        <button ref={fileIconRefs[index]} name={obj.fileName} id={"button-" + obj.fileName} className={(obj.fileName === activeFile.fileName ? "fileReturnedButtonSelected secondary" : "fileReturnedButton secondary")} onClick={() => { fileSelector(obj.fileName, index, obj.fileExtensionType) }}>
-                            <div className={`${(obj.fileName === activeFile.fileName ? "fileReturnedIconSelected" : "fileReturnedIcon")} fileReturned`} id={index} aria-busy={fileBusyRefs.current[index].current}>
-                                {fileIconRefs.current[index].current}{/* {extension.getThumbnail(obj.fileExtensionType, obj.fileType)} */}
+                    <div className="fileReturned" key={index} id={obj.name}>
+                        <button ref={fileIconRefs[index]} name={obj.name} id={"button-" + obj.name} directory={obj.directory} className={(obj.name === activeFile.fileName ? "fileReturnedButtonSelected secondary" : "fileReturnedButton secondary")} onClick={() => { fileSelector(obj.name, index, obj.extensionType, obj.directory), console.log("renderfiled directory: " + obj.directory) }}>
+                            <div className={`${(obj.name === activeFile.fileName ? "fileReturnedIconSelected" : "fileReturnedIcon")} fileReturned`} id={index} aria-busy={fileBusyRefs.current[index].current}>
+                                {fileIconRefs.current[index].current}{/* {extension.getThumbnail(obj.extensionType, obj.type)} */}
                             </div>
                         </button>
-                        <p className="fileReturnedText" extension={obj.fileExtension}>{obj.fileName}</p>
+                        <p className="fileReturnedText" extension={obj.extension}>{obj.name}</p>
                     </div>)
             ))
 
@@ -132,33 +136,36 @@ const FileExplorer = function ({ setModal }) {
 
         const createRefs = (fileList) => {
             fileList.map((obj, index) => {
+                // create ref for icon
                 fileIconRefs.current[index] = createRef();
-                fileIconRefs.current[index].current = extension.getThumbnail(obj.fileExtensionType, obj.fileType);
+                fileIconRefs.current[index].current = extension.getThumbnail(obj.extensionType, obj.type);
 
+                // create ref for busy state
                 fileBusyRefs.current[index] = createRef();
                 fileBusyRefs.current[index].current = "false";
             })
         };
 
         try {
-            setQueryingFiles(true); // Set querying state to true
+            setFileRetrievalInProgress(true); // Set querying state to true
             explorerButtonLoading.refresh(true) // Set the file list to a loading state
-            setFiles(<div aria-busy="true"><p style={{ color: "white" }}>Loading...</p></div>); // Set the file list to a loading state
+            setFiles(<div aria-busy="true" style={{alignContent: "center", justifyContent: "center", display: "flex-box", margin: "100%", position: "relative"}}><p style={{ color: "white", alignContent: "center", justifyContent: "center"}}>Loading...</p></div>); // Set the file list to a loading state
 
-            const data = localApi.requestFiles(connectionType)
-            let fileList = await data
+            const response = localApi.requestFiles(connectionType, currentDirectory)
+            let fileData = await response;
 
-            createRefs(fileList);
-            setFileData(fileList);
+            createRefs(fileData);
+            setFileData(fileData);
 
         } catch (error) {
-            setFileData([{ fileName: "No Files Found", fileType: "-", fileExtension: "txt", fileExtensionType: 1 }]);
-            createRefs([{ fileName: "No Files Found", fileType: "-", fileExtension: "txt", fileExtensionType: 1 }]);
+            console.log(error)
+            setFileData([{ fileName: "No Files Found", fileType: "-", fileExtension: "txt", fileExtensionType: 1, directory: "null" }]);
+            createRefs([{ fileName: "No Files Found", fileType: "-", fileExtension: "txt", fileExtensionType: 1, directory: "null" }]);
 
             console.log('Error fetching files: ' + error.message); // Handle error if API request fails
         } finally {
             explorerButtonLoading.refresh(false) // Set the file list to a loading state
-            setQueryingFiles(false); // Set querying state to false
+            setFileRetrievalInProgress(false); // Set querying state to false
         }
     }
 
@@ -176,7 +183,7 @@ const FileExplorer = function ({ setModal }) {
         )
     };
 
-    const fileEditorOpener = async (fileName, index, connectionType) => {
+    const getFileEditorModal = async (fileName, index, connectionType) => {
 
         const openEditModal = (fileName, connectionType) => {
             setModal(
@@ -213,7 +220,7 @@ const FileExplorer = function ({ setModal }) {
     }
 
 
-    const getFilePreview = async function (fileName, index, fileExtensionType) {
+    const getFilePreviewModal = async function (fileName, index, fileExtensionType) {
 
         const openPreviewModal = (selectedFileData, selectedFileType, selectedFileName) => {
             setModal(
@@ -230,11 +237,11 @@ const FileExplorer = function ({ setModal }) {
         }
 
         try {
-            setQueryingFiles(true); // Set querying state to true
+            setFileRetrievalInProgress(true); // Set querying state to true
             explorerButtonLoading.preview(true); // Set the file opening state to busy
             selectedFile.setLoading(index); // Set the selected file to a loading state
 
-            const response = await localApi.getFile(fileName, connectionType); // Query the file
+            const response = await localApi.getFile(activeFile.directory, connectionType); // Query the file
             const blob = new Blob([response.data], { type: `image/${extension.getFromFileName(fileName)}` }); // Create a blob from the file data 
 
             openPreviewModal(blob, fileExtensionType, fileName);
@@ -248,38 +255,13 @@ const FileExplorer = function ({ setModal }) {
             selectedFile.setNotLoading(index);
             selectedFile.clear();
 
-            setQueryingFiles(false); // Set querying state to false
+            setFileRetrievalInProgress(false); // Set querying state to false
         }
     };
+    
+    const getFolderCreateModal = async () => {
 
-    // Run every time file is selected
-    const fileSelector = async (fileName, index, fileExtensionType) => {
-        if (queryingFiles) {
-            return; // If querying files, return without performing any action
-        } else if ((fileName === null)) { // If no fileName was passed to the function
-
-            console.log("No File Name Passed To File Selector")
-
-        } else if (activeFile.fileName === null || activeFile.fileName === undefined) { // If no file is currently selected
-
-            setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType });
-
-        } else if (activeFile.fileName === fileName) { // If the file clicked is the same as the one selected
-
-            setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType }); // Set the active file to the one just clicked on
-            selectedFile.clear();
-            return (getFilePreview(fileName, index, fileExtensionType));
-
-        } else if (activeFile.fileName !== fileName) { // If the file clicked is different from the one selected
-
-            setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType });
-
-        }
-    }
-
-    const folderCreatorOpener = async () => {
-
-        const openFolderCreatorModal = () => {
+        const openFolderCreatorModal = (connectionType, currentDirectory) => {
             setModal(
                 <dialog open className="dialogs">
                     <article className="modals">
@@ -287,7 +269,7 @@ const FileExplorer = function ({ setModal }) {
                             <a href="#close" aria-label="Close" className="close" onClick={async () => { setModal(null); refreshFiles(); selectedFile.clear(); }}></a>
                             Create Folder
                         </header>
-                        <FolderCreateForm method={connectionType}></FolderCreateForm>
+                        <FolderCreateForm method={connectionType} currentDirectory={currentDirectory}></FolderCreateForm>
                     </article>
                 </dialog>
             )
@@ -295,13 +277,58 @@ const FileExplorer = function ({ setModal }) {
 
         try {
             explorerButtonLoading.create(true); // Set the modal opening state to busy
-            openFolderCreatorModal(connectionType);
+            openFolderCreatorModal(connectionType, currentDirectory);
         } catch (error) {
             console.log(error)
         } finally {
             explorerButtonLoading.create(false); // Set the modal opening state to not busy
         }
     };
+    
+    // Run every time file is selected
+    const fileSelector = async (fileName, index, fileExtensionType, filePath) => {
+        const setActive = () => { setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType, directory: filePath }); }
+
+        if (fileRetrievalInProgress) { return; } else if (fileName === null) { return;
+
+        } else if (activeFile.fileName === null ||  undefined) {
+            setActive();
+
+        } else if (activeFile.directory === filePath) {
+            setActive()
+            selectedFile.clear();
+            if (fileExtensionType === 3) {
+                setDirectoryHistory(prevHistory => [...prevHistory, currentDirectory]);
+                console.log('File Path:' + filePath)
+                setCurrentDirectory(filePath);
+            } else {
+                return getFilePreviewModal(filePath, index, fileExtensionType);
+            }
+            
+        } else if (activeFile.fileName !== fileName) {
+            setActive()
+        }
+    }
+
+
+    const navigate = async (direction) => {
+        if (direction === 'up') {
+            if (currentDirectory === '') {
+                return;
+            } else {
+                const transformedDirectory = currentDirectory.endsWith('/') ? currentDirectory.slice(0, -1) : currentDirectory;
+                setCurrentDirectory(transformedDirectory.substring(0, transformedDirectory.lastIndexOf('/')));
+                setDirectoryHistory(prevHistory => [...prevHistory, currentDirectory]);
+            }
+        } else if (direction === 'previous') {
+            if (directoryHistory.length > 0) {
+                const previousDir = directoryHistory.pop();
+                setCurrentDirectory(previousDir);
+            }
+        } else if (direction === 'down') {
+            // Implement later
+        }
+    }
 
 
 
@@ -311,43 +338,61 @@ const FileExplorer = function ({ setModal }) {
     }, [activeFile, fileData, fileBusy.current]);
 
     return (
-        <div className="container">
+
 
             <div className="fileExplorerContainer">
-                <div className="fileExplorerDirectoryMap"></div>
+                <div className="fileExplorerDirectoryTree">
+                    <FileNavigationTree fileList={files}/>
+                </div>
+                <div className="fileExplorerInterface">
+                    {useEffect(() => {
+                        refreshFiles();
+                        console.log(currentDirectory)
+                    }, [connectionType, currentDirectory])}
 
-                {useEffect(() => {
-                    refreshFiles();
-                }, [connectionType])}
+                    {/** File Explorer Nav */}
+                    <div>
+                        <nav className="fileExplorerNav">
+                            <ul /** directory buttons */>
+                            <button
+                                aria-busy={previousDirectoryButtonState.busy}
+                                onClick={() => navigate('previous')}
+                                className="contrast fileExplorerButton"
+                            >
+                                {previousDirectoryButtonState.icon}
+                            </button>
+                            <button
+                            aria-busy={upDirectoryButtonState.busy}
+                            onClick={() => navigate('up')}
+                            className="contrast fileExplorerButton"
+                        >
+                            {upDirectoryButtonState.icon}
+                        </button>
+                                <button aria-busy={createFolderButtonState.busy} onClick={() => { getFolderCreateModal() }} className="contrast fileExplorerButton">{createFolderButtonState.icon}</button>
+                            </ul>
+                            <ul /** file function buttons */ >
+                                <button aria-busy={fileUploading.busy} onClick={() => { openUploadModal(connectionType) }} className="contrast fileExplorerButton">{fileUploading.icon}</button>
+                                <button aria-busy={deleteButtonState.busy} onClick={() => { selectedFile.delete(activeFile.index) }} className="contrast fileExplorerButton">{deleteButtonState.icon}</button>
+                                <button aria-busy={previewButtonState.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType, activeFile.directory)) }} className="contrast fileExplorerButton">{previewButtonState.icon}</button>
+                                <button aria-busy={editButtonState.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : getFileEditorModal(activeFile.directory , activeFile.index, connectionType)) }} className="contrast fileExplorerButton">{editButtonState.icon}</button>
+                                <button aria-busy={refreshButtonState.busy} onClick={() => { refreshFiles(); }} className="contrast fileExplorerButton">{refreshButtonState.icon}</button>
+                            </ul>
+                            <ul /** S3 or SFTP radio button */ >
+                                <Toggle func={setActiveConnection} text1={'S3'} text2={'SFTP'} opt1Param={'S3'} opt2Param={'SFTP'} stateVar={connectionType} />
+                            </ul>
+                        </nav>
+                    </div>
 
-                {/** File Explorer Nav */}
-                <nav style={{ padding: "20px" }}>
+                    <hr style={{ marginTop: "0px" }}></hr>
 
-                    <ul /** directory buttons */>
-                        <button aria-busy={previousDirectoryButtonState.busy} onClick={() => { /** TBA */ }} className="contrast fileExplorerButton">{previousDirectoryButtonState.icon}</button>
-                        <button aria-busy={upDirectoryButtonState.busy} onClick={() => { /** TBA */ }} className="contrast fileExplorerButton">{upDirectoryButtonState.icon}</button>
-                        <button aria-busy={createFolderButtonState.busy} onClick={() => { folderCreatorOpener() }} className="contrast fileExplorerButton">{createFolderButtonState.icon}</button>
-                    </ul>
-                    <ul /** file function buttons */ >
-                        <button aria-busy={fileUploading.busy} onClick={() => { openUploadModal(connectionType) }} className="contrast fileExplorerButton">{fileUploading.icon}</button>
-                        <button aria-busy={deleteButtonState.busy} onClick={() => { selectedFile.delete(activeFile.index) }} className="contrast fileExplorerButton">{deleteButtonState.icon}</button>
-                        <button aria-busy={previewButtonState.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType)) }} className="contrast fileExplorerButton">{previewButtonState.icon}</button>
-                        <button aria-busy={editButtonState.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileEditorOpener(activeFile.fileName, activeFile.index, connectionType)) }} className="contrast fileExplorerButton">{editButtonState.icon}</button>
-                        <button aria-busy={refreshButtonState.busy} onClick={() => { refreshFiles(); }} className="contrast fileExplorerButton">{refreshButtonState.icon}</button>
-                    </ul>
-                    <ul /** S3 or SFTP radio button */ >
-                        <Toggle func={setActiveConnection} text1={'S3'} text2={'SFTP'} opt1Param={'S3'} opt2Param={'SFTP'} stateVar={connectionType} />
-                    </ul>
-                </nav>
+                    <div className="filesListed" /** File List */>
+                        {files /** updated by fileSelector function */}
+                    </div>
 
-                <hr style={{ marginTop: "0px" }}></hr>
-
-                <div className="filesListed" /** File List */>
-                    {files /** updated by fileSelector function */}
                 </div>
             </div>
 
-        </div>
+    
     );
 };
 

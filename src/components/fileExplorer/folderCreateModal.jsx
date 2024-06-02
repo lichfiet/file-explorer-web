@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import localApi from '../../utils/apiHanding';
 
-export default function FolderCreateForm({ method }) {
+export default function FolderCreateForm({ method, currentDirectory}) {
     const [name, setName] = useState(null);
     const [isDirty, setIsDirty] = useState(false);
 
@@ -14,7 +14,7 @@ export default function FolderCreateForm({ method }) {
         setIsDirty(false);
 
         const editedName = name ? name.replace(/\/+$/, '') : '';
-        console.log(await localApi.createFolder(editedName, method));
+        console.log(await localApi.createFolder(currentDirectory + editedName, method));
 
         try {
             console.log(await localApi.createFolder( editedName, method ));
