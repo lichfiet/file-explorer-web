@@ -2,30 +2,38 @@ import React, { useState, useEffect } from 'react';
 import FolderTree from 'react-folder-tree';
 import axios from 'axios';
 
-const FileNavigationTree = ({ fileList }) => {
+const FileNavigationTree = ({ fileList, fileSelector }) => {
     const [treeData, setTreeData] = useState([]);
 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             const response = await axios.get(`http://localhost:8443/listFiles/`, {
-    //                 headers: {
-    //                     'method': `S3`,
-    //                     'sessionid': 'true',
-    //                     'Access-Control-Allow-Credentials': 'true',
-    //                 }
-    //             });
-    //             setTreeData(response.data);
-    //         } catch (error) {
-    //             console.error('Error fetching tree data:', error);
-    //         }
-    //     };
+    
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8443/listFiles/`, {
+                    headers: {
+                        'method': `S3`,
+                        'sessionid': 'true',
+                        'Access-Control-Allow-Credentials': 'true',
+                    }
+                });
+                setTreeData(response.data);
+            } catch (error) {
+                console.error('Error fetching tree data:', error);
+            }
+        };
+        
+        fetchData();
+    }, [fileList]);
+    
+    const onNameClick = async ({ defaultOnClick, nodeData}) => {
+        defaultOnClick();
 
-    //     fetchData();
-    // }, []);
+        await fileSelector(nodeData.name, 0, nodeData.extensionType, nodeData.directory);
+
+      };
 
     const onTreeStateChange = (state, event) => {
-        console.log(state, event);
+        // maybe update later to save state and whatnot
     };
 
     return (
@@ -36,6 +44,9 @@ const FileNavigationTree = ({ fileList }) => {
                     data={treeData}
                     onChange={onTreeStateChange}
                     showCheckbox={false}
+                    onNameClick={onNameClick}
+                    readOnly={true}
+                    indentPixels={ 15 }
                 />
             </div>
         </>

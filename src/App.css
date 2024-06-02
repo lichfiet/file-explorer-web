@@ -93,7 +93,7 @@ p {
 }
 
 .fileExplorerButton {
-  font-size: 90%;
+  font-size: 80%;
   background-color: #ebebeb;
   border-color: #2b2d31;
   color: #222125;
@@ -107,7 +107,7 @@ p {
   height: 20px;
   align-content: center;
   justify-content: center;
-  margin: 10px;
+  margin: 8px;
 }
 
 .fileExplorerNav {
@@ -146,15 +146,20 @@ p {
 
 .fileReturnedButtonSelected {
   background-color: #313135;
+  border-color: #2b2d3100;
   color: white;
 }
 
 .fileReturnedIcon {
   color: #2a2b30;
+  width: 35px;
+  height: 42px;
 }
 
 .fileReturnedIconSelected {
   color: white;
+  width: 35px;
+  height: 42px;
 }
 
 .toggle {
