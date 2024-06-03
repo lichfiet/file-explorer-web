@@ -6,10 +6,8 @@ const localApi = {
 
 
     requestFiles: async (connectionType, currentDirectory) => {
-
         try {
-            console.log(`${apiUrl}/listFiles/${currentDirectory}`)
-
+            console.debug(`${apiUrl}/listFiles/${currentDirectory}`)
             console.log("Getting file list from Backend API");
 
             const response = await axios.get(`${apiUrl}/listFiles/${currentDirectory}`, {
@@ -20,8 +18,7 @@ const localApi = {
                 }
             })
 
-            console.log("Retrieved file list");
-            console.log((response.data.children).map((file) => JSON.stringify(file)))
+            console.debug((response.data.children).map((file) => JSON.stringify(file)))
 
             if (!response.status === 200 || response === undefined) {
                 throw new Error('Network response was not ok');
@@ -31,7 +28,6 @@ const localApi = {
         } catch (error) {
             console.error('There was an error:', error);
             return (undefined);
-        } finally {
         }
     },
 
@@ -44,10 +40,8 @@ const localApi = {
                     'method': method,
                     'sessionid': 'true',
                     'Access-Control-Allow-Credentials': true,
-                }
-            })
+                }});
 
-            // Check for valid response
             if (!response.status === 200) {
                 throw new Error('Network response was not ok: ' + response.body);
             } else {
@@ -58,26 +52,24 @@ const localApi = {
         } catch (error) {
             console.error('There was an error: ', error);
         } finally {
-            console.log("File Upload Request Executed")
+            console.debug("File Upload Request Executed")
         }
     },
 
     getFile: async (fileName, connectionType) => {
 
         const encodedFileName = encodeURIComponent(fileName);
-
         try {
 
-            console.log("Getting file from FTP Client");
+            console.debug("Getting file from FTP Client");
             const response = await axios.get(`${apiUrl}/getFile/${encodedFileName}`, {
                 responseType: 'blob', // Set responseType to 'blob'
                 headers: {
                     method: `${connectionType}`,
                     'sessionid': 'true',
                     'Access-Control-Allow-Credentials': 'true',
-                }
-            });
-            console.log("Retrieved file list");
+                }});
+            console.debug("Retrieved file list");
 
             if (!response.status === 200) {
                 throw new Error('Network response was not ok');
@@ -85,22 +77,15 @@ const localApi = {
                 return (response)
             }
 
-
         } catch (error) {
-
             console.error('There was an error:', error);
-
-        } finally {
-
-            console.log("Epic request")
-
         }
-
     },
 
     deleteFile: async (fileName, connectionType) => {
 
         const encodedFileName = encodeURIComponent(fileName);
+        console.log(`${apiUrl}/deleteFile/${encodedFileName}`)
 
         try {
 

@@ -40,7 +40,7 @@ const extension = {
         for (let n = 0; n < fileList.length; n++) {
             let fileName = fileList[n];
             let validity = extension.checkValid(extension.getFromFileName(fileName));
-            if ([0, 1, 2].includes(validity[0]) === true) {
+            if ([0, 1, 2, 99].includes(validity[0]) === true) {
                 validFiles.push(fileName);
             }
         }

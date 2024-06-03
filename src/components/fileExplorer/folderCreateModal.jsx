@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import localApi from '../../utils/apiHanding';
 
-export default function FolderCreateForm({ method, currentDirectory}) {
+export default function FolderCreateForm({ connectionType, currentDirectory}) {
     const [name, setName] = useState(null);
     const [isDirty, setIsDirty] = useState(false);
 
@@ -14,11 +14,9 @@ export default function FolderCreateForm({ method, currentDirectory}) {
         setIsDirty(false);
 
         const editedName = name ? name.replace(/\/+$/, '') : '';
-        console.log(await localApi.createFolder(currentDirectory + editedName, method));
 
         try {
-            console.log(await localApi.createFolder( editedName, method ));
-
+            console.debug(await localApi.createFolder( currentDirectory + editedName, connectionType ));
         } catch (error) {
             console.error('There was an error:', error);
         } finally {

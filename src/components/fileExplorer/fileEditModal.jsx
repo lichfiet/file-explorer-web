@@ -17,7 +17,7 @@ export default function FileEditForm({ method, fileName }) {
         const formFileProps = {
             fileProperties: {
                 name: name,
-                director: "/",
+                directory: "/",
             }
         };
 
