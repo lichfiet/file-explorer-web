@@ -23,7 +23,7 @@ const localApi = {
             console.log("Retrieved file list");
             console.log((response.data.children).map((file) => JSON.stringify(file)))
 
-            if (!response.status === 200) {
+            if (!response.status === 200 || response === undefined) {
                 throw new Error('Network response was not ok');
             } else {
                 return response.data.children

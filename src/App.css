@@ -296,3 +296,9 @@ p {
   filter: drop-shadow(0px 0px 5px #4e4949);
   display: inline;
 }
+
+.toastContainerCustom {
+  --toastify-text-color-light: #e9e9f0; /* Example color */
+  font-size: 70%;
+  --toastify-color-light: hwb(227 11% 86%);
+}

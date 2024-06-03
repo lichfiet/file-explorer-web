@@ -7,12 +7,10 @@ import FilePreviewRenderer from './filePreviewRenderer'
 import FolderCreateForm from './folderCreateModal'
 import FileNavigationTree from './fileTree.jsx';
 
-
-
 import Toggle from '../buttons/toggle.jsx'
 
 
-const FileExplorer = function ({ setModal }) {
+const FileExplorer = function ({ setModal, showError }) {
 
     const [files, setFiles] = useState(<div aria-busy="true"></div>); // State Data for file list
     const [fileData, setFileData] = useState([]); // State Data for file list
@@ -115,7 +113,9 @@ const FileExplorer = function ({ setModal }) {
     const renderFiles = () => {
         setFiles(() => {
             let renderedFiles = []
-
+            if (fileData === undefined || fileData === null || fileData == []) {
+                return;
+            } else {
             fileData.map((obj, index) => (
                 renderedFiles.push(
                     <div className="fileReturned" key={index} id={obj.name}>
@@ -129,6 +129,8 @@ const FileExplorer = function ({ setModal }) {
             ))
 
             return renderedFiles
+
+            }
         }); // Update file state variable
     };
 
@@ -136,6 +138,9 @@ const FileExplorer = function ({ setModal }) {
     const refreshFiles = async () => {
 
         const createRefs = (fileList) => {
+            if (fileList === undefined || fileList === null || fileList == []) {
+                return
+            } else {
             fileList.map((obj, index) => {
                 // create ref for icon
                 fileIconRefs.current[index] = createRef();
@@ -145,6 +150,7 @@ const FileExplorer = function ({ setModal }) {
                 fileBusyRefs.current[index] = createRef();
                 fileBusyRefs.current[index].current = "false";
             })
+        }
         };
 
         try {
@@ -152,16 +158,27 @@ const FileExplorer = function ({ setModal }) {
             explorerButtonLoading.refresh(true) // Set the file list to a loading state
             setFiles(<div aria-busy="true" style={{ alignContent: "center", justifyContent: "center", display: "flex-box", margin: "100%", position: "relative" }}><p style={{ color: "white", alignContent: "center", justifyContent: "center" }}>Loading...</p></div>); // Set the file list to a loading state
 
-            const response = localApi.requestFiles(connectionType, currentDirectory)
+            const response = await localApi.requestFiles(connectionType, currentDirectory)
             let fileData = await response;
+
+            const validatedResponse = async (fileData) => { 
+                if (await fileData.length === 0) {
+                    fileData = []
+                    console.log("meow")
+                    showError("No files found in this directory")
+                } else {
+                    return;
+                } 
+            }
+            await validatedResponse(fileData);
 
             createRefs(fileData);
             setFileData(fileData);
 
         } catch (error) {
-            console.log(error)
-            setFileData([{ fileName: "No Files Found", fileType: "-", fileExtension: "txt", fileExtensionType: 1, directory: "null" }]);
-            createRefs([{ fileName: "No Files Found", fileType: "-", fileExtension: "txt", fileExtensionType: 1, directory: "null" }]);
+            setFileData([]);
+            createRefs([]);
+            showError("Error Occured Retrieving Files From Remote")
 
             console.log('Error fetching files: ' + error.message); // Handle error if API request fails
         } finally {
