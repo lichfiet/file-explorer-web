@@ -15,7 +15,7 @@ const Search = ({ currentDirectory, fileList, fileSelector }) => {
             data.forEach((file) => {
                 unMapFileList.push({
                     key: file.directory,
-                    value: file.directory,
+                    value: file.name,
                     name: file.name,
                     extensionType: 3,
                     directory: file.directory,

@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, createRef } from 'react';
 import localApi from '../../utils/apiHanding';
 import extension from '../../utils/extensiontools'
-import FileUploadForm from './fileUploadForm'
-import FileEditForm from './fileEditModal.jsx';
-import FilePreviewRenderer from './filePreviewRenderer'
+import FileUploadForm from './explorerComponents/FileUploadModal/fileUploadForm.jsx'
+import FileEditForm from './explorerComponents/FileEditModal/fileEditModal.jsx';
+import FilePreviewRenderer from './explorerComponents/FilePreviewModal/filePreviewRenderer.jsx'
 import FolderCreateForm from './folderCreateModal'
 import FileNavigationTree from './fileTree.jsx';
 import Search from './Search.jsx';
@@ -28,6 +28,7 @@ const FileExplorer = function ({ setModal, showError }) {
     const [createFolderButtonState, setCreateFolderButtonState] = useState({ busy: false, icon: <i className="squareIcon fa fa-solid fa-folder-plus"></i> }) // Create Folder Button State
     const [upDirectoryButtonState, setUpDirectoryButtonState] = useState({ busy: false, icon: <i className="squareIcon fa fa-solid fa-arrow-up"></i> })
     const [previousDirectoryButtonState, setPreviousDirectoryButtonState] = useState({ busy: false, icon: <i className="squareIcon fa fa-solid fa-arrow-left"></i> })
+    const [nextDirectoryButtonState, setnextDirectoryButtonState] = useState({ busy: false, icon: <i className="squareIcon fa fa-solid fa-arrow-right"></i> })
 
     class NullActiveFile {
         constructor() {
@@ -412,8 +413,11 @@ const FileExplorer = function ({ setModal, showError }) {
                 const previousDir = directoryHistory.pop();
                 setCurrentDirectory(previousDir);
             }
-        } else if (direction === 'down') {
-            // Implement later
+        } else if (direction === 'next') {
+            if (directoryHistory.length > 0) {
+                const nextDir = directoryHistory.shift(-1);
+                setCurrentDirectory(nextDir);
+            }
         }
     }
 
@@ -464,6 +468,9 @@ const FileExplorer = function ({ setModal, showError }) {
                             </button>
                             <button aria-busy={upDirectoryButtonState.busy} onClick={() => navigate('up')} className="contrast fileExplorerButton">
                                 {upDirectoryButtonState.icon}
+                            </button>
+                            <button aria-busy={nextDirectoryButtonState.busy} onClick={() => navigate('next')} className="contrast fileExplorerButton">
+                                {nextDirectoryButtonState.icon}
                             </button>
                         </ul>
                         <ul>

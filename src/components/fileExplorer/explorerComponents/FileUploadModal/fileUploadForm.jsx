@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import localApi from '../../utils/apiHanding';
+import localApi from '../../../../utils/apiHanding';
 
 export default function FileUploadForm({ method }) {
   const fileSelector = useRef(null);

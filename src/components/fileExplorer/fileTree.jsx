@@ -20,7 +20,7 @@ const FileNavigationTree = ({ fileList, fileSelector }) => {
     return (
         <>
             <div className="fileExplorerDirectoryTreeContainer">
-                <h5 style={{ color: "#e9e9f0", fontSize: "110%", marginBottom: "3%" }}>Navigation Tree</h5>
+                <h5 style={{ color: "#e9e9f0", fontSize: "110%", marginBottom: "3%" }}><i className="squareIcon fa fa-solid fa-folder-tree"></i> Navigation Tree</h5>
                 <FolderTree
                     data={treeData}
                     onChange={onTreeStateChange}
