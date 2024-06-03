@@ -1,22 +1,37 @@
 const extension = {
 
     getFromFileName: function (fileName) {
-        return ((fileName.split('.').pop()) === "jpg" ? "jpeg" : (fileName.split('.').pop()))
+
+        const splitFileName = fileName.split('.');
+        let fileExtension = splitFileName[splitFileName.length - 1];
+    
+        const directoryCheck = (fileName) => {
+            const lastChar = fileName[fileName.length - 1];
+            lastChar === '/' ? fileExtension = '/' : null;
+        };
+    
+        directoryCheck(fileName);
+    
+        return fileExtension
     },
 
     checkValid: function (fileExtension) {
 
-        const def = (fileExtension === undefined ? true : false)
-
-        if (RegExp((/^(jpg|jpeg|png)$/i)).test(fileExtension) === true || def === true) {
-            return ([0, "image/", "JPG/JPEG/PNG"]) 
-        } else if (RegExp((/^(gif)$/i)).test(fileExtension) === true) {
-            return ([1, "image/", "GIF"])
-        } else if (RegExp((/^(mov|avi|mp4)$/i)).test(fileExtension) === true) {
-            return ([2, "video/", "MOV/AVI/MP4"])
-        } else {
-            return ([99, 99, 99])
+        const checkExtension = (fileExtension) => {
+            if (RegExp((/^(jpg|jpeg|png)$/i)).test(fileExtension) === true) {
+                return ([0, null, "JPG/JPEG/PNG"]) // unsure what other value to return
+            } else if (RegExp((/^(gif)$/i)).test(fileExtension) == true) {
+                return ([1, null, "GIF"]) // unsure what other value to return
+            } else if (RegExp((/^(mov|avi|mp4)$/i)).test(fileExtension) == true) {
+                return ([2, null, "MOV/AVI/MP4"]) // unsure what other value to return
+            } else if (fileExtension === '/' || fileExtension === undefined) {
+                return ([3, null, "Directory"])
+            } else {
+                return ([99, null, "N/A"])   
+            };
         }
+
+        return checkExtension(fileExtension);
     },
 
     returnValidFileNames: function (fileList) {
@@ -30,26 +45,26 @@ const extension = {
             }
         }
 
-        return (validFiles)
+        return (validFiles);
     },
 
     getThumbnail: function (fileExtensionType, fileType) {
 
         const thumbnailImg = () => {
             if (fileType === "d") {
-                return(<i className="fileIcon fa fa-solid fa-folder"></i>)
+                return (<i className="fileIcon fa fa-solid fa-folder"></i>)
             } else if (fileExtensionType === 0) {
-                return(<i className="fileIcon fa fa-file-image"></i>)
+                return (<i className="fileIcon fa fa-file-image"></i>)
             } else if (fileExtensionType === 1) {
-                return(<i className="fileIcon fa fa-file-image"></i>)
+                return (<i className="fileIcon fa fa-file-image"></i>)
             } else if (fileExtensionType === 2) {
-                return(<i className="fileIcon fa fa-solid fa-film"></i>)
-            } else if (fileExtensionType === 3) {
-                return(<i className="fileIcon fa fa-file"></i>)
+                return (<i className="fileIcon fa fa-solid fa-film"></i>)
+            } else if (fileExtensionType === 99) {
+                return (<i className="fileIcon fa fa-file"></i>)
             }
         }
 
-        return(thumbnailImg());
+        return (thumbnailImg());
     }
 };
 

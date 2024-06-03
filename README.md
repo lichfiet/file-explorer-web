@@ -17,7 +17,8 @@ Each one serves a different purpose, but all work to support the functions of th
 
 
 ## Start Development
-Before you can start development, you will need a running instance of the [file-explorer-backend](https://github.com/lichfiet/file-explorer-backend) API, as well as a working FTP server or S3 Bucket setup in [file-explorer-infra](https://github.com/lichfiet/file-explorer-infra). I would suggest setting up the S3 bucket for testing because it's much faster, and requires a couple commands to get up and running.
+Before you can start development, you will need a running instance of the [file-explorer-backend](https://github.com/lichfiet/file-explorer-backend) API, as well as a working FTP server or S3 Bucket setup in [file-explorer-infra](https://github.com/lichfiet/file-explorer-infra). I would suggest setting up the S3 bucket for testing because it's much faster, and requires a couple commands to get up and running. 
+
 
 #### Requirements
 
@@ -41,17 +42,19 @@ Before you can start development, you will need a running instance of the [file-
 
     At this point, you can open the webpage, but you won't be able to interact with many of the functions. Next, you're going to need to setup the backend API
 
-2. **Backend Installation**
+2. **File Storage Setup**
+
+    Follow the instructions in [file-explorer-infra](https://github.com/lichfiet/file-explorer-infra) to generate access credentials for AWS. If you plan on using SFTP, you can skip this step.
+
+3. **Backend Instalation**
 
     Follow the instructions in the [file-explorer-backend](https://github.com/lichfiet/file-explorer-backend) repository. It included instructions for getting set up with the S3 or FTP connection methods, whichever is preferred.
 
 ### To Do List:
 - Clean up code *(In progress always)*
 - Store S3 and SFTP config information in SQL db and retrieve based on user
-- SSL for production (Might do SSL through Kubernetes and EKS and leave backend using http)
-- Optimize the FTP Wrapper to use the "exists" function. Looping through the file array is slow.
-- Cleanup SFTP code make easier to use (It's a mess, not sure how it works but it works on my machine)
-- Change S3 method to use postgres to index files and folder, and change S3 keys to UUIDs
+- Optimize the SFTP Wrapper and code, make easier to use (It's a mess, not sure how it works but it works on my machine)
+- Add folders and pagination to file output and storage
 - Create a scalable service for handling file uploads, and file downloads.
 - API Reference
 - Auth with api key or jwt token verification.
