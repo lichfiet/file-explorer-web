@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef, createRef } from 'react';
 import localApi from '../../utils/apiHanding';
 import extension from '../../utils/extensiontools'
-import FileUploadForm from './explorerComponents/FileUploadModal/fileUploadForm.jsx'
-import FileEditForm from './explorerComponents/FileEditModal/fileEditModal.jsx';
-import FilePreviewRenderer from './explorerComponents/FilePreviewModal/filePreviewRenderer.jsx'
-import FolderCreateForm from './folderCreateModal'
-import FileNavigationTree from './fileTree.jsx';
-import Search from './Search.jsx';
+import FileUploadForm from './FileExplorerComponents/FileUploadModal/fileUploadForm.jsx'
+import FileEditForm from './FileExplorerComponents/FileEditModal/fileEditModal.jsx';
+import FilePreviewRenderer from './FileExplorerComponents/FilePreviewModal/filePreviewRenderer.jsx'
+import FolderCreateForm from './FileExplorerComponents/FolderCreateModal/folderCreateModal.jsx'
+import FileNavigationTree from './FileExplorerComponents/FileNavigationTree/FileTree.jsx';
+import Search from './FileExplorerComponents/FileSearch/FileSearch.jsx';
 
 import Toggle from '../buttons/toggle.jsx'
 
@@ -166,7 +166,7 @@ const FileExplorer = function ({ setModal, showError }) {
                     renderedFiles.push(
                         <div className="fileReturned" key={index} id={fullFilePath}>
                             <button ref={iconRef(index)} name={fileName} id={"button-" + fileName} directory={fullFilePath}
-                                hasChildren={hasChildren} className={buttonClassName} onClick={() => { handleButtonClick() }}
+                                 className={buttonClassName} onClick={() => { handleButtonClick() }}
                             >
 
                                 <div className={fileClassName}
@@ -448,8 +448,6 @@ const FileExplorer = function ({ setModal, showError }) {
     }, [fileData]);
 
     return (
-
-
         <div className="fileExplorerContainer">
             <div className="fileExplorerDirectoryTree">
                 <FileNavigationTree fileList={wholeDirectory} fileSelector={directSelect} />
@@ -482,6 +480,7 @@ const FileExplorer = function ({ setModal, showError }) {
                             <button aria-busy={fileUploading.busy} onClick={() => { openUploadModal(connectionType) }} className="contrast fileExplorerButton">{fileUploading.icon}</button>
                         </ul>
                         <ul /** S3 or SFTP radio button */ >
+                            
                             <Toggle func={setActiveConnection} text1={'S3'} text2={'SFTP'} opt1Param={'S3'} opt2Param={'SFTP'} stateVar={connectionType} />
                         </ul>
                     </nav>
@@ -491,9 +490,17 @@ const FileExplorer = function ({ setModal, showError }) {
                 </div>
 
                 <hr style={{ marginTop: "0px" }}></hr>
-                <Search currentDirectory={currentDirectory} fileList={wholeDirectory} fileSelector={directSelect} />
+                <span>
+
+                    <Search currentDirectory={currentDirectory} fileList={wholeDirectory} fileSelector={directSelect} />
+                </span>
+                <div>
+                    <div>
+
                 <div className="filesListed" /** File List */>
                     {files /** updated by fileSelector function */}
+                </div>
+                    </div>
                 </div>
 
             </div>

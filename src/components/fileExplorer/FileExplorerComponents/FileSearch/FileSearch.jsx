@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import ReactSearchBox from 'react-search-box';
+import './FileSearch.css';
 
 const Search = ({ currentDirectory, fileList, fileSelector }) => {
     const [unMappedFileList, setUnMappedFileList] = useState([]);
@@ -36,11 +37,12 @@ const Search = ({ currentDirectory, fileList, fileSelector }) => {
     }, [fileList]);
 
     return (
-        <div className='container'>
+        <div className='container' style={{ overflow: "visible", height: "83px", position: "relative"}}>
             <ReactSearchBox
-                placeholder={currentDirectory === '' ? "root/" : currentDirectory}
+                placeholder={"/" + currentDirectory}
                 value={currentDirectory}
                 data={unMappedFileList}
+                
                 callback={(key) => console.log(key)}
                 onSelect={(record) => {
                     fileSelector(record.item.key, 0, record.item.extensionType, record.item.parentDir, record.item.children);

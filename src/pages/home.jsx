@@ -1,8 +1,8 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react"; // Make sure to import useState
 
-import FileExplorer from '../components/fileExplorer/fileExplorer'
-import Notification, { notify } from '../components/Notifications';
+import FileExplorer from '../components/fileExplorer/FileExplorer'
+import Notification, { notify } from '../components/Notifications/Notifications.jsx';
 
 const Home = function () {
 

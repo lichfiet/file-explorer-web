@@ -1,3 +1,5 @@
+import './FilePreviewModal.css';
+
 export default function FilePreviewRenderer(props) {
 
         const fileType = props.fileType
