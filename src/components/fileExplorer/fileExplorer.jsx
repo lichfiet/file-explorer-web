@@ -215,7 +215,6 @@ const FileExplorer = function ({ setModal, showError }) {
             const validatedResponse = async (fileData) => {
                 if (await fileData.length === 0) {
                     fileData = []
-                    console.log("meow")
                     showError("No files found in this directory")
                 } else {
                     return;
@@ -354,7 +353,7 @@ const FileExplorer = function ({ setModal, showError }) {
         }
     };
 
-    const directSelect = async (fileName, index, fileExtensionType, filePath, hasChildren) => {
+    const directSelect = async (fileName, index, fileExtensionType, parentDir, filePath ) => {
         if (fileRetrievalInProgress === true) {
             return;
         } else if (fileName === null) {
@@ -363,10 +362,12 @@ const FileExplorer = function ({ setModal, showError }) {
             selectedFile.clear();
             if (fileExtensionType === 3) {
                 setDirectoryHistory(prevHistory => [...prevHistory, currentDirectory]);
+                console.log('File Path:' + parentDir)
+                setCurrentDirectory(parentDir);
+            } else {
+                setDirectoryHistory(prevHistory => [...prevHistory, currentDirectory]);
                 console.log('File Path:' + filePath)
                 setCurrentDirectory(filePath);
-            } else {
-                return getFilePreviewModal(filePath, index, fileExtensionType);
             }
         }
     }
@@ -447,7 +448,7 @@ const FileExplorer = function ({ setModal, showError }) {
 
         <div className="fileExplorerContainer">
             <div className="fileExplorerDirectoryTree">
-                <FileNavigationTree fileList={wholeDirectory} fileSelector={fileSelector} />
+                <FileNavigationTree fileList={wholeDirectory} fileSelector={directSelect} />
             </div>
             <div className="fileExplorerInterface">
                 {useEffect(() => {

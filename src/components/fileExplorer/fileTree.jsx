@@ -10,7 +10,7 @@ const FileNavigationTree = ({ fileList, fileSelector }) => {
     
     const onNameClick = async ({ defaultOnClick, nodeData}) => {
         defaultOnClick();
-        await fileSelector(nodeData.name, 0, nodeData.extensionType, nodeData.directory);
+        await fileSelector(nodeData.name, 0, nodeData.extensionType, nodeData.directory, nodeData.parentDir);
       };
 
     const onTreeStateChange = (state, event) => {
