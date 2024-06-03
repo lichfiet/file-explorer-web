@@ -23,7 +23,8 @@ const Home = function () {
                 height: "100vh",
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "center"
+                justifyContent: "center",
+                paddingTop: "5vh"
             }}>
 
                 {modal}
