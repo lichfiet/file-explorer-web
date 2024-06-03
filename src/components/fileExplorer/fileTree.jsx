@@ -1,35 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import FolderTree from 'react-folder-tree';
-import axios from 'axios';
 
 const FileNavigationTree = ({ fileList, fileSelector }) => {
     const [treeData, setTreeData] = useState([]);
 
-    
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(`http://localhost:8443/listFiles/`, {
-                    headers: {
-                        'method': `S3`,
-                        'sessionid': 'true',
-                        'Access-Control-Allow-Credentials': 'true',
-                    }
-                });
-                setTreeData(response.data);
-            } catch (error) {
-                console.error('Error fetching tree data:', error);
-            }
-        };
-        
-        fetchData();
+        fileList !== undefined ? setTreeData(fileList) : null;
     }, [fileList]);
     
     const onNameClick = async ({ defaultOnClick, nodeData}) => {
         defaultOnClick();
-
         await fileSelector(nodeData.name, 0, nodeData.extensionType, nodeData.directory);
-
       };
 
     const onTreeStateChange = (state, event) => {

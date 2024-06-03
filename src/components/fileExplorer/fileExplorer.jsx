@@ -6,14 +6,18 @@ import FileEditForm from './fileEditModal.jsx';
 import FilePreviewRenderer from './filePreviewRenderer'
 import FolderCreateForm from './folderCreateModal'
 import FileNavigationTree from './fileTree.jsx';
+import Search from './Search.jsx';
 
 import Toggle from '../buttons/toggle.jsx'
+
+import axios from 'axios';
 
 
 const FileExplorer = function ({ setModal, showError }) {
 
     const [files, setFiles] = useState(<div aria-busy="true"></div>); // State Data for file list
     const [fileData, setFileData] = useState([]); // State Data for file list
+    const [wholeDirectory, setWholeDirectory] = useState(); // State Data for file list
 
     // Button States
     const [refreshButtonState, setRefreshButtonState] = useState({ busy: false, icon: null }) // Refresh Button State
@@ -155,7 +159,7 @@ const FileExplorer = function ({ setModal, showError }) {
                     const busyRef = (index) => { return fileBusyRefs.current[index].current }
 
                     const handleButtonClick = async () => {
-                        fileSelector(fileName, index, obj.extensionType, fullFilePath);
+                        fileSelector(fileName, index, obj.extensionType, fullFilePath, hasChildren);
                     }
 
                     renderedFiles.push(
@@ -350,18 +354,34 @@ const FileExplorer = function ({ setModal, showError }) {
         }
     };
 
+    const directSelect = async (fileName, index, fileExtensionType, filePath, hasChildren) => {
+        if (fileRetrievalInProgress === true) {
+            return;
+        } else if (fileName === null) {
+            return;
+        } else {
+            selectedFile.clear();
+            if (fileExtensionType === 3) {
+                setDirectoryHistory(prevHistory => [...prevHistory, currentDirectory]);
+                console.log('File Path:' + filePath)
+                setCurrentDirectory(filePath);
+            } else {
+                return getFilePreviewModal(filePath, index, fileExtensionType);
+            }
+        }
+    }
+        
+
     // Run every time file is selected
     const fileSelector = async (fileName, index, fileExtensionType, filePath, hasChildren) => {
-        const setActive = () => { setActiveFile({ fileName: fileName, index: index, fileExtensionType: fileExtensionType, directory: filePath, hasChilden: hasChildren }); }
-
-        if (fileRetrievalInProgress) { return; } else if (fileName === null) {
+        if (fileRetrievalInProgress === true) {
             return;
-
+        } else if (fileName === null) {
+            return;
         } else if (activeFile.fileName === null || undefined) {
-            setActive();
-
+            setActiveFile(new ActiveFile(fileName, index, fileExtensionType, filePath, hasChildren))
         } else if (activeFile.directory === filePath) {
-            setActive()
+            setActiveFile(new ActiveFile(fileName, index, fileExtensionType, filePath, hasChildren))
             selectedFile.clear();
             if (fileExtensionType === 3) {
                 setDirectoryHistory(prevHistory => [...prevHistory, currentDirectory]);
@@ -372,7 +392,7 @@ const FileExplorer = function ({ setModal, showError }) {
             }
 
         } else if (activeFile.fileName !== fileName) {
-            setActive()
+            setActiveFile(new ActiveFile(fileName, index, fileExtensionType, filePath, hasChildren));
         }
     }
 
@@ -403,12 +423,31 @@ const FileExplorer = function ({ setModal, showError }) {
         renderFiles();
     }, [activeFile, fileData, fileBusy.current]);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8443/listFiles/`, {
+                    headers: {
+                        'method': `S3`,
+                        'sessionid': 'true',
+                        'Access-Control-Allow-Credentials': 'true',
+                    }
+                });
+                setWholeDirectory(response.data);
+            } catch (error) {
+                console.error('Error fetching tree and search data:', error);
+            }
+        };
+        
+        fetchData();
+    }, [fileData]);
+
     return (
 
 
         <div className="fileExplorerContainer">
             <div className="fileExplorerDirectoryTree">
-                <FileNavigationTree fileList={files} fileSelector={fileSelector} />
+                <FileNavigationTree fileList={wholeDirectory} fileSelector={fileSelector} />
             </div>
             <div className="fileExplorerInterface">
                 {useEffect(() => {
@@ -429,7 +468,7 @@ const FileExplorer = function ({ setModal, showError }) {
                         <ul>
                             <button aria-busy={createFolderButtonState.busy} onClick={() => { getFolderCreateModal(connectionType, currentDirectory) }} className="contrast fileExplorerButton">{createFolderButtonState.icon}</button>
                             <button aria-busy={deleteButtonState.busy} onClick={() => { selectedFile.delete(activeFile.index) }} className="contrast fileExplorerButton">{deleteButtonState.icon}</button>
-                            <button aria-busy={previewButtonState.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType, activeFile.directory)) }} className="contrast fileExplorerButton">{previewButtonState.icon}</button>
+                            <button aria-busy={previewButtonState.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : fileSelector(activeFile.fileName, activeFile.index, activeFile.fileExtensionType, activeFile.directory, activeFile.hasChilden)) }} className="contrast fileExplorerButton">{previewButtonState.icon}</button>
                             <button aria-busy={editButtonState.busy} onClick={() => { (activeFile.fileName === null ? console.log('No File Selected') : getFileEditorModal(activeFile.directory, activeFile.index, connectionType)) }} className="contrast fileExplorerButton">{editButtonState.icon}</button>
                             <button aria-busy={refreshButtonState.busy} onClick={() => { refreshFiles(); }} className="contrast fileExplorerButton">{refreshButtonState.icon}</button>
                             <button aria-busy={fileUploading.busy} onClick={() => { openUploadModal(connectionType) }} className="contrast fileExplorerButton">{fileUploading.icon}</button>
@@ -438,10 +477,13 @@ const FileExplorer = function ({ setModal, showError }) {
                             <Toggle func={setActiveConnection} text1={'S3'} text2={'SFTP'} opt1Param={'S3'} opt2Param={'SFTP'} stateVar={connectionType} />
                         </ul>
                     </nav>
+                    <nav>
+
+                    </nav>
                 </div>
 
                 <hr style={{ marginTop: "0px" }}></hr>
-
+                <Search currentDirectory={currentDirectory} fileList={wholeDirectory} fileSelector={directSelect} />
                 <div className="filesListed" /** File List */>
                     {files /** updated by fileSelector function */}
                 </div>

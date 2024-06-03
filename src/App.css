@@ -284,6 +284,20 @@ p {
   filter: drop-shadow(0px 0px 5px #4e4949);
 }
 
+.fileExplorerSearch {
+  background-color: #e9e9f0; 
+  padding: 0%;
+  height: 20px;
+  padding-bottom: 0%;
+  border-radius: 0.75rem;
+  border-color: #000000;
+  display: inline; 
+  color: #1b1d24;
+  outline-width: 0px ;
+  border-width: 0px ;
+  --pico-outline-width: 100rem
+}
+
 .fileExplorerDirectoryTree { 
   background-color: #1b1d24;
 }
