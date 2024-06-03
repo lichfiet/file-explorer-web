@@ -93,13 +93,47 @@ p {
 }
 
 .fileExplorerButton {
-  font-size: 100%;
-  margin-right: 5%;
-  padding: 5px;
-  padding-left: 15px;
-  padding-right: 17px;
-  width: 50px;
+  font-size: 80%;
   background-color: #ebebeb;
+  border-color: #2b2d31;
+  color: #222125;
+  padding: 0%;
+  align-content: center;
+  justify-content: center;
+}
+
+.squareIcon {
+  width: 20px;
+  height: 20px;
+  align-content: center;
+  justify-content: center;
+  margin: 8px;
+}
+
+.fileExplorerNav {
+  display: grid;
+  grid-template-columns: 4fr 7fr 2fr;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+  padding: 1%;
+  padding-left: 2%;
+  padding-top: 0%;
+  width: 100%;
+  border-color: #2b2d31;
+  color: #222125;
+  filter: drop-shadow(0px 0px 5px #2b2828);
+
+}
+
+.fileExplorerToggle {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+  padding: 1%;
+  padding-left: 2%;
+  width: 100%;
   border-color: #2b2d31;
   color: #222125;
 }
@@ -112,23 +146,30 @@ p {
 
 .fileReturnedButtonSelected {
   background-color: #313135;
+  border-color: #2b2d3100;
   color: white;
 }
 
 .fileReturnedIcon {
   color: #2a2b30;
+  width: 35px;
+  height: 42px;
 }
 
 .fileReturnedIconSelected {
   color: white;
+  width: 35px;
+  height: 42px;
 }
 
 .toggle {
   border-color: #4f5055;
+  font-size: 90%;
 }
 
 .toggle-text {
   color: white;
+  font-size: 90%;
 }
 
 
@@ -188,13 +229,6 @@ p {
   font-family: 'Open Sans', sans-serif;
 }
 
-.portrait {
-  margin-top: 30px;
-  margin-bottom: 30px;
-  background-color: rgba(211, 211, 211, 0.925);
-  filter: drop-shadow( 7px 7px 0px rgba(65, 65, 65, 0.705))
-}
-
 .file-preview-container {
   /* width: 500px; */
   height: 500px;
@@ -228,4 +262,43 @@ p {
 
 .dialogs {
   background-color: #2d2e2fbf;
+}
+
+.fileExplorerContainer {
+  padding-top: 2%;
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  grid-template-rows: 1fr;
+  grid-column-gap: 2%;
+}
+
+.fileExplorerDirectoryTreeContainer {
+  background-color: #e9e9f0;
+  padding: 9%;
+  border-radius: 0.5rem;
+  font-size: 80%;
+  color: #e9e9f0;
+  padding-top: 9%;
+  padding-bottom: 100%;
+  background-color: #1b1d24;
+  filter: drop-shadow(0px 0px 5px #4e4949);
+}
+
+.fileExplorerDirectoryTree { 
+  background-color: #1b1d24;
+}
+
+.fileExplorerInterface {
+  background-color: #1b1d24;
+  padding: 2%;
+  padding-bottom: 0%;
+  border-radius: 0.5rem;
+  filter: drop-shadow(0px 0px 5px #4e4949);
+  display: inline;
+}
+
+.toastContainerCustom {
+  --toastify-text-color-light: #e9e9f0; /* Example color */
+  font-size: 70%;
+  --toastify-color-light: hwb(227 11% 86%);
 }

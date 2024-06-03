@@ -5,14 +5,14 @@ const apiUrl = "http://localhost:8443"
 const localApi = {
 
 
-    requestFiles: async (connectionType) => {
+    requestFiles: async (connectionType, currentDirectory) => {
 
         try {
-            console.log(apiUrl)
+            console.log(`${apiUrl}/listFiles/${currentDirectory}`)
 
             console.log("Getting file list from Backend API");
 
-            const response = await axios.get(`${apiUrl}/listFilesDev/`, {
+            const response = await axios.get(`${apiUrl}/listFiles/${currentDirectory}`, {
                 headers: {
                     'method': `${connectionType}`,
                     'sessionid': 'true',
@@ -21,12 +21,12 @@ const localApi = {
             })
 
             console.log("Retrieved file list");
-            console.log(response.data)
+            console.log((response.data.children).map((file) => JSON.stringify(file)))
 
-            if (!response.status === 200) {
+            if (!response.status === 200 || response === undefined) {
                 throw new Error('Network response was not ok');
             } else {
-                return response.data
+                return response.data.children
             }
         } catch (error) {
             console.error('There was an error:', error);
@@ -105,7 +105,7 @@ const localApi = {
         try {
 
             console.log("Deleting file from client");
-            const response = await axios.delete(`${apiUrl}/deleteFile/${encodedFileName}/`, {
+            const response = await axios.delete(`${apiUrl}/deleteFile/${encodedFileName}`, {
                 headers: {
                     'method': `${connectionType}`,
                     'sessionid': 'true',
@@ -141,7 +141,7 @@ const localApi = {
         const encodedFileName = encodeURIComponent(fileName);
 
         try {
-            const response = await axios.put(`${apiUrl}/modifyFile/${encodedFileName}/`, fileProperties, {
+            const response = await axios.put(`${apiUrl}/modifyFile/${encodedFileName}`, fileProperties, {
                 headers: {
                     'method': `${connectionType}`,
                     'Access-Control-Allow-Credentials': 'true'
@@ -189,7 +189,7 @@ const localApi = {
 
         try {
             console.log("Creating folder");
-            const response = await axios.post(`${apiUrl}/createFolder/${encodedFolderName}/`, null, {
+            const response = await axios.post(`${apiUrl}/createFolder/${encodedFolderName}`, null, {
                 headers: {
                     'method': `${connectionType}`,
                     'Access-Control-Allow-Credentials': 'true'
@@ -213,7 +213,7 @@ const localApi = {
 
         try {
             console.log("Deleting folder");
-            const response = await axios.delete(`${apiUrl}/deleteFolder/${encodedFolderName}/`, {
+            const response = await axios.delete(`${apiUrl}/deleteFolder/${encodedFolderName}`, {
                 headers: {
                     'method': `${connectionType}`,
                     'Access-Control-Allow-Credentials': 'true'
