@@ -1,5 +1,5 @@
 import './App.css';
-import Home from './pages/home.jsx';
+import Home from './pages/Home.jsx';
 import '@picocss/pico'
 
 function App() {

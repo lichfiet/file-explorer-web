@@ -1,15 +1,15 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react"; // Make sure to import useState
 
-import FileExplorer from '../components/fileExplorer/FileExplorer'
+import FileExplorer from '../components/FileExplorer/FileExplorer.jsx'
 import Notification, { notify } from '../components/Notifications/Notifications.jsx';
 
 const Home = function () {
 
     const [modal, setModal] = useState(undefined);
 
-    const showError = (message) => {
-        notify(message, "info");
+    const showPopup = (message, type) => {
+        notify(message, type);
     }
 
     return (
@@ -43,7 +43,7 @@ const Home = function () {
 
                 <article className="overrideArticle">
                     <div className="container-fluid">
-                        <FileExplorer setModal={setModal} showError={showError} />
+                        <FileExplorer setModal={setModal} createPopUpNotif={showPopup} />
                     </div>
                 </article>
             </div>

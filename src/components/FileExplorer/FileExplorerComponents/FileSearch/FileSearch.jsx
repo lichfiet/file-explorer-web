@@ -1,3 +1,4 @@
+import './reset.css'
 import { useEffect, useState } from 'react';
 import ReactSearchBox from 'react-search-box';
 import './FileSearch.css';
