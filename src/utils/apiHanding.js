@@ -4,7 +4,6 @@ const apiUrl = "http://localhost:8443"
 
 const localApi = {
 
-
     requestFiles: async (connectionType, currentDirectory) => {
         try {
             console.debug(`${apiUrl}/listFiles/${currentDirectory}`)
@@ -13,7 +12,6 @@ const localApi = {
             const response = await axios.get(`${apiUrl}/listFiles/${currentDirectory}`, {
                 headers: {
                     'method': `${connectionType}`,
-                    'sessionid': 'true',
                     'Access-Control-Allow-Credentials': 'true',
                 }
             })
@@ -26,8 +24,8 @@ const localApi = {
                 return response.data.children
             }
         } catch (error) {
-            console.error('There was an error:', error);
-            return (undefined);
+            console.error('Error requesting file list from remote: ', error);
+            throw new Error('Error requesting file list from remote: ' + error.message);
         }
     },
 
@@ -38,7 +36,6 @@ const localApi = {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'method': method,
-                    'sessionid': 'true',
                     'Access-Control-Allow-Credentials': true,
                 }});
 
@@ -50,28 +47,27 @@ const localApi = {
             }
 
         } catch (error) {
-            console.error('There was an error: ', error);
+            console.error('Error uploading file to remote: ', error);
+            throw new Error('Error uploading file to remote: ' + error.message);
         } finally {
             console.debug("File Upload Request Executed")
         }
     },
 
     getFile: async (fileName, connectionType) => {
-
         const encodedFileName = encodeURIComponent(fileName);
-        try {
 
+        try {
             console.debug("Getting file from FTP Client");
             const response = await axios.get(`${apiUrl}/getFile/${encodedFileName}`, {
                 responseType: 'blob', // Set responseType to 'blob'
                 headers: {
-                    method: `${connectionType}`,
-                    'sessionid': 'true',
+                    method: `${connectionType}`, 
                     'Access-Control-Allow-Credentials': 'true',
                 }});
             console.debug("Retrieved file list");
 
-            if (!response.status === 200) {
+            if (response.status !== 200) {
                 throw new Error('Network response was not ok');
             } else {
                 return (response)
@@ -79,50 +75,38 @@ const localApi = {
 
         } catch (error) {
             console.error('There was an error:', error);
+            throw new Error('Error requesting file from remote: ' + error.message);
         }
     },
 
     deleteFile: async (fileName, connectionType) => {
-
         const encodedFileName = encodeURIComponent(fileName);
         console.log(`${apiUrl}/deleteFile/${encodedFileName}`)
 
         try {
-
             console.log("Deleting file from client");
             const response = await axios.delete(`${apiUrl}/deleteFile/${encodedFileName}`, {
                 headers: {
-                    'method': `${connectionType}`,
-                    'sessionid': 'true',
+                    'method': `${connectionType}`,   
                     'Access-Control-Allow-Credentials': 'true'
                 }
             });
             console.log("Retrieved response");
 
             if (!response.status === 200) {
-
                 throw new Error('Network response was not ok');
-
             } else {
-
                 return (response)
-
             }
-
-
         } catch (error) {
-
-            console.error('There was an error:', error);
-
+            console.log('Error deleting file from remote: ', error);
+            throw new Error('Error deleting file from remote: ' + error.message);
         } finally {
-
             console.log("Epic request")
-
         }
-
     },
+
     modifyFile: async (fileName, connectionType, fileProperties) => {
-        
         const encodedFileName = encodeURIComponent(fileName);
 
         try {
@@ -134,28 +118,31 @@ const localApi = {
             });
 
             console.log(fileProperties)
-
             response.status != 200 ? () => { throw new Error('Network response was not ok') } : () => { console.log("File modified"); return response };
             
         } catch (err) {
-            console.error('There was an error attempting to modify the file:', err);
+            console.error('Error modifying file from remote: ', err);
+            throw new Error('Error modifying file from remote: ' + err.message);
         } finally {
-            console.log("Epic request executed")
+            console.log("Epic request")
         }
-
     },
+
     downloadFile: async (fileName, connectionType) => {
+        const encodedFileName = encodeURIComponent(fileName);
+
         try {
-            console.log("Downloading file from FTP Client");
-            const response = await axios.get(`${apiUrl}/downloadFile/${fileName}/`, {
+            console.log("Downloading file from remote");
+
+            const response = await axios.get(`${apiUrl}/downloadFile/${encodedFileName}/`, {
                 responseType: 'blob', // Set responseType to 'blob'
                 headers: {
                     method: `${connectionType}`,
-                    'sessionid': 'true',
                     'Access-Control-Allow-Credentials': 'true',
                 }
             });
-            console.log("Retrieved file list");
+            
+            console.log("Retrieved file");
 
             if (!response.status === 200) {
                 throw new Error('Network response was not ok');
@@ -163,13 +150,14 @@ const localApi = {
                 return (response)
             }
         } catch (error) {
-            console.error('There was an error:', error);
+            console.error('Error downloading file from remote: ', error);
+            throw new Error('Error downloading file from remote: ' + error.message);
         } finally {
             console.log("Epic request")
         }
     },
+
     createFolder: async (folderName, connectionType) => {
-        
         const encodedFolderName = encodeURIComponent(folderName); 
 
         try {
@@ -187,13 +175,14 @@ const localApi = {
                 return (response)
             }
         } catch (error) {
-            console.error('There was an error:', error);
+            console.error('Error creating folder from remote: ', error);
+            throw new Error('Error creating folder from remote: ' + error.message);
         } finally {
             console.log("Epic request")
         }
     },
+
     deleteFolder: async (folderName, connectionType) => {
-        
         const encodedFolderName = encodeURIComponent(folderName);
 
         try {
@@ -211,7 +200,8 @@ const localApi = {
                 return (response)
             }
         } catch (error) {
-            console.error('There was an error:', error);
+            console.error('Error deleting folder from remote: ', error);
+            throw new Error('Error deleting folder from remote: ' + error.message);
         } finally {
             console.log("Epic request")
         }

@@ -61,7 +61,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif }) {
     
     const [fileEventInProgress, setFileEventInProgress] = useState(false);
     
-    // // Set the active connection type
+    // ! Set the active connection type
     // const setActiveConnection = (value) => {
     //     setConnectionType(value);
     // }
@@ -250,12 +250,6 @@ const FileExplorer = function ({ setModal, createPopUpNotif }) {
 
 
 
-
-
-
-
-
-
     /**
      * EVENT HANDLING
      */
@@ -294,22 +288,25 @@ const FileExplorer = function ({ setModal, createPopUpNotif }) {
         const openPreviewModal = (selectedFileData, selectedFileType, selectedFileName) => {
             setModal(<FilePreviewRenderer fileInputData={selectedFileData} fileType={selectedFileType} fileName={activeFile.fileName} closeModal={ closeModal } />)
         }
-
-        setFileEventInProgress(true); // Set querying state to true
-        explorerButtonLoading.preview(true); // Set the file opening state to busy
-        selectedFile.setLoading(index); // Set the selected file to a loading state
-
+        
         try {
+            setFileEventInProgress(true); // Set querying state to true
+            explorerButtonLoading.preview(true); // Set the file opening state to busy
+            selectedFile.setLoading(index); // Set the selected file to a loading state
+
             const response = await localApi.getFile(activeFile.directory, connectionType); // Query the file
             const selectedFileData = new Blob([response.data], { type: `media/*` }); // Create a blob from the file data 
             openPreviewModal(selectedFileData, fileExtensionType, fileName);
         } catch (error) {
-            console.log(error)
-        } 
-
-        explorerButtonLoading.preview(false);
-        selectedFile.clear(); // Clear the selected file
-        setFileEventInProgress(false); // Set querying state to false
+            console.log('Error fetching file:', error.message); // Handle error if API request fails
+            createPopUpNotif('Error occurred requesting file' + error.message, "error")
+        } finally {
+            console.log("meow")
+            explorerButtonLoading.preview(false);
+            selectedFile.setNotLoading(index);
+            selectedFile.clear(); // Clear the selected file
+            setFileEventInProgress(false); // Set querying state to false
+        }
     }
 
     const handleFileDeleteEvent = async () => {
@@ -346,32 +343,46 @@ const FileExplorer = function ({ setModal, createPopUpNotif }) {
             return;
         }
 
-        selectedFile.clear();
-        if (fileExtensionType === 3) {
-            setDirectoryHistory(prevHistory => [...prevHistory, currentDirectory]);
-            console.log('File Path:' + parentDir)
-            setCurrentDirectory(parentDir);
-        } else {
-            setDirectoryHistory(prevHistory => [...prevHistory, currentDirectory]);
-            console.log('File Path:' + filePath)
-            setCurrentDirectory(filePath);
+        setFileEventInProgress(true)
+
+        try {
+            if (fileExtensionType === 3) {
+                setDirectoryHistory(prevHistory => [...prevHistory, currentDirectory]);
+                console.log('File Path:' + parentDir)
+                setCurrentDirectory(parentDir);
+            } else {
+                setDirectoryHistory(prevHistory => [...prevHistory, currentDirectory]);
+                console.log('File Path:' + filePath)
+                setCurrentDirectory(filePath);
+            }
+        } catch (error) {
+            createPopUpNotif(error.message, "error")
+        } finally {
+            selectedFile.clear();
+            setFileEventInProgress(false)
         }
+
+
     }; 
 
     const fileSelectionEventController = async (fileName, index, fileExtensionType, filePath, hasChildren) => {
-        if (isEventInProgress()) {
-            return;
-        } else if (!activeFile.fileName === null || activeFile.fileName === undefined || activeFile.fileName !== fileName) {
-            setActiveFile(new ActiveFile(fileName, index, fileExtensionType, filePath, hasChildren))
-        } else if (activeFile.directory === filePath && fileExtensionType == 3) {
-            setActiveFile(new ActiveFile(fileName, index, fileExtensionType, filePath, hasChildren))
-            selectedFile.clear();
-            setDirectoryHistory(prevHistory => [...prevHistory, currentDirectory]);
-            setCurrentDirectory(filePath);
-        } else if (activeFile.directory === filePath && fileExtensionType !== 3) {
-            setActiveFile(new ActiveFile(fileName, index, fileExtensionType, filePath, hasChildren))
-            selectedFile.clear();
-            handleFilePreviewEvent(filePath, index, fileExtensionType);
+        try {
+            if (isEventInProgress()) {
+                return;
+            } else if (!activeFile.fileName === null || activeFile.fileName === undefined || activeFile.fileName !== fileName) {
+                setActiveFile(new ActiveFile(fileName, index, fileExtensionType, filePath, hasChildren))
+            } else if (activeFile.directory === filePath && fileExtensionType == 3) {
+                setActiveFile(new ActiveFile(fileName, index, fileExtensionType, filePath, hasChildren))
+                selectedFile.clear();
+                setDirectoryHistory(prevHistory => [...prevHistory, currentDirectory]);
+                setCurrentDirectory(filePath);
+            } else if (activeFile.directory === filePath && fileExtensionType !== 3) {
+                setActiveFile(new ActiveFile(fileName, index, fileExtensionType, filePath, hasChildren))
+                selectedFile.clear();
+                handleFilePreviewEvent(filePath, index, fileExtensionType);
+            }
+        } catch (error) {
+            createPopUpNotif(error.message, "error")
         }
     }
 
@@ -466,7 +477,6 @@ const FileExplorer = function ({ setModal, createPopUpNotif }) {
         await handleFileDeleteEvent();
     }
 
-
     const navigate = async (direction) => {
         if (isEventInProgress()) {
             return;
@@ -539,19 +549,13 @@ const FileExplorer = function ({ setModal, createPopUpNotif }) {
                     refreshFiles();
                 }, [connectionType, currentDirectory])}
 
-                {/** File Explorer Nav */}
-                <div>
+                
+                <div /** File Explorer Nav */>
                     <nav className="fileExplorerNav">
                         <ul /** directory navigation buttons */>
-                            <button aria-busy={previousDirectoryButtonState.busy} onClick={() => navigate('previous')} className="contrast fileExplorerButton">
-                                {previousDirectoryButtonState.icon}
-                            </button>
-                            <button aria-busy={nextDirectoryButtonState.busy} onClick={() => navigate('next')} className="contrast fileExplorerButton">
-                                {nextDirectoryButtonState.icon}
-                            </button>
-                            <button aria-busy={upDirectoryButtonState.busy} onClick={() => navigate('up')} className="contrast fileExplorerButton">
-                                {upDirectoryButtonState.icon}
-                            </button>
+                            <button aria-busy={previousDirectoryButtonState.busy} onClick={() => navigate('previous')} className="contrast fileExplorerButton">{previousDirectoryButtonState.icon}</button>
+                            <button aria-busy={nextDirectoryButtonState.busy} onClick={() => navigate('next')} className="contrast fileExplorerButton">{nextDirectoryButtonState.icon}</button>
+                            <button aria-busy={upDirectoryButtonState.busy} onClick={() => navigate('up')} className="contrast fileExplorerButton">{upDirectoryButtonState.icon}</button>
                         </ul>
                         <ul /** file interaction buttons */>
                             <button aria-busy={createFolderButtonState.busy} onClick={() => { handleFolderCreateButtonClick() }} className="contrast fileExplorerButton">{createFolderButtonState.icon}</button>
@@ -566,6 +570,8 @@ const FileExplorer = function ({ setModal, createPopUpNotif }) {
                         </ul>
                     </nav>
                 </div>
+
+                
                 <hr style={{ marginTop: "0px" }}></hr>
                 <span>
 
