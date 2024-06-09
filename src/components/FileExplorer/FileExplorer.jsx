@@ -413,7 +413,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif }) {
                             <a href="#close" aria-label="Close" className="close" onClick={async () => { closeModal(); }}></a>
                             Editing: {activeFile.fileName}
                         </header>
-                        <FileEditForm method={activeFile.connectionType} fileName={activeFile.fileName}></FileEditForm>
+                        <FileEditForm method={connectionType} fileName={activeFile.fileName}></FileEditForm>
                     </article>
                 </dialog>
             )
