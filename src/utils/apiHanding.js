@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const apiUrl = "http://localhost:8443"
+const apiUrl = "https://explorer.trevorlichfield.com"
 
 const localApi = {
 
