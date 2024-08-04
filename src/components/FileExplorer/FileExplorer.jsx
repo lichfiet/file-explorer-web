@@ -521,7 +521,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`https://explorer.trevorlichfield.com/listFiles/`, {
+                const response = await axios.get(import.meta.env.VITE_API_URL, {
                     headers: {
                         'method': `S3`,
                         'sessionid': 'true',
