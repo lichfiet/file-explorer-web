@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const apiUrl = "https://explorer.trevorlichfield.com"
+const apiUrl = import.meta.env.VITE_API_URL
 
 const localApi = {
 
