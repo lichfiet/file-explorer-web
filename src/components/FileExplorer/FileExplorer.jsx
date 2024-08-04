@@ -521,7 +521,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`http://explorer.trevorlichfield.com/listFiles/`, {
+                const response = await axios.get(`https://explorer.trevorlichfield.com/listFiles/`, {
                     headers: {
                         'method': `S3`,
                         'sessionid': 'true',
