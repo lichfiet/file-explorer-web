@@ -3,9 +3,9 @@
 
 This is the front-end website for my file explorer project. It's a single page web application that allows you to interact with multiple file storage and retrieval apps from one site. It currently supports: *S3 and FTP* as file storage types.
 
-*A live preview of this project is running at  [trevorlichfield.com](https://trevorlichfield.com)*
+*A live preview of this project is running at  [trevorlichfield.com](https://files.trevorlichfield.com)*
 
-![fileexplorer](https://github.com/lichfiet/file-explorer-web/assets/143028846/d13e5c49-fcaf-4852-a99b-5a54f19169ee)
+![fileexplorer](https://github.com/user-attachments/assets/4c747f55-81ef-4503-a642-ec807dd250c1)
 
 This project consists of 4 Repositories:
 - [file-explorer-web *(this page)*](https://github.com/lichfiet/file-explorer-web)
