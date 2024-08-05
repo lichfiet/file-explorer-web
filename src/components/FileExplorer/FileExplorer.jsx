@@ -469,14 +469,16 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
         }
 
         const openFolderCreatorModal = (connectionType, currentDirectory) => {
+            const finishModal = async () => { closeModal(); refreshFiles(); selectedFile.clear(); }
+
             setModal(
                 <dialog open className="dialogs">
                     <article className="modals">
                         <header className='modals-header'>
-                            <a href="#close" aria-label="Close" className="close" onClick={async () => { setModal(null); refreshFiles(); selectedFile.clear(); }}></a>
+                            <a href="#close" aria-label="Close" className="close" onClick={async () => { await finishModal();}}></a>
                             Create Folder
                         </header>
-                        <FolderCreateForm connectionType={connectionType} currentDirectory={currentDirectory}></FolderCreateForm>
+                        <FolderCreateForm connectionType={connectionType} currentDirectory={currentDirectory} closeModal={finishModal} ></FolderCreateForm>
                     </article>
                 </dialog>
             )
