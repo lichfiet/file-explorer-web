@@ -8,6 +8,10 @@ const Home = function () {
 
     const [modal, setModal] = useState(undefined);
 
+    const closeModal = () => {
+        setModal(undefined);
+    }
+
     const showPopup = (message, type) => {
         notify(message, type);
     }
@@ -43,7 +47,7 @@ const Home = function () {
 
                 <article className="overrideArticle">
                     <div className="container-fluid">
-                        <FileExplorer setModal={setModal} createPopUpNotif={showPopup} />
+                        <FileExplorer setModal={setModal} createPopUpNotif={showPopup} closeModal={closeModal} />
                     </div>
                 </article>
             </div>

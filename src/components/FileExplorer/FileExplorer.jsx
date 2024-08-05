@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, createRef, act } from 'react';
+import { useState, useEffect, useRef, createRef, act, Children } from 'react';
 import localApi from '../../utils/apiHanding';
 import extension from '../../utils/extensiontools'
 import FileUploadForm from './FileExplorerComponents/FileUploadModal/fileUploadForm.jsx'
@@ -6,6 +6,7 @@ import FileEditForm from './FileExplorerComponents/FileEditModal/fileEditModal.j
 import FilePreviewRenderer from './FileExplorerComponents/FilePreviewModal/filePreviewRenderer.jsx'
 import FolderCreateForm from './FileExplorerComponents/FolderCreateModal/folderCreateModal.jsx'
 import FileNavigationTree from './FileExplorerComponents/FileNavigationTree/FileTree.jsx';
+import VerifyDeleteForm from './FileExplorerComponents/VerifyDeleteModal/VerifyDeleteModal.jsx';
 import Search from './FileExplorerComponents/FileSearch/FileSearch.jsx';
 
 import Toggle from '../buttons/toggle.jsx'
@@ -13,7 +14,7 @@ import Toggle from '../buttons/toggle.jsx'
 import axios from 'axios';
 
 
-const FileExplorer = function ({ setModal, createPopUpNotif }) {
+const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
 
     const [files, setFiles] = useState(<div aria-busy="true"></div>); // State Data for file list
     const [fileData, setFileData] = useState([]); // State Data for file list
@@ -60,11 +61,9 @@ const FileExplorer = function ({ setModal, createPopUpNotif }) {
     const fileBusy = useRef();
     
     const [fileEventInProgress, setFileEventInProgress] = useState(false);
-    
-    // ! Set the active connection type
-    // const setActiveConnection = (value) => {
-    //     setConnectionType(value);
-    // }
+
+
+
     
     /** ------------------------------------File Explorer Button Loading State Management-------------------------------------- */
 
@@ -156,7 +155,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif }) {
                 let renderedFiles = []
 
                 fileData.map((obj, index) => {
-                    const hasChildren = obj.Children ? true : false;
+                    const hasChildren = obj.children !== undefined && obj.children[0] !== undefined ? true : false;
                     const fullFilePath = obj.directory
                     const fileName = obj.name
                     const extension = obj.extensionType
@@ -318,9 +317,33 @@ const FileExplorer = function ({ setModal, createPopUpNotif }) {
         selectedFile.setLoading(activeFile.index); // Set the deleting file to a loading state
 
         if (activeFile.fileExtensionType === 3) {
-            try {
-                const response = async () => { await localApi.deleteFolder(activeFile.directory, connectionType); }
-                createPopUpNotif(await response(), "info");
+            const response = async () => { await localApi.deleteFolder(activeFile.directory, connectionType); }
+            
+            const deleteFunction = async () => {
+                await createPopUpNotif(await response(), "info");
+                await refreshFiles();
+            }
+
+            try {                
+
+                if (activeFile.hasChilden === true) {
+                    setModal(
+                        <dialog open className="dialogs">
+                            <article className="modals">
+                                <header className='modals-header'>
+                                    <a href="#close" aria-label="Close" className="close" onClick={async () => { closeModal(); }}></a>
+                                    {activeFile.fileName}
+                                </header>
+                                <VerifyDeleteForm deleteFunction={deleteFunction} closeModal={closeModal} />
+                            </article>
+                        </dialog>
+                    )
+
+                } else {
+                    await createPopUpNotif(await response(), "info");
+                }
+
+
             } catch (error) {
                 createPopUpNotif("Error Deleting File", "error")
             }
@@ -413,7 +436,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif }) {
                             <a href="#close" aria-label="Close" className="close" onClick={async () => { closeModal(); }}></a>
                             Editing: {activeFile.fileName}
                         </header>
-                        <FileEditForm method={connectionType} fileName={activeFile.fileName}></FileEditForm>
+                        <FileEditForm method={connectionType} fileName={activeFile.directory}></FileEditForm>
                     </article>
                 </dialog>
             )
@@ -547,7 +570,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif }) {
             <div className="fileExplorerInterface">
                 {useEffect(() => {
                     refreshFiles();
-                }, [connectionType, currentDirectory])}
+                }, [currentDirectory])}
 
                 
                 <div /** File Explorer Nav */>
@@ -564,9 +587,6 @@ const FileExplorer = function ({ setModal, createPopUpNotif }) {
                             <button aria-busy={editButtonState.busy} onClick={() => { handFileEditButtonClick() }} className="contrast fileExplorerButton">{editButtonState.icon}</button>
                             <button aria-busy={refreshButtonState.busy} onClick={() => { refreshFiles(); }} className="contrast fileExplorerButton">{refreshButtonState.icon}</button>
                             <button aria-busy={fileUploading.busy} onClick={() => { handUploadButtonClick() }} className="contrast fileExplorerButton">{fileUploading.icon}</button>
-                        </ul>
-                        <ul /** S3 or SFTP radio button */ >
-                            <Toggle func={ setConnectionType } text1={'S3'} text2={'SFTP'} opt1Param={'S3'} opt2Param={'SFTP'} stateVar={connectionType} />
                         </ul>
                     </nav>
                 </div>

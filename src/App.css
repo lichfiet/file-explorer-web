@@ -98,7 +98,7 @@ p {
 
 .fileExplorerNav {
   display: grid;
-  grid-template-columns: 4fr 7fr 2fr;
+  grid-template-columns: 2fr 1fr;
   flex-direction: row;
   justify-content: left;
   align-items: center;
