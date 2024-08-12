@@ -577,10 +577,10 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
                 
                 <div /** File Explorer Nav */>
                     <nav className="fileExplorerNav">
-                        <ul /** directory navigation buttons */ className="mobilevisiblity">
+                        <ul /** directory navigation buttons */>
                             <button aria-busy={previousDirectoryButtonState.busy} onClick={() => navigate('previous')} className="contrast fileExplorerButton mobilevisiblity">{previousDirectoryButtonState.icon}</button>
                             <button aria-busy={nextDirectoryButtonState.busy} onClick={() => navigate('next')} className="contrast fileExplorerButton mobilevisiblity">{nextDirectoryButtonState.icon}</button>
-                            <button aria-busy={upDirectoryButtonState.busy} onClick={() => navigate('up')} className="contrast fileExplorerButton mobilevisiblity">{upDirectoryButtonState.icon}</button>
+                            <button aria-busy={upDirectoryButtonState.busy} onClick={() => navigate('up')} className="contrast fileExplorerButton">{upDirectoryButtonState.icon}</button>
                         </ul>
                         <ul /** file interaction buttons */>
                             <button aria-busy={createFolderButtonState.busy} onClick={() => { handleFolderCreateButtonClick() }} className="contrast fileExplorerButton">{createFolderButtonState.icon}</button>
