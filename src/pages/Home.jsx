@@ -32,18 +32,6 @@ const Home = function () {
             }}>
 
                 {modal}
-                <nav>
-                    <hgroup>
-                        <h2 style={{ color: "white" }}>File Explorer</h2>
-                        <p>By Trevor Lichfield</p>
-
-                    </hgroup>
-                    <ul>
-                        <li><a className="contrast socialMedia outline" href="https://github.com/lichfiet" target="blank"><i className="socialMediaIcon fab fa-github"></i></a></li>
-                        <li><a className="contrast socialMedia outline" href="https://www.linkedin.com/in/trevorlichfield/" target="blank"><i className="socialMediaIcon fab fa-linkedin-in"></i></a></li>
-                    </ul>
-
-                </nav>
 
                 <article className="overrideArticle">
                     <div className="container-fluid">
