@@ -279,7 +279,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
     // ? These events are called by buttons AND other events in the file explorer
      
     const handleFilePreviewEvent = async (fileName, index, fileExtensionType) => {
-        if (isEventInProgress() && !isFileSelected() ) {
+        if (isEventInProgress() || !isFileSelected()) {
             return;
         }
 
@@ -309,7 +309,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
     }
 
     const handleFileDeleteEvent = async () => {
-        if (isEventInProgress() && !isFileSelected() ) {
+        if (isEventInProgress() || !isFileSelected() ) {
             return;
         }
 
@@ -373,6 +373,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
                 setDirectoryHistory(prevHistory => [...prevHistory, currentDirectory]);
                 console.log('File Path:' + parentDir)
                 setCurrentDirectory(parentDir);
+                setActiveFile(new NullActiveFile());
             } else {
                 setDirectoryHistory(prevHistory => [...prevHistory, currentDirectory]);
                 console.log('File Path:' + filePath)
@@ -456,7 +457,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
     }
 
     const handleFilePreviewButtonClick = async () => {
-        if (isEventInProgress() && !isFileSelected() ) {
+        if (isEventInProgress() || !isFileSelected()) {
             return;
         }
 
