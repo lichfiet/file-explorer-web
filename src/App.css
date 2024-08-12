@@ -112,18 +112,6 @@ p {
 
 }
 
-.fileExplorerToggle {
-  display: flex;
-  flex-direction: row;
-  justify-content: left;
-  align-items: center;
-  padding: 1%;
-  padding-left: 2%;
-  width: 100%;
-  border-color: #2b2d31;
-  color: #222125;
-}
-
 .fileReturnedButton {
   background-color: #e9e9f1;
   border-color: #2b2d3100;
@@ -243,4 +231,209 @@ p {
   --toastify-text-color-light: #e9e9f0; /* Example color */
   font-size: 70%;
   --toastify-color-light: hwb(227 11% 86%);
+}
+
+@media (max-width: 500px) {
+  .filesListed /* For the file display element buttons */ {
+    display: grid;
+    gap: 0rem;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  }
+  
+  .fileReturned {
+    display: flex;
+    flex-direction: column;
+    inline-size: min-content;
+    justify-content: top;
+    align-items: center;
+    font-size: 2rem;
+    height: 100%;
+    width: 100%;
+    border-radius: 4px;
+    transition: all 50ms;
+    overflow: wrap;
+    word-break: break-all;
+  
+
+    color: #2a2b30;
+  }
+  
+  .fileReturnedText {
+    margin: 0px;
+    word-break: break-all;
+    text-align: center;
+    font-size: 30%;
+    padding-bottom: 15px;
+    color: white;
+  }
+  
+  .fileExplorerButton {
+    font-size: 60%;
+    background-color: #ebebeb;
+    border-color: #2b2d31;
+    color: #222125;
+    padding: 0%;
+    align-content: center;
+    justify-content: center;
+  }
+  
+  .squareIcon {
+    width: 8px;
+    height: 8px;
+    align-content: center;
+    justify-content: center;
+    margin: 10px;
+  }
+  
+  .fileExplorerNav {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    padding: 1%;
+    padding-left: 2%;
+    padding-top: 0%;
+    width: 100%;
+    border-color: #2b2d31;
+    color: #222125;
+    filter: drop-shadow(0px 0px 5px #2b2828);
+  
+  }
+  
+  .fileReturnedButton {
+    background-color: #e9e9f1;
+    border-color: #2b2d3100;
+    color: #2a2b30;
+  }
+  
+  .fileReturnedButtonSelected {
+    background-color: #313135;
+    border-color: #2b2d3100;
+    color: white;
+  }
+  
+  .fileReturnedIcon {
+    color: #2a2b30;
+    width: 23px;
+    height: 29px;
+  }
+  
+  .fileReturnedIconSelected {
+    color: white;
+    width: 23px;
+    height: 29px;
+  }
+  
+}
+
+@media (max-width: 400px) {
+  .mobilevisiblity {
+    display: none;
+  }
+}
+
+@media (max-width: 1200px) {
+  .fileExplorerContainer {
+    padding-top: 2%;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-column-gap: 2%;
+  }
+
+  .filesListed /* For the file display element buttons */ {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+  }
+  
+  .fileReturned {
+    display: flex;
+    flex-direction: column;
+    inline-size: min-content;
+    justify-content: top;
+    align-items: center;
+    font-size: 2rem;
+    height: 100%;
+    width: 100%;
+    border-radius: 4px;
+    transition: all 50ms;
+    overflow: wrap;
+    word-break: break-all;
+  
+
+    color: #2a2b30;
+  }
+
+  .navtreevisiblity {
+    display: none;
+  }
+  
+  .fileReturnedText {
+    margin: 0px;
+    word-break: break-all;
+    text-align: center;
+    font-size: 30%;
+    padding-bottom: 15px;
+    color: white;
+  }
+  
+  .fileExplorerButton {
+    font-size: 60%;
+    background-color: #ebebeb;
+    border-color: #2b2d31;
+    color: #222125;
+    padding: 0%;
+    align-content: center;
+    justify-content: center;
+  }
+  
+  .squareIcon {
+    width: 8px;
+    height: 8px;
+    align-content: center;
+    justify-content: center;
+    margin: 10px;
+  }
+  
+  .fileExplorerNav {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
+    padding: 1%;
+    padding-left: 2%;
+    padding-top: 0%;
+    width: 100%;
+    border-color: #2b2d31;
+    color: #222125;
+    filter: drop-shadow(0px 0px 5px #2b2828);
+  
+  }
+  
+  .fileReturnedButton {
+    background-color: #e9e9f1;
+    border-color: #2b2d3100;
+    color: #2a2b30;
+  }
+  
+  .fileReturnedButtonSelected {
+    background-color: #313135;
+    border-color: #2b2d3100;
+    color: white;
+  }
+  
+  .fileReturnedIcon {
+    color: #2a2b30;
+    width: 23px;
+    height: 29px;
+  }
+  
+  .fileReturnedIconSelected {
+    color: white;
+    width: 23px;
+    height: 29px;
+  }
+  
 }
