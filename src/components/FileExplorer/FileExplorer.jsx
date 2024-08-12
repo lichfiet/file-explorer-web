@@ -595,7 +595,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
 
                 
                 <hr style={{ marginTop: "0px" }}></hr>
-                <span>
+                <span className="mobilevisiblity">
 
                     <Search currentDirectory={currentDirectory} fileList={wholeDirectory} fileSelector={handleForceFileSelectorEvent} />
                 </span>

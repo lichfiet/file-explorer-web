@@ -333,7 +333,7 @@ p {
   }
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1000px) {
   .fileExplorerContainer {
     padding-top: 2%;
     display: grid;

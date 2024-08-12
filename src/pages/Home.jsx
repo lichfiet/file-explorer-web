@@ -24,11 +24,11 @@ const Home = function () {
 
             <div className="container" style={{
                 margin: "auto",
-                height: "100vh",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
-                paddingTop: "5vh"
+                alignItems: "center", // Add this line to center the div vertically
+                height: "100vh", // Add this line to make the div take up the full height of the viewport
             }}>
 
                 {modal}
