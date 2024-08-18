@@ -567,7 +567,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
 
     return (
         <div className="fileExplorerContainer">
-            <div className="fileExplorerDirectoryTree mobilevisiblity navtreevisiblity">
+            <div className="mobilevisiblity navtreevisiblity">
                 <FileNavigationTree fileList={wholeDirectory} fileSelector={handleForceFileSelectorEvent} />
             </div>
             <div className="fileExplorerInterface">
@@ -576,14 +576,14 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
                 }, [currentDirectory])}
 
                 
-                <div /** File Explorer Nav */>
+                <div className="" /** File Explorer Nav */>
                     <nav className="fileExplorerNav">
                         <ul /** directory navigation buttons */>
                             <button aria-busy={previousDirectoryButtonState.busy} onClick={() => navigate('previous')} className="contrast fileExplorerButton mobilevisiblity">{previousDirectoryButtonState.icon}</button>
                             <button aria-busy={nextDirectoryButtonState.busy} onClick={() => navigate('next')} className="contrast fileExplorerButton mobilevisiblity">{nextDirectoryButtonState.icon}</button>
                             <button aria-busy={upDirectoryButtonState.busy} onClick={() => navigate('up')} className="contrast fileExplorerButton">{upDirectoryButtonState.icon}</button>
                         </ul>
-                        <ul /** file interaction buttons */>
+                        <ul /** file interaction buttons */ style={{ justifyContent: "end"}}>
                             <button aria-busy={createFolderButtonState.busy} onClick={() => { handleFolderCreateButtonClick() }} className="contrast fileExplorerButton">{createFolderButtonState.icon}</button>
                             <button aria-busy={deleteButtonState.busy} onClick={() => { handleDeleteButtonClick() }} className="contrast fileExplorerButton">{deleteButtonState.icon}</button>
                             <button aria-busy={previewButtonState.busy} onClick={() => { handleFilePreviewButtonClick() }} className="contrast fileExplorerButton">{previewButtonState.icon}</button>

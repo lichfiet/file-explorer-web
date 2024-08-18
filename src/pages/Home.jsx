@@ -22,22 +22,17 @@ const Home = function () {
             <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet"></link>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet"></link>
 
-            <div className="container" style={{
-                margin: "auto",
+            <div className="" style={{
                 display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center", // Add this line to center the div vertically
+                alignItems: "", // Add this line to center the div vertically
                 height: "100vh", // Add this line to make the div take up the full height of the viewport
             }}>
 
                 {modal}
 
-                <article className="overrideArticle">
-                    <div className="container-fluid">
+                    <div className="container">
                         <FileExplorer setModal={setModal} createPopUpNotif={showPopup} closeModal={closeModal} />
                     </div>
-                </article>
             </div>
         </>
     )
