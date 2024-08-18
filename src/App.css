@@ -211,7 +211,8 @@ p {
   grid-template-columns: 1fr 4fr;
   grid-template-rows: 1fr;
   grid-column-gap: 2%;
-  min-height: 200px;
+  min-height: 450px;
+  max-height: 450px;
 }
 
 .fileExplorerInterface {
@@ -235,7 +236,6 @@ p {
     display: grid;
     grid-template-columns: 1fr;
     grid-column-gap: 2%;
-
   }
 
   .filesListed /* For the file display element buttons */ {
@@ -335,6 +335,19 @@ p {
   }
   
 }
+
+@media (max-width: 768px) {
+
+  .fileExplorerContainer {
+    padding-top: 2%;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-column-gap: 2%;
+    max-height: 300px;
+    min-height: 300px;
+  }
+}
+
 
 @media (max-width: 500px) {
   .fileExplorerNav {
