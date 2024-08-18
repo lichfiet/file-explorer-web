@@ -23,6 +23,7 @@ const FileNavigationTree = ({ fileList, fileSelector }) => {
             <div className="fileExplorerDirectoryTreeContainer">
                 <h5 style={{ color: "#e9e9f0", fontSize: "110%", marginBottom: "3%" }}><i className="squareIcon fa fa-solid fa-folder-tree"></i> Navigation Tree</h5>
 
+                <div className="fileExplorerDirectoryTree">                    
                 <FolderTree
                     data={treeData}
                     onChange={onTreeStateChange}
@@ -31,6 +32,7 @@ const FileNavigationTree = ({ fileList, fileSelector }) => {
                     readOnly={true}
                     indentPixels={ 15 }
                 />
+                </div>
             </div>
         </>
     );
