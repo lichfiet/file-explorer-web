@@ -1,6 +1,6 @@
 .file-preview-container {
     /* width: 500px; */
-    height: 500px;
+    height: 450px;
     justify-content: center;
     display: flex;
     align-items: center;
@@ -17,4 +17,15 @@
     width: 600%;
     max-height: 100%;
     object-fit: contain;
+  }
+
+  @media (max-width: 768px) {
+
+    .file-preview-container {
+      /* width: 500px; */
+      height: 300px;
+      justify-content: center;
+      display: flex;
+      align-items: center;
+    }
   }
