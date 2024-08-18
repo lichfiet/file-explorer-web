@@ -10,6 +10,7 @@
     min-height: 500px;
     background-color: #1b1d24;
     filter: drop-shadow(0px 0px 5px #4e4949);
+    overflow-y: auto;
 }
 
 .fileExplorerDirectoryTree {
