@@ -424,9 +424,14 @@ p {
   }
   
   .fileReturnedButtonSelected {
+    display: flex;
     background-color: #313135;
     border-color: #2b2d3100;
     color: white;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
   }
   
   .fileReturnedIcon {

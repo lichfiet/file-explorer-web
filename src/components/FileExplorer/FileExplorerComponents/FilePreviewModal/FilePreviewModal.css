@@ -24,6 +24,7 @@
     .file-preview-container {
       /* width: 500px; */
       height: 300px;
+      max-width: 500px;
       justify-content: center;
       display: flex;
       align-items: center;
