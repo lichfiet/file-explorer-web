@@ -7,6 +7,7 @@
     padding-top: 9%;
     padding-bottom: 100%;
     max-height: 500px;
+    min-height: 500px;
     background-color: #1b1d24;
     filter: drop-shadow(0px 0px 5px #4e4949);
 }
@@ -21,6 +22,10 @@
         padding-top: 5%;
         padding-bottom: 100%;
         font-size: 60%;
+        max-height: 300px;
+        min-height: 300px;
+
     }
     
 }
+
