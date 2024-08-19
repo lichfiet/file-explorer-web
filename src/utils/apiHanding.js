@@ -27,13 +27,14 @@ const localApi = {
         }
     },
 
-    uploadFile: async (formData, method) => {
+    uploadFile: async (formData, method, currentDirectory) => {
         try {
             console.log("Attempting upload");
             const response = await axios.post(`${apiUrl}/uploadFile/`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'method': method,
+                    'currentDirectory': currentDirectory,
                     'Access-Control-Allow-Credentials': true,
                 }});
 

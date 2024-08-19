@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import localApi from '../../../../utils/apiHanding';
 
-export default function FileUploadForm({ method, closeModal }) {
+export default function FileUploadForm({ method, closeModal, currentDirectory }) {
   const fileSelector = useRef(null);
   const dropZoneRef = useRef(null);
   const [uploadLoading, setUploadLoading] = useState({
@@ -19,7 +19,7 @@ export default function FileUploadForm({ method, closeModal }) {
         const formData = new FormData();
         formData.append('fileUpload', file);
 
-        const response = await localApi.uploadFile(formData, method);
+        const response = await localApi.uploadFile(formData, method, currentDirectory);
         console.log('Response:', response);
 
         if (response.status === 200) {

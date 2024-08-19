@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, createRef, act, Children } from 'react';
+import { useState, useEffect, useRef, createRef } from 'react';
 import localApi from '../../utils/apiHanding';
 import extension from '../../utils/extensiontools'
 import FileUploadForm from './FileExplorerComponents/FileUploadModal/fileUploadForm.jsx'
@@ -7,14 +7,17 @@ import FilePreviewRenderer from './FileExplorerComponents/FilePreviewModal/fileP
 import FolderCreateForm from './FileExplorerComponents/FolderCreateModal/folderCreateModal.jsx'
 import FileNavigationTree from './FileExplorerComponents/FileNavigationTree/FileTree.jsx';
 import VerifyDeleteForm from './FileExplorerComponents/VerifyDeleteModal/VerifyDeleteModal.jsx';
-import Search from './FileExplorerComponents/FileSearch/FileSearch.jsx';
-
-import Toggle from '../buttons/toggle.jsx'
 
 import axios from 'axios';
 
-
 const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
+
+    const modalMethods = {
+        setModal: setModal,
+        createPopUpNotif: (message, level) => {createPopUpNotif(message, level)},
+        closeModal: closeModal
+    };
+
 
     const [files, setFiles] = useState(<div aria-busy="true"></div>); // State Data for file list
     const [fileData, setFileData] = useState([]); // State Data for file list
@@ -55,16 +58,16 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
     const [activeFile, setActiveFile] = useState(new NullActiveFile());
     const [currentDirectory, setCurrentDirectory] = useState('');
     const [directoryHistory, setDirectoryHistory] = useState([]);
-    
+
     const fileIconRefs = useRef([]); // Create a reference to the file list
     const fileBusyRefs = useRef([]); // Create a reference to the file list
     const fileBusy = useRef();
-    
+
     const [fileEventInProgress, setFileEventInProgress] = useState(false);
 
 
 
-    
+
     /** ------------------------------------File Explorer Button Loading State Management-------------------------------------- */
 
     const emptyDiv = <i className="squareIcon fa fa-solid" aria-busy={true} ></i>;
@@ -73,7 +76,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
             (boolean === true ? setRefreshButtonState({ busy: false, icon: emptyDiv }) : setRefreshButtonState({ busy: false, icon: <i className="squareIcon fa fa-solid fa-rotate-right"></i> }))
         },
         preview: (boolean) => {
-        (boolean === true ? setPreviewButtonState({ busy: false, icon: emptyDiv }) : setPreviewButtonState({ busy: false, icon: <i className="squareIcon fa fa-solid fa-eye"></i> }))
+            (boolean === true ? setPreviewButtonState({ busy: false, icon: emptyDiv }) : setPreviewButtonState({ busy: false, icon: <i className="squareIcon fa fa-solid fa-eye"></i> }))
         },
         delete: (boolean) => {
             (boolean === true ? setDeleteButtonState({ busy: false, icon: emptyDiv }) : setDeleteButtonState({ busy: false, icon: <i className="squareIcon fa fa-solid fa-trash"></i> }))
@@ -140,12 +143,12 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
             }
         }
     };
-    
+
 
 
 
     /** ------------------------------------File List State Management / Rendering-------------------------------------- */
- 
+
     // ? Re-renders the file list. Run every time fileData is updated or activeFile is updated
     const renderFiles = () => {
         setFiles(() => {
@@ -174,7 +177,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
                     renderedFiles.push(
                         <div className="fileReturned" key={index} id={fullFilePath}>
                             <button ref={iconRef(index)} name={fileName} id={"button-" + fileName} directory={fullFilePath}
-                                 className={buttonClassName} onClick={() => { handleButtonClick() }}
+                                className={buttonClassName} onClick={() => { handleButtonClick() }}
                             >
 
                                 <div className={fileClassName}
@@ -257,7 +260,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
 
     // ? Check if an event is in progress
     const isEventInProgress = () => {
-        if ( fileEventInProgress === true ) {
+        if (fileEventInProgress === true) {
             createPopUpNotif("Event In Progress, please wait", "warn")
             return true
         } else {
@@ -277,7 +280,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
 
     /** ---------------------------------File Explorer Event Handlers---------------------------------- */
     // ? These events are called by buttons AND other events in the file explorer
-     
+
     const handleFilePreviewEvent = async (fileName, index, fileExtensionType) => {
         if (isEventInProgress() || !isFileSelected()) {
             return;
@@ -285,9 +288,9 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
 
         const closeModal = async () => { setModal(null); refreshFiles(); selectedFile.clear(); }
         const openPreviewModal = (selectedFileData, selectedFileType, selectedFileName) => {
-            setModal(<FilePreviewRenderer fileInputData={selectedFileData} fileType={selectedFileType} fileName={activeFile.fileName} closeModal={ closeModal } />)
+            setModal(<FilePreviewRenderer fileInputData={selectedFileData} fileType={selectedFileType} fileName={activeFile.fileName} closeModal={closeModal} />)
         }
-        
+
         try {
             setFileEventInProgress(true); // Set querying state to true
             explorerButtonLoading.preview(true); // Set the file opening state to busy
@@ -309,7 +312,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
     }
 
     const handleFileDeleteEvent = async () => {
-        if (isEventInProgress() || !isFileSelected() ) {
+        if (isEventInProgress() || !isFileSelected()) {
             return;
         }
 
@@ -318,13 +321,13 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
 
         if (activeFile.fileExtensionType === 3) {
             const response = async () => { await localApi.deleteFolder(activeFile.directory, connectionType); }
-            
+
             const deleteFunction = async () => {
                 await createPopUpNotif(await response(), "info");
                 await refreshFiles();
             }
 
-            try {                
+            try {
 
                 if (activeFile.hasChilden === true) {
                     setModal(
@@ -355,7 +358,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
                 createPopUpNotif("Error Deleting File", "error")
             }
         }
-            
+
         explorerButtonLoading.delete(false) // Set file delete button state to not busy
         setActiveFile(new NullActiveFile());
         refreshFiles();
@@ -387,7 +390,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
         }
 
 
-    }; 
+    };
 
     const fileSelectionEventController = async (fileName, index, fileExtensionType, filePath, hasChildren) => {
         try {
@@ -419,7 +422,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
 
         const closeModal = async () => { setModal(null); refreshFiles(); selectedFile.clear(); }
 
-        setModal(<FileUploadForm method={connectionType} closeModal={closeModal}></FileUploadForm>)
+        setModal(<FileUploadForm method={connectionType} closeModal={closeModal} currentDirectory={currentDirectory}></FileUploadForm>)
     };
 
     const handFileEditButtonClick = async () => {
@@ -437,7 +440,13 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
                             <a href="#close" aria-label="Close" className="close" onClick={async () => { closeModal(); }}></a>
                             Editing: {activeFile.fileName}
                         </header>
-                        <FileEditForm method={connectionType} fileName={activeFile.directory}></FileEditForm>
+                        <FileEditForm 
+                        method={connectionType} 
+                        fileName={activeFile.directory} 
+                        fileDirectory={activeFile.directory} 
+                        closeModal={closeModal}
+                        modalMethods={modalMethods} 
+                        />
                     </article>
                 </dialog>
             )
@@ -476,7 +485,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
                 <dialog open className="dialogs">
                     <article className="modals">
                         <header className='modals-header'>
-                            <a href="#close" aria-label="Close" className="close" onClick={async () => { await finishModal();}}></a>
+                            <a href="#close" aria-label="Close" className="close" onClick={async () => { await finishModal(); }}></a>
                             Create Folder
                         </header>
                         <FolderCreateForm connectionType={connectionType} currentDirectory={currentDirectory} closeModal={finishModal} ></FolderCreateForm>
@@ -493,10 +502,10 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
         } finally {
             explorerButtonLoading.create(false); // Set the modal opening state to not busy
         }
-    };       
+    };
 
     const handleDeleteButtonClick = async () => {
-        if (isEventInProgress() || !isFileSelected() ) {
+        if (isEventInProgress() || !isFileSelected()) {
             return;
         }
 
@@ -559,7 +568,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
                 console.error('Error fetching tree and search data:', error);
             }
         };
-        
+
         fetchData();
     }, [fileData]);
 
@@ -575,15 +584,17 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
                     refreshFiles();
                 }, [currentDirectory])}
 
-                
-                <div className="" /** File Explorer Nav */>
+
+
+                {/** File Explorer Nav */}
+                <div>
                     <nav className="fileExplorerNav">
                         <ul /** directory navigation buttons */>
                             <button aria-busy={previousDirectoryButtonState.busy} onClick={() => navigate('previous')} className="contrast fileExplorerButton mobilevisiblity">{previousDirectoryButtonState.icon}</button>
                             <button aria-busy={nextDirectoryButtonState.busy} onClick={() => navigate('next')} className="contrast fileExplorerButton mobilevisiblity">{nextDirectoryButtonState.icon}</button>
                             <button aria-busy={upDirectoryButtonState.busy} onClick={() => navigate('up')} className="contrast fileExplorerButton">{upDirectoryButtonState.icon}</button>
                         </ul>
-                        <ul /** file interaction buttons */ style={{ justifyContent: "end"}}>
+                        <ul /** file interaction buttons */ style={{ justifyContent: "end" }}>
                             <button aria-busy={createFolderButtonState.busy} onClick={() => { handleFolderCreateButtonClick() }} className="contrast fileExplorerButton">{createFolderButtonState.icon}</button>
                             <button aria-busy={deleteButtonState.busy} onClick={() => { handleDeleteButtonClick() }} className="contrast fileExplorerButton">{deleteButtonState.icon}</button>
                             <button aria-busy={previewButtonState.busy} onClick={() => { handleFilePreviewButtonClick() }} className="contrast fileExplorerButton">{previewButtonState.icon}</button>
@@ -593,21 +604,18 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
                         </ul>
                     </nav>
                 </div>
+                <hr style={{ marginTop: "4px" }}></hr>
 
-                
-                <hr style={{ marginTop: "0px" }}></hr>
-                <span className="mobilevisiblity">
 
-                    <Search currentDirectory={currentDirectory} fileList={wholeDirectory} fileSelector={handleForceFileSelectorEvent} />
-                </span>
-                <div>
-                    <div>
 
-                <div className="filesListed" /** File List */>
-                    {files /** updated by fileSelector function */}
+                {/* File Explorer File List 
+                reredender files when fileData is updated or activeFile is updated
+                */}
+                <div className="filesListed">
+                    {files}                
                 </div>
-                    </div>
-                </div>
+
+
 
             </div>
         </div>
