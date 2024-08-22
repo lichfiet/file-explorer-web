@@ -30,7 +30,7 @@ const Home = function () {
 
                 {modal}
 
-                    <div className="container">
+                    <div className="container-fluid">
                         <FileExplorer setModal={setModal} createPopUpNotif={showPopup} closeModal={closeModal} />
                     </div>
             </div>
