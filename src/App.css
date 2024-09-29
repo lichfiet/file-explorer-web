@@ -606,6 +606,13 @@ p {
   }
 }
 
-.test {
+.test2 {
   background-color: transparent;
+  border-radius: 0px;
+}
+
+.test {
+  background-color: white;
+  border-radius: 0px;
+  margin: 0.2px
 }

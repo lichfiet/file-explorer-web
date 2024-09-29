@@ -168,7 +168,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
                     const buttonClassName = (fileName === activeFile.fileName ? "fileReturnedButtonSelected secondary" : "fileReturnedButton secondary")
                     const fileClassName = (fileName === activeFile.fileName ? "fileReturnedIconSelected fileReturned" : "fileReturnedIcon fileReturned")
 
-                    const testbuttonClassName = (fileName === activeFile.fileName ? "fileReturnedButtonSelected secondary test" : "fileReturnedButton secondary test")
+                    const testbuttonClassName = (fileName === activeFile.fileName ? "fileReturnedButtonSelected secondary test2" : "fileReturnedButton secondary test")
 
 
                     const icon = (index) => { return fileIconRefs.current[index].current }
