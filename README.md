@@ -1,7 +1,7 @@
 
 # file-explorer-web (Main Project Page)
 
-This is the front-end website for my file explorer project. It's a single page web application that allows you to interact with multiple file storage and retrieval apps from one site. It currently supports: *S3 and FTP* as file storage types.
+This is the front-end website for my file explorer project. It's a single page web application that provides a UI to interact with S3 Object storage.
 
 *A live preview of this project is running at  [files.trevorlichfield.com](https://files.trevorlichfield.com)*
 
@@ -12,7 +12,7 @@ This project consists of 5 Repositories:
 - [file-explorer-backend (Backend API)](https://github.com/lichfiet/file-explorer-backend)
 - [file-explorer-thumbnailer (FFmpeg Thumbnailer)](https://github.com/lichfiet/file-explorer-thumbnailer)
 - [file-explorer-infra (AWS Provisioning with Terraform)](https://github.com/lichfiet/file-explorer-infra)
-- *WIP [file-explorer-k8s (Kubernetes Deployment w/ Gitops)](https://github.com/lichfiet/file-explorer-k8s)*
+- *WIP [file-explorer-k8s (Kubernetes Deployment w/ Gitops & Observability)](https://github.com/lichfiet/file-explorer-k8s)*
 
 Each one serves a different purpose, but all work to support the functions of this project.
 
