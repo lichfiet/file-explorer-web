@@ -163,8 +163,13 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
                     const fileName = obj.name
                     const extension = obj.extensionType
 
+                    const hasThumbnail = obj.thumbnailUrl !== null && obj.thumbnailUrl !== undefined ? true : false;
+
                     const buttonClassName = (fileName === activeFile.fileName ? "fileReturnedButtonSelected secondary" : "fileReturnedButton secondary")
                     const fileClassName = (fileName === activeFile.fileName ? "fileReturnedIconSelected fileReturned" : "fileReturnedIcon fileReturned")
+
+                    const testbuttonClassName = (fileName === activeFile.fileName ? "fileReturnedButtonSelected secondary test" : "fileReturnedButton secondary test")
+
 
                     const icon = (index) => { return fileIconRefs.current[index].current }
                     const iconRef = (index) => { return fileIconRefs[index] }
@@ -176,16 +181,23 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
 
                     renderedFiles.push(
                         <div className="fileReturned" key={index} id={fullFilePath}>
+                            {hasThumbnail &&
+                            
+                                <button className={testbuttonClassName} style={{padding: "0px", backgroundColor: "none", borderColor: "none"}} ref={iconRef(index)} name={fileName} id={"button-" + fileName} directory={fullFilePath} onClick={() => { handleButtonClick() }} 
+                                >{icon(index)}
+                                </button>
+                               
+                            }
+
+                            {!hasThumbnail &&
                             <button ref={iconRef(index)} name={fileName} id={"button-" + fileName} directory={fullFilePath}
                                 className={buttonClassName} onClick={() => { handleButtonClick() }}
                             >
-
-                                <div className={fileClassName}
+                                 <div className={fileClassName}
                                     id={index}
                                     aria-busy={busyRef(index)}
                                 >{icon(index)}</div>
-
-                            </button>
+                            </button>}
                             <p className="fileReturnedText" extension={extension}>{fileName}</p>
                         </div>
                     )
@@ -207,7 +219,7 @@ const FileExplorer = function ({ setModal, createPopUpNotif, closeModal }) {
                 fileList.map((obj, index) => {
                     // create ref for icon
                     fileIconRefs.current[index] = createRef();
-                    fileIconRefs.current[index].current = extension.getThumbnail(obj.extensionType, obj.type);
+                    fileIconRefs.current[index].current = obj.thumbnailUrl !== null && obj.thumbnailUrl !== undefined ? <img src={obj.thumbnailUrl} alt={obj.name} style={{ width: "100%", height: "100%" }} /> : extension.getThumbnail(obj.extensionType, obj.type);
                     // create ref for busy state
                     fileBusyRefs.current[index] = createRef();
                     fileBusyRefs.current[index].current = "false";

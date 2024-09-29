@@ -128,12 +128,16 @@ p {
   background-color: #e9e9f1;
   border-color: #2b2d3100;
   color: #2a2b30;
+  width: 70px;
+  height: 70px;
 }
 
 .fileReturnedButtonSelected {
   background-color: #313135;
   border-color: #2b2d3100;
   color: white;
+  width: 70px;
+  height: 70px;
 }
 
 .fileReturnedIcon {
@@ -332,12 +336,16 @@ p {
     background-color: #e9e9f1;
     border-color: #2b2d3100;
     color: #2a2b30;
+    width: 60px;
+    height: 60px;
   }
   
   .fileReturnedButtonSelected {
     background-color: #313135;
     border-color: #2b2d3100;
     color: white;
+    width: 60px;
+    height: 60px;
   }
   
   .fileReturnedIcon {
@@ -596,4 +604,8 @@ p {
     width: 20px;
     height: 20px;
   }
+}
+
+.test {
+  background-color: transparent;
 }

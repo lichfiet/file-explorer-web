@@ -17,8 +17,10 @@ export default function FilePreviewRenderer({ fileInputData, fileType, fileName,
                     return (<Image src={fileSrc} />)
                 } else if (fileType === 1 /* Text */) {
                     return (<Text />)
+                } else {
+                    return (<p>Unknown file type</p>)
                 }
-                console.log("rendering media")
+                console.log("rendering media");
             }
 
             return (

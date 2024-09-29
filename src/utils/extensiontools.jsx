@@ -23,7 +23,7 @@ const extension = {
             } else if (RegExp((/^(gif)$/i)).test(fileExtension) == true) {
                 return ([1, null, "GIF"]) // unsure what other value to return
             } else if (RegExp((/^(mov|avi|mp4)$/i)).test(fileExtension) == true) {
-                return ([2, null, "MOV/AVI/MP4"]) // unsure what other value to return
+                return ([2, null, "MOV/AVI/MP4/WMV"]) // unsure what other value to return
             } else if (fileExtension === '/' || fileExtension === undefined) {
                 return ([3, null, "Directory"])
             } else {
