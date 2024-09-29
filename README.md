@@ -7,23 +7,24 @@ This is the front-end website for my file explorer project. It's a single page w
 
 ![fileexplorer](https://github.com/user-attachments/assets/4c747f55-81ef-4503-a642-ec807dd250c1)
 
-This project consists of 4 Repositories:
+This project consists of 5 Repositories:
 - [file-explorer-web *(this page)*](https://github.com/lichfiet/file-explorer-web)
-- [file-explorer-backend (Node.js Backend API)](https://github.com/lichfiet/file-explorer-backend)
+- [file-explorer-backend (Backend API)](https://github.com/lichfiet/file-explorer-backend)
+- [file-explorer-thumbnailer (FFmpeg Thumbnailer)](https://github.com/lichfiet/file-explorer-thumbnailer)
 - [file-explorer-infra (AWS Provisioning with Terraform)](https://github.com/lichfiet/file-explorer-infra)
-- *file-explorer-k8s (kubernetes coming soon...)*
+- *WIP [file-explorer-k8s (Kubernetes Deployment w/ Gitops)](https://github.com/lichfiet/file-explorer-k8s)*
 
 Each one serves a different purpose, but all work to support the functions of this project.
 
 
 ## Start Development
-Before you can start development, you will need a running instance of the [file-explorer-backend](https://github.com/lichfiet/file-explorer-backend) API, as well as a working FTP server or S3 Bucket setup in [file-explorer-infra](https://github.com/lichfiet/file-explorer-infra). I would suggest setting up the S3 bucket for testing because it's much faster, and requires a couple commands to get up and running. 
+Before you can start development, you will need a to have Docker and Docker Compose installed, as well as an accessible S3 Bucket setup in [file-explorer-infra](https://github.com/lichfiet/file-explorer-infra).
 
 
 #### Requirements
 
 - Node Version >= 18.0.0
-- *docker (soon)*
+- Docker
 
 ### Initial Setup
 
@@ -35,26 +36,34 @@ Before you can start development, you will need a running instance of the [file-
     git clone https://github.com/lichfiet/file-explorer-web.git &&
     cd ./file-explorer-web &&
     npm -i
-    mv .env.sample .env
+    cp .env.sample .env
     ```
 
     And then to start, run `npm run dev`
 
-    At this point, you can open the webpage, but you won't be able to interact with many of the functions. Next, you're going to need to setup the backend API
+    This will start the web interface using Vite, for hot reloading. You'll likely be greeted with an error however, so you'll need to proceed to the next step. 
+    
+    *(Note: If you would like to only develop the front-end, there is a live instance of the backend running at [https://explorer.trevorlichfield.com](https://explorer.trevorlichfield.com). You'll need to edit the API url in the .env file to point to this instance)*
 
-2. **File Storage Setup**
+2. **S3 Bucket Setup**
 
     Follow the instructions in [file-explorer-infra](https://github.com/lichfiet/file-explorer-infra) to generate access credentials for AWS. If you plan on using SFTP, you can skip this step.
 
-3. **Backend Instalation**
+3. **Backend & Thumbnailer Setup**
 
-    Follow the instructions in the [file-explorer-backend](https://github.com/lichfiet/file-explorer-backend) repository. It included instructions for getting set up with the S3 or FTP connection methods, whichever is preferred.
+    If you plan on running the backend and thumbnailer locally, this repository contains a docker-compose file that will start the backend, a thumbnailer container, redis (for thumbnail caching), and a To Be Implemented Postgres database. (Adding support for Minio soon because AWS).
+
+    
 
 ### To Do List:
-- Clean up code *(In progress always)*
-- Store S3 and SFTP config information in SQL db and retrieve based on user
-- Optimize the SFTP Wrapper and code, make easier to use (It's a mess, not sure how it works but it works on my machine)
-- Add folders and pagination to file output and storage
-- Create a scalable service for handling file uploads, and file downloads.
-- API Reference
-- Auth with api key or jwt token verification.
+- **Clean up code *(In progress always)***
+- **Migrate styles to Tailwind *(Next)***
+- *API Reference*
+- *Build custom file tree component (currently using a library)*
+- *Better mobile experience*
+- *Drag and drop move to folder*
+- *Add pagination to file output and storage*
+- *Auth with api key or jwt token verification.*
+- ~~Optimize the SFTP Wrapper and code, make easier to use (It's a mess, not sure how it works but it works on my machine)~~ *Remove SFTP support*
+- ~~Create a scalable service for handling file uploads, and file downloads.~~ *Using presigned urls for now*
+- ~~Add folders~~
