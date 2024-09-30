@@ -53,9 +53,11 @@ Before you can start development, you will need a to have Docker and Docker Comp
 
     If you plan on running the backend and thumbnailer locally, this repository contains a docker-compose file that will start the backend, a thumbnailer container, redis (for thumbnail caching), and a To Be Implemented Postgres database. (Adding support for Minio soon because AWS).
 
+    To run the docker compose file, make sure your .env variables are set and run `docker compose up`. That's all! If you need more verbose logging to see whats going on, you can set the `LOG_LEVEL` variable in the compose file for the thumbnailer and backend to `debug`.
+
     
 
-### To Do List:
+###  To Do List:
 - **Clean up code *(In progress always)***
 - **Migrate styles to Tailwind *(Next)***
 - *API Reference*
