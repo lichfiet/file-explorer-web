@@ -1,0 +1,57 @@
+
+services:
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    environment:
+      REDIS_PASSWORD: "" 
+      REDIS_PORT: "6379"
+
+  thumbnailer:
+    depends_on:
+      - rabbitmq
+    image: lichfiet/file-explorer-thumbnailer:latest
+    container_name: thumbnailer
+    ports:
+      - "8441:8441"
+    environment:
+      PORT: "8441"
+      LOG_LEVEL: "debug"
+      RABBITMQ_HOST: "rabbitmq"
+      AWS_REGION: "${AWS_REGION}"
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      AWS_S3_BUCKET: "file-explorer-s3-bucket"
+      THUMBNAIL_FILES_LOCATION: "/usr/file/"
+      REDIS_HOST: "redis"
+
+  backend:
+    image: lichfiet/file-explorer-backend:latest
+    container_name: backend
+    depends_on:
+      - redis
+      - rabbitmq
+    ports:
+      - "8443:8443"
+    environment:
+      APP_NAME: "file-explorer-backend"
+      PORT: "8443"
+      LOG_LEVEL: "debug"
+      RABBITMQ_HOST: "rabbitmq"
+      AWS_REGION: "${AWS_REGION}"
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY}"
+      AWS_S3_BUCKET: "file-explorer-s3-bucket"
+      REDIS_HOST: "redis"
